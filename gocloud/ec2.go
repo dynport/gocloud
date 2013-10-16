@@ -257,8 +257,8 @@ func ec2DescribeImages(args *gocli.Args) error {
 	}
 	sort.Sort(images)
 	table := gocli.NewTable()
-	for i, image := range images {
-		table.Add(i+1, image.ImageId, image.Name, image.ImageState)
+	for _, image := range images {
+		table.Add(image.ImageId, image.Name, image.ImageState)
 	}
 	fmt.Println(table)
 	return nil
