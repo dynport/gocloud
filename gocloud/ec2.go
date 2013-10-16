@@ -10,9 +10,14 @@ import (
 )
 
 const (
-	CLI_INSTANCE_TYPE         = "--instance-type"
-	CLI_SSH_KEY               = "--ssh-key"
-	CLI_SECURITY_GROUP        = "--security-group"
+	CLI_INSTANCE_TYPE  = "--instance-type"
+	CLI_SSH_KEY        = "--ssh-key"
+	CLI_SECURITY_GROUP = "--security-group"
+	CLI_CANONICAL      = "--canonical"
+	CLI_SELF           = "--self"
+	CLI_UBUNTU         = "--ubuntu"
+	CLI_UBUNTU_RARING  = "--raring"
+
 	USAGE_IMAGE_ID            = "IMAGE"
 	USAGE_KEY_NAME            = "KEY_NAME"
 	USAGE_IMAGE_TYPE          = "IMAGE_TYPE"
@@ -54,8 +59,13 @@ func init() {
 		Handler: ec2DescribeTags, Description: "Describe Tags",
 	})
 
+	args = gocli.NewArgs(nil)
+	args.RegisterBool(CLI_CANONICAL, "canonical", false, false, "Filter canonical images")
+	args.RegisterBool(CLI_SELF, "self", false, false, "Filter own images")
+	args.RegisterBool(CLI_UBUNTU, "ubuntu", false, false, "Filter ubuntu images")
+	args.RegisterBool(CLI_UBUNTU_RARING, "raring", false, false, "Filter ubuntu raring images")
 	router.Register("aws/ec2/images/describe", &gocli.Action{
-		Handler: ec2DescribeImages, Description: "Describe ec2 images",
+		Handler: ec2DescribeImages, Description: "Describe ec2 images", Args: args,
 	})
 
 	router.Register("aws/ec2/key-pairs/describe", &gocli.Action{
@@ -251,7 +261,19 @@ func ec2DescribeInstances(args *gocli.Args) error {
 
 func ec2DescribeImages(args *gocli.Args) error {
 	logger.Info("describing images")
-	images, e := ec2Client.DescribeImagesWithFilter(&ec2.ImageFilter{Owner: ec2.CANONICAL_OWNER_ID, Name: ec2.UBUNTU_RARING_PREFIX})
+	filter := &ec2.ImageFilter{}
+	if args.GetBool(CLI_CANONICAL) {
+		filter.Owner = ec2.CANONICAL_OWNER_ID
+	} else if args.GetBool(CLI_SELF) {
+		filter.Owner = ec2.SELF_OWNER_ID
+	}
+
+	if args.GetBool(CLI_UBUNTU) {
+		filter.Name = ec2.UBUNTU_PREFIX
+	} else if args.GetBool(CLI_UBUNTU_RARING) {
+		filter.Name = ec2.UBUNTU_RARING_PREFIX
+	}
+	images, e := ec2Client.DescribeImagesWithFilter(filter)
 	if e != nil {
 		return e
 	}
