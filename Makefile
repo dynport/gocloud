@@ -1,5 +1,5 @@
 default:
-	go install github.com/dynport/gocloud/gocloud
+	go get github.com/dynport/gocloud/gocloud
 
 test:
 	cd jiffybox && go test -v
