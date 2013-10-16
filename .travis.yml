@@ -1,0 +1,13 @@
+language: go
+
+install:
+  - go get -d -v ./... && go build -v ./...
+  - go get github.com/stretchr/testify/assert
+  - make test
+
+go:
+  - 1.1
+
+notifications:
+  email:
+    - travis@dynport.de
