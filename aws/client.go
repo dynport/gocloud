@@ -41,9 +41,8 @@ func QueryPrefix(version, action string) string {
 // list of endpoints
 func (client *Client) DoSignedRequest(method string, endpoint, action string, extraAttributes map[string]string) (rsp *Response, e error) {
 	request, e := http.NewRequest("GET", endpoint+"?"+action, nil)
-	httpClient := &http.Client{}
 	client.SignAwsRequestV2(request, time.Now())
-	raw, e := httpClient.Do(request)
+	raw, e := http.DefaultClient.Do(request)
 	if e != nil {
 		return rsp, e
 	}
