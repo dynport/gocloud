@@ -1,5 +1,7 @@
 # Gocloud (did not find a better name yet)
 
+[![Build Status](https://travis-ci.org/dynport/gocloud.png)](https://travis-ci.org/dynport/gocloud)
+
 ## Disclaimer
 
 * __This is still a heavy work in progress. THINGS WILL CHANGE!__
