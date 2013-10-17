@@ -111,9 +111,8 @@ func (client *Client) doRequest(method, path string) (rsp *HttpResponse, e error
 	if e != nil {
 		return nil, e
 	}
-	httpClient := &http.Client{}
 	client.SignAwsRequest(request)
-	raw, e := httpClient.Do(request)
+	raw, e := http.DefaultClient.Do(request)
 
 	if e != nil {
 		return nil, e

@@ -133,8 +133,7 @@ func (client *Client) DeleteJiffyBox(id string) (e error) {
 	if e != nil {
 		return e
 	}
-	httpClient := http.Client{}
-	httpResponse, e := httpClient.Do(req)
+	httpResponse, e := http.DefaultClient.Do(req)
 	if e != nil {
 		return e
 	}
@@ -217,7 +216,7 @@ func (client *Client) ChangeState(id int, state string, planId int) (server *Ser
 	if e != nil {
 		return nil, e
 	}
-	httpResponse, e := (&http.Client{}).Do(req)
+	httpResponse, e := http.DefaultClient.Do(req)
 	if e != nil {
 		return nil, e
 	}
@@ -261,8 +260,7 @@ func (client *Client) ChangeStatus(id string, status string, planId int, metadat
 	if e != nil {
 		return nil, e
 	}
-	httpClient := &http.Client{}
-	httpResponse, e := httpClient.Do(req)
+	httpResponse, e := http.DefaultClient.Do(req)
 	if e != nil {
 		return nil, e
 	}
