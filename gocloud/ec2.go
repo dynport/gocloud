@@ -17,6 +17,7 @@ const (
 	CLI_SELF           = "--self"
 	CLI_UBUNTU         = "--ubuntu"
 	CLI_UBUNTU_RARING  = "--raring"
+	CLI_UBUNTU_SAUCY   = "--saucy"
 
 	USAGE_IMAGE_ID            = "IMAGE"
 	USAGE_KEY_NAME            = "KEY_NAME"
@@ -64,6 +65,8 @@ func init() {
 	args.RegisterBool(CLI_SELF, "self", false, false, "Filter own images")
 	args.RegisterBool(CLI_UBUNTU, "ubuntu", false, false, "Filter ubuntu images")
 	args.RegisterBool(CLI_UBUNTU_RARING, "raring", false, false, "Filter ubuntu raring images")
+	args.RegisterBool(CLI_UBUNTU_SAUCY, "saucy", false, false, "Filter ubuntu saucy images")
+
 	router.Register("aws/ec2/images/describe", &gocli.Action{
 		Handler: ec2DescribeImages, Description: "Describe ec2 images", Args: args,
 	})
@@ -272,7 +275,10 @@ func ec2DescribeImages(args *gocli.Args) error {
 		filter.Name = ec2.UBUNTU_PREFIX
 	} else if args.GetBool(CLI_UBUNTU_RARING) {
 		filter.Name = ec2.UBUNTU_RARING_PREFIX
+	} else if args.GetBool(CLI_UBUNTU_SAUCY) {
+		filter.Name = ec2.UBUNTU_SAUCY_PREFIX
 	}
+
 	images, e := ec2Client.DescribeImagesWithFilter(filter)
 	if e != nil {
 		return e

@@ -25,6 +25,7 @@ const (
 	SELF_OWNER_ID        = "self"
 	UBUNTU_PREFIX        = "ubuntu/images/ubuntu-*"
 	UBUNTU_RARING_PREFIX = "ubuntu/images/ubuntu-raring*"
+	UBUNTU_SAUCY_PREFIX  = "ubuntu/images/ubuntu-saucy*"
 	ENDPOINT             = "https://eu-west-1.ec2.amazonaws.com"
 )
 
