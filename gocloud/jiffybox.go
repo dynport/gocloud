@@ -146,6 +146,10 @@ func printServer(server *jiffybox.Server) {
 	table.Add("RAM", server.Plan.RamInMB)
 	table.Add("IsBeingCopied", server.IsBeingCopied)
 	table.Add("ManualBackupRunning", server.ManualBackupRunning)
+	if server.ActiveProfile != nil {
+		table.Add("Profile Name", server.ActiveProfile.Name)
+		table.Add("Profile Kernel", server.ActiveProfile.Kernel)
+	}
 	i := 0
 	for k, v := range server.Ips {
 		key := ""
