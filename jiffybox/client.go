@@ -62,7 +62,6 @@ func (client *Client) unmarshalResponse(rsp *http.Response, i interface{}) error
 func (client *Client) unmarshal(b []byte, i interface{}) error {
 	er := &ErrorResponse{}
 	e := json.Unmarshal(b, er)
-	logger.Debug("result of unmarshalling err", e)
 	if e == nil {
 		allErrors := []string{}
 		for _, message := range er.Messages {
