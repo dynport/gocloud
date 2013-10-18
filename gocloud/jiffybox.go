@@ -190,7 +190,7 @@ func jiffyBoxDeleteAction(args *gocli.Args) error {
 		return fmt.Errorf(USAGE_DELETE)
 	}
 	id := args.Args[0]
-	logger.Infof("deleting box with id %d", id)
+	logger.Infof("deleting box with id %s", id)
 	e := client().DeleteJiffyBox(id)
 	if e != nil {
 		return e
