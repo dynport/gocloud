@@ -215,14 +215,15 @@ func jiffyBoxListDistributionsAction(args *gocli.Args) error {
 	return nil
 }
 
-const CLI_NAME = "--name"
-const CLI_PLAN_ID = "--plan-id"
-const CLI_DISTRIBUTION = "--distribution"
-
-const DEFAULT_PLAN_ID = 20
-const DEFAULT_DISTRIBUTION = "ubuntu_12_4_lts_64bit"
-
-const USAGE_CLONE_SERVER = "id"
+const (
+	CLI_NAME             = "--name"
+	CLI_PLAN_ID          = "--plan-id"
+	CLI_DISTRIBUTION     = "--distribution"
+	DEFAULT_PLAN_ID      = 20
+	DEFAULT_DISTRIBUTION = "ubuntu_12_4_lts_64bit"
+	USAGE_CLONE_SERVER   = "id"
+	HOURS_PER_MONTH      = 365 * 24.0 / 12.0
+)
 
 func init() {
 	args := gocli.NewArgs(nil)
@@ -238,9 +239,13 @@ func jiffyBoxListPlansAction(args *gocli.Args) error {
 		return e
 	}
 	table := gocli.NewTable()
-	table.Add("Id", "Name", "Cpu", "Ram", "Disk", "Price")
+	table.Add("Id", "Name", "Cpu", "Ram", "Disk", "Price/Hour", "Price/Month")
 	for _, plan := range plans {
-		table.Add(plan.Id, plan.Name, plan.Cpus, plan.RamInMB, plan.DiskSizeInMB, plan.PricePerHour)
+		table.Add(
+			plan.Id, plan.Name, plan.Cpus, plan.RamInMB, plan.DiskSizeInMB,
+			fmt.Sprintf("%.02f €", plan.PricePerHour),
+			fmt.Sprintf("%.2f €", plan.PricePerHour*HOURS_PER_MONTH),
+		)
 	}
 	fmt.Println(table)
 	return nil
