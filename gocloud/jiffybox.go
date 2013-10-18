@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/jiffybox"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -100,8 +101,9 @@ func jiffyBoxCloneServerAction(args *gocli.Args) error {
 		return e
 	}
 	opts := &jiffybox.CreateOptions{
-		PlanId: args.MustGetInt(CLI_PLAN_ID),
-		Name:   args.MustGetString(CLI_NAME),
+		PlanId:   args.MustGetInt(CLI_PLAN_ID),
+		Name:     args.MustGetString(CLI_NAME),
+		Password: os.Getenv("JIFFYBOX_DEFAULT_PASSWORD"),
 	}
 	logger.Infof("cloning server %d with %#v", id, opts)
 	s, e := client().CloneServer(id, opts)
@@ -262,6 +264,7 @@ func jiffyBoxCreateAction(args *gocli.Args) error {
 		PlanId:       args.MustGetInt(CLI_PLAN_ID),
 		Distribution: args.MustGetString(CLI_DISTRIBUTION),
 		UseSshKey:    true,
+		Password: os.Getenv("JIFFYBOX_DEFAULT_PASSWORD"),
 	}
 	s, e := client().CreateJiffyBox(opts)
 	if e != nil {

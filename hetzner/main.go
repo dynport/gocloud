@@ -139,15 +139,6 @@ func (server *Server) String() string {
 var router = gocli.NewRouter(nil)
 var account *Account
 
-func init() {
-	var e error
-	account, e = AccountFromEnv()
-	if e != nil {
-		logger.Error(e.Error())
-		os.Exit(1)
-	}
-}
-
 func listServers(args *gocli.Args) error {
 	servers, e := account.Servers()
 	if e != nil {

@@ -35,12 +35,7 @@ func RenameDropletAction(args *gocli.Args) error {
 }
 
 func init() {
-	router.Register("do/droplet/info",
-		&gocli.Action{
-			Handler:     DescribeDropletAction,
-			Description: "Describe Droplet",
-		},
-	)
+	router.Register("do/droplet/info", &gocli.Action{Handler: DescribeDropletAction, Description: "Describe Droplet"})
 }
 
 func DescribeDropletAction(args *gocli.Args) error {
@@ -97,30 +92,30 @@ func ExitWith(err interface{}) {
 }
 
 const (
-	DIGITAL_OCEAN_CLIENT_ID         = "DIGITAL_OCEAN_CLIENT_ID"
-	DIGITAL_OCEAN_API_KEY           = "DIGITAL_OCEAN_API_KEY"
-	DIGITAL_OCEAN_DEFAULT_REGION_ID = "DIGITAL_OCEAN_DEFAULT_REGION_ID"
-	DIGITAL_OCEAN_DEFAULT_SIZE_ID   = "DIGITAL_OCEAN_DEFAULT_SIZE_ID"
-	DIGITAL_OCEAN_DEFAULT_IMAGE_ID  = "DIGITAL_OCEAN_DEFAULT_IMAGE_ID"
-	DIGITAL_OCEAN_DEFAULT_SSH_KEY   = "DIGITAL_OCEAN_DEFAULT_SSH_KEY"
+	ENV_DIGITAL_OCEAN_CLIENT_ID         = "DIGITAL_OCEAN_CLIENT_ID"
+	ENV_DIGITAL_OCEAN_API_KEY           = "DIGITAL_OCEAN_API_KEY"
+	ENV_DIGITAL_OCEAN_DEFAULT_REGION_ID = "DIGITAL_OCEAN_DEFAULT_REGION_ID"
+	ENV_DIGITAL_OCEAN_DEFAULT_SIZE_ID   = "DIGITAL_OCEAN_DEFAULT_SIZE_ID"
+	ENV_DIGITAL_OCEAN_DEFAULT_IMAGE_ID  = "DIGITAL_OCEAN_DEFAULT_IMAGE_ID"
+	ENV_DIGITAL_OCEAN_DEFAULT_SSH_KEY   = "DIGITAL_OCEAN_DEFAULT_SSH_KEY"
 )
 
 func AccountFromEnv() (*digitalocean.Account, error) {
 	account := &digitalocean.Account{}
-	account.ClientId = os.Getenv(DIGITAL_OCEAN_CLIENT_ID)
-	account.ApiKey = os.Getenv(DIGITAL_OCEAN_API_KEY)
-	account.RegionId, _ = strconv.Atoi(os.Getenv(DIGITAL_OCEAN_DEFAULT_REGION_ID))
-	account.SizeId, _ = strconv.Atoi(os.Getenv(DIGITAL_OCEAN_DEFAULT_SIZE_ID))
-	account.ImageId, _ = strconv.Atoi(os.Getenv(DIGITAL_OCEAN_DEFAULT_IMAGE_ID))
-	account.SshKey, _ = strconv.Atoi(os.Getenv(DIGITAL_OCEAN_DEFAULT_SSH_KEY))
+	account.ClientId = os.Getenv(ENV_DIGITAL_OCEAN_CLIENT_ID)
+	account.ApiKey = os.Getenv(ENV_DIGITAL_OCEAN_API_KEY)
+	account.RegionId, _ = strconv.Atoi(os.Getenv(ENV_DIGITAL_OCEAN_DEFAULT_REGION_ID))
+	account.SizeId, _ = strconv.Atoi(os.Getenv(ENV_DIGITAL_OCEAN_DEFAULT_SIZE_ID))
+	account.ImageId, _ = strconv.Atoi(os.Getenv(ENV_DIGITAL_OCEAN_DEFAULT_IMAGE_ID))
+	account.SshKey, _ = strconv.Atoi(os.Getenv(ENV_DIGITAL_OCEAN_DEFAULT_SSH_KEY))
 
 	allErrors := []string{}
 
 	if account.ClientId == "" {
-		allErrors = append(allErrors, fmt.Sprintf("%s must be set in env", DIGITAL_OCEAN_CLIENT_ID))
+		allErrors = append(allErrors, fmt.Sprintf("%s must be set in env", ENV_DIGITAL_OCEAN_CLIENT_ID))
 	}
 	if account.ApiKey == "" {
-		allErrors = append(allErrors, fmt.Sprintf("%s must be set in env", DIGITAL_OCEAN_API_KEY))
+		allErrors = append(allErrors, fmt.Sprintf("%s must be set in env", ENV_DIGITAL_OCEAN_API_KEY))
 	}
 	if len(allErrors) > 0 {
 		return nil, fmt.Errorf(strings.Join(allErrors, "\n"))
@@ -129,13 +124,7 @@ func AccountFromEnv() (*digitalocean.Account, error) {
 }
 
 func init() {
-	router.Register(
-		"do/droplet/list",
-		&gocli.Action{
-			Handler:     ListDropletsAction,
-			Description: "List active droplets",
-		},
-	)
+	router.Register("do/droplet/list", &gocli.Action{Handler: ListDropletsAction, Description: "List active droplets"})
 }
 
 func ListDropletsAction(args *gocli.Args) (e error) {
@@ -173,12 +162,19 @@ func ListDropletsAction(args *gocli.Args) (e error) {
 	return nil
 }
 
+const (
+	DIGITAL_OCEAN_DEFAULT_REGION_ID = 2
+	DIGITAL_OCEAN_DEFAULT_SIZE_ID   = 66
+	DIGITAL_OCEAN_DEFAULT_IMAGE_ID  = 350076
+	DIGITAL_OCEAN_DEFAULT_SSH_KEY   = 22197
+)
+
 func init() {
 	args := &gocli.Args{}
-	args.RegisterInt("-i", "image_id", false, CurrentAccount().ImageId, "Image id for new droplet")
-	args.RegisterInt("-r", "region_id", false, CurrentAccount().RegionId, "Region id for new droplet")
-	args.RegisterInt("-s", "size_id", false, CurrentAccount().SizeId, "Size id for new droplet")
-	args.RegisterInt("-k", "ssh_key_id", false, CurrentAccount().SshKey, "Ssh key to be used")
+	args.RegisterInt("-i", "image_id", false, DIGITAL_OCEAN_DEFAULT_IMAGE_ID, "Image id for new droplet")
+	args.RegisterInt("-r", "region_id", false, DIGITAL_OCEAN_DEFAULT_REGION_ID, "Region id for new droplet")
+	args.RegisterInt("-s", "size_id", false, DIGITAL_OCEAN_DEFAULT_SIZE_ID, "Size id for new droplet")
+	args.RegisterInt("-k", "ssh_key_id", false, 0, "Ssh key to be used")
 
 	router.Register(
 		"do/droplet/create",
