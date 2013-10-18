@@ -222,6 +222,18 @@ func (client *Client) ChangeState(id int, state string, planId int) (server *Ser
 	}
 	rsp := &JiffyBoxResponse{}
 	e = client.unmarshalResponse(httpResponse, rsp)
+	if e != nil {
+		return rsp.Server, e
+	}
+	errors := []string{}
+	for _, message := range rsp.Messages {
+		if message.Type == "error" {
+			errors = append(errors, message.Message)
+		}
+	}
+	if len(errors) > 0 {
+		return rsp.Server, fmt.Errorf(strings.Join(errors, ", "))
+	}
 	return rsp.Server, e
 }
 
