@@ -148,7 +148,7 @@ func (client *Client) DeleteJiffyBox(id string) (e error) {
 type CreateOptions struct {
 	Name         string
 	PlanId       int
-	BackupId     int
+	BackupId     string
 	Distribution string
 	Password     string
 	UseSshKey    bool
@@ -159,10 +159,9 @@ func (client *Client) CreateJiffyBox(options *CreateOptions) (server *Server, e 
 	values := url.Values{}
 	values.Add("name", options.Name)
 	values.Add("planid", strconv.Itoa(options.PlanId))
-	if options.BackupId > 0 {
-		values.Add("backupid", strconv.Itoa(options.BackupId))
-	}
-	if options.Distribution != "" {
+	if options.BackupId != "" {
+		values.Add("backupid", options.BackupId)
+	} else if options.Distribution != "" {
 		values.Add("distribution", options.Distribution)
 	}
 	if options.Password != "" {
