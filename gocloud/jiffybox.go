@@ -179,9 +179,11 @@ func jiffyBoxListBackupsAction(args *gocli.Args) error {
 		return e
 	}
 
+	table := gocli.NewTable()
 	for _, backup := range backups {
-		fmt.Println(backup.ServerId, backup.Key, backup.CreatedAt())
+		table.Add(backup.Id, backup.ServerId, backup.Key, backup.CreatedAt().Format(TIME_FORMAT))
 	}
+	fmt.Println(table)
 	return nil
 }
 
