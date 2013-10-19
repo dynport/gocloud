@@ -40,7 +40,7 @@ func QueryPrefix(version, action string) string {
 
 // list of endpoints
 func (client *Client) DoSignedRequest(method string, endpoint, action string, extraAttributes map[string]string) (rsp *Response, e error) {
-	request, e := http.NewRequest("GET", endpoint+"?"+action, nil)
+	request, e := http.NewRequest(method, endpoint+"?"+action, nil)
 	client.SignAwsRequestV2(request, time.Now())
 	raw, e := http.DefaultClient.Do(request)
 	if e != nil {
