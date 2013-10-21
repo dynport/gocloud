@@ -53,6 +53,33 @@ func jiffyBoxStopServer(args *gocli.Args) error {
 	return nil
 }
 
+const USAGE_FREEZE_SERVER = "id"
+
+func init() {
+	router.Register("jb/servers/freeze", &gocli.Action{Handler: jiffyBoxFreezeServer, Description: "Freeze Server", Usage: USAGE_FREEZE_SERVER})
+}
+
+func jiffyBoxFreezeServer(args *gocli.Args) error {
+	id, e := serverFromArgs(args.Args)
+	if e != nil {
+		return e
+	}
+	s, e := client().JiffyBox(id)
+	if e != nil {
+		return e
+	}
+	if s.Running {
+		return fmt.Errorf("Server must not be running!")
+	}
+	s, e = client().FreezeServer(id)
+	if e != nil {
+		return e
+	}
+	logger.Infof("froze server %d", id)
+	printServer(s)
+	return nil
+}
+
 func init() {
 	args := gocli.NewArgs(nil)
 	args.RegisterInt(CLI_PLAN_ID, "plan_id", false, DEFAULT_PLAN_ID, "Plan id")
@@ -70,6 +97,29 @@ func jiffyBoxStartServer(args *gocli.Args) error {
 		return e
 	}
 	logger.Infof("started server %d", id)
+	printServer(s)
+	return nil
+}
+
+const USAGE_THAW_SERVER = "id"
+
+func init() {
+	args := gocli.NewArgs(nil)
+	args.RegisterInt(CLI_PLAN_ID, "plan_id", false, DEFAULT_PLAN_ID, "Plan id")
+	router.Register("jb/servers/thaw", &gocli.Action{Handler: jiffyBoxThawServer, Description: "Thaw Server", Usage: USAGE_THAW_SERVER, Args: args})
+}
+
+func jiffyBoxThawServer(args *gocli.Args) error {
+	id, e := serverFromArgs(args.Args)
+	if e != nil {
+		return e
+	}
+	planId := args.MustGetInt(CLI_PLAN_ID)
+	s, e := client().ThawServer(id, planId)
+	if e != nil {
+		return e
+	}
+	logger.Infof("thawed server %d", id)
 	printServer(s)
 	return nil
 }
