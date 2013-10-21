@@ -150,20 +150,26 @@ func jiffyBoxCloneServerAction(args *gocli.Args) error {
 	if e != nil {
 		return e
 	}
+	s, e := client().JiffyBox(id)
+	if e != nil {
+		return e
+	}
+	if s.Frozen() {
+		return fmt.Errorf("Server must not be frozen!")
+	}
 	opts := &jiffybox.CreateOptions{
 		PlanId:   args.MustGetInt(CLI_PLAN_ID),
 		Name:     args.MustGetString(CLI_NAME),
 		Password: os.Getenv("JIFFYBOX_DEFAULT_PASSWORD"),
 	}
 	logger.Infof("cloning server %d with %#v", id, opts)
-	s, e := client().CloneServer(id, opts)
+	s, e = client().CloneServer(id, opts)
 	if e != nil {
 		return e
 	}
 	logger.Infof("cloned server %d", id)
 	printServer(s)
 	return nil
-
 }
 
 const USAGE_SHOW_SERVER = "id"

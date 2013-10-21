@@ -80,6 +80,10 @@ func (server *Server) PublicIp() string {
 	return ""
 }
 
+func (server *Server) Frozen() bool {
+	return server.Status == "FROZEN" || server.Status == "FREEZING"
+}
+
 type Message struct {
 	Type    string `json:"type"`
 	Message string `json:"message"`
