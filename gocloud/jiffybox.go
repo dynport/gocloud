@@ -48,7 +48,7 @@ func jiffyBoxStopServer(args *gocli.Args) error {
 	if e != nil {
 		return e
 	}
-	logger.Infof("started server %d", id)
+	logger.Infof("stopped server %d", id)
 	printServer(s)
 	return nil
 }
