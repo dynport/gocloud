@@ -183,8 +183,8 @@ func (client *Client) CreateJiffyBox(options *CreateOptions) (server *Server, e 
 }
 
 // unfreeze server
-func (client *Client) ThawServer(id int) (server *Server, e error) {
-	return client.ChangeState(id, STATUS_THAW, -1)
+func (client *Client) ThawServer(id int, planId int) (server *Server, e error) {
+	return client.ChangeState(id, STATUS_THAW, planId)
 }
 
 func (client *Client) FreezeServer(id int) (server *Server, e error) {
