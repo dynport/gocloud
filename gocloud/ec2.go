@@ -186,11 +186,13 @@ func ec2RunInstances(args *gocli.Args) error {
 	imageId := args.Args[0]
 	imageType := args.MustGetString(CLI_INSTANCE_TYPE)
 	keyName := args.MustGetString(CLI_SSH_KEY)
+	securityGroup := args.MustGetString(CLI_SECURITY_GROUP)
 
 	config := &ec2.RunInstancesConfig{
-		ImageId:      imageId,
-		KeyName:      keyName,
-		InstanceType: imageType,
+		ImageId:        imageId,
+		KeyName:        keyName,
+		InstanceType:   imageType,
+		SecurityGroups: []string{securityGroup},
 	}
 	_, e := ec2Client.RunInstances(config)
 	return e
