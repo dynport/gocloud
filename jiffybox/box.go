@@ -95,7 +95,7 @@ type JiffyBoxResponse struct {
 }
 
 type JiffyBoxesResponse struct {
-	Messages   []*Message
+	Messages   []*Message `json:"messages:"`
 	ServersMap map[string]*Server `json:"result"`
 }
 
