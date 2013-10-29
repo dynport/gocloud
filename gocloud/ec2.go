@@ -56,9 +56,7 @@ func init() {
 		Handler: ec2CreateTags, Description: "Create Tags", Usage: USAGE_CREATE_TAGS,
 	})
 
-	router.Register("aws/ec2/tags/describe", &gocli.Action{
-		Handler: ec2DescribeTags, Description: "Describe Tags",
-	})
+	router.Register("aws/ec2/tags/describe", &gocli.Action{Handler: ec2DescribeTags, Description: "Describe Tags"})
 
 	args = gocli.NewArgs(nil)
 	args.RegisterBool(CLI_CANONICAL, "canonical", false, false, "Filter canonical images")
