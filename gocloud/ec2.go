@@ -28,7 +28,9 @@ const (
 	USAGE_RUN_INSTANCE = "IMAGE"
 )
 
-var ec2Client = ec2.NewFromEnv()
+func ec2Client() *ec2.Client {
+	return ec2.NewFromEnv()
+}
 
 func init() {
 	router.Register("aws/ec2/instances/describe", &gocli.Action{
@@ -92,7 +94,7 @@ func ec2DescribeSpotPriceHistory(args *gocli.Args) error {
 		ProductDescriptions: []string{ec2.DESC_LINUX_UNIX},
 		StartTime:           time.Now().Add(-7 * 24 * time.Hour),
 	}
-	prices, e := ec2Client.DescribeSpotPriceHistory(filter)
+	prices, e := ec2Client().DescribeSpotPriceHistory(filter)
 	if e != nil {
 		return e
 	}
@@ -106,7 +108,7 @@ func ec2DescribeSpotPriceHistory(args *gocli.Args) error {
 }
 
 func ec2DescribeSecurityGroups(args *gocli.Args) error {
-	groups, e := ec2Client.DescribeSecurityGroups()
+	groups, e := ec2Client().DescribeSecurityGroups()
 	if e != nil {
 		return e
 	}
@@ -141,7 +143,7 @@ func ec2DescribeSecurityGroups(args *gocli.Args) error {
 }
 
 func ec2DescribeAddresses(args *gocli.Args) error {
-	addresses, e := ec2Client.DescribeAddresses()
+	addresses, e := ec2Client().DescribeAddresses()
 	if e != nil {
 		return e
 	}
@@ -154,7 +156,7 @@ func ec2DescribeAddresses(args *gocli.Args) error {
 }
 
 func ec2DescribeKeyPairs(args *gocli.Args) error {
-	pairs, e := ec2Client.DescribeKeyPairs()
+	pairs, e := ec2Client().DescribeKeyPairs()
 	if e != nil {
 		return e
 	}
@@ -192,7 +194,7 @@ func ec2RunInstances(args *gocli.Args) error {
 		InstanceType:   imageType,
 		SecurityGroups: []string{securityGroup},
 	}
-	_, e := ec2Client.RunInstances(config)
+	_, e := ec2Client().RunInstances(config)
 	return e
 }
 
@@ -200,7 +202,7 @@ func ec2TerminateInstances(args *gocli.Args) error {
 	if len(args.Args) < 1 {
 		return fmt.Errorf(USAGE_TERMINATE_INSTANCES)
 	}
-	return ec2Client.TerminateInstances(args.Args)
+	return ec2Client().TerminateInstances(args.Args)
 }
 
 func ec2CreateTags(args *gocli.Args) error {
@@ -211,14 +213,14 @@ func ec2CreateTags(args *gocli.Args) error {
 	tags := map[string]string{
 		args.Args[1]: args.Args[2],
 	}
-	return ec2Client.CreateTags([]string{resourceId}, tags)
+	return ec2Client().CreateTags([]string{resourceId}, tags)
 }
 
 func ec2DescribeTags(args *gocli.Args) error {
 	if len(args.Args) < 0 {
 		return fmt.Errorf("instance...")
 	}
-	tags, e := ec2Client.DescribeTags()
+	tags, e := ec2Client().DescribeTags()
 	if e != nil {
 		return e
 	}
@@ -233,7 +235,7 @@ func ec2DescribeTags(args *gocli.Args) error {
 
 func ec2DescribeInstances(args *gocli.Args) error {
 	logger.Info("describing ec2 instances")
-	instances, e := ec2Client.DescribeInstances()
+	instances, e := ec2Client().DescribeInstances()
 	if e != nil {
 		return e
 	}
@@ -279,7 +281,7 @@ func ec2DescribeImages(args *gocli.Args) error {
 		filter.Name = ec2.UBUNTU_SAUCY_PREFIX
 	}
 
-	images, e := ec2Client.DescribeImagesWithFilter(filter)
+	images, e := ec2Client().DescribeImagesWithFilter(filter)
 	if e != nil {
 		return e
 	}
