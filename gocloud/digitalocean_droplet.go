@@ -167,6 +167,7 @@ const (
 	DIGITAL_OCEAN_DEFAULT_SIZE_ID   = 66
 	DIGITAL_OCEAN_DEFAULT_IMAGE_ID  = 350076
 	DIGITAL_OCEAN_DEFAULT_SSH_KEY   = 22197
+	CLI_DIGITAL_OCEAN_SSH_KEY       = "-l"
 )
 
 func init() {
@@ -174,7 +175,7 @@ func init() {
 	args.RegisterInt("-i", "image_id", false, DIGITAL_OCEAN_DEFAULT_IMAGE_ID, "Image id for new droplet")
 	args.RegisterInt("-r", "region_id", false, DIGITAL_OCEAN_DEFAULT_REGION_ID, "Region id for new droplet")
 	args.RegisterInt("-s", "size_id", false, DIGITAL_OCEAN_DEFAULT_SIZE_ID, "Size id for new droplet")
-	args.RegisterInt("-k", "ssh_key_id", false, 0, "Ssh key to be used")
+	args.RegisterString(CLI_DIGITAL_OCEAN_SSH_KEY, "ssh_key_id", false, os.Getenv(ENV_DIGITAL_OCEAN_DEFAULT_SSH_KEY), "Ssh key to be used")
 
 	router.Register(
 		"do/droplet/create",
@@ -208,9 +209,7 @@ func CreateDropletAction(a *gocli.Args) error {
 		return e
 	}
 
-	if droplet.SshKey, e = a.GetInt("-k"); e != nil {
-		return e
-	}
+	droplet.SshKey, _ = strconv.Atoi(a.MustGetString(CLI_DIGITAL_OCEAN_SSH_KEY))
 
 	droplet, e = CurrentAccount().CreateDroplet(droplet)
 	if e != nil {
