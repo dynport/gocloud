@@ -7,14 +7,18 @@ type Price struct {
 	Amount   float64
 	Currency string
 	PerHour  bool
+	Setup    float64
 }
 
 type Plan struct {
-	MemoryInMB  int
-	Cores       int
-	DiskInGB    int
-	TrafficInTB int
-	Price       *Price
+	Name           string
+	MemoryInMB     int
+	Cores          int
+	DiskInGB       int
+	TrafficInTB    int
+	Cpu            string
+	HyperThreading bool
+	Price          *Price
 }
 
 func (plan *Plan) PricePerCore() *Price {
