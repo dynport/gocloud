@@ -322,7 +322,7 @@ func jiffyBoxCreateAction(args *gocli.Args) error {
 		PlanId:       args.MustGetInt(CLI_PLAN_ID),
 		Distribution: args.MustGetString(CLI_DISTRIBUTION),
 		UseSshKey:    true,
-		Password: os.Getenv("JIFFYBOX_DEFAULT_PASSWORD"),
+		Password:     os.Getenv("JIFFYBOX_DEFAULT_PASSWORD"),
 	}
 	s, e := client().CreateJiffyBox(opts)
 	if e != nil {
