@@ -6,12 +6,13 @@ import (
 )
 
 const (
-	CONTENT_MD5        = "Content-Md5"
-	CONTENT_TYPE       = "Content-Type"
-	CONTENT_EXPIRES    = "Expires"
-	CONTENT_ACL        = "x-amz-acl"
-	ENV_AWS_ACCESS_KEY = "AWS_ACCESS_KEY"
-	ENV_AWS_SECRET_KEY = "AWS_SECRET_KEY"
+	CONTENT_MD5            = "Content-Md5"
+	CONTENT_TYPE           = "Content-Type"
+	CONTENT_EXPIRES        = "Expires"
+	CONTENT_ACL            = "x-amz-acl"
+	ENV_AWS_ACCESS_KEY     = "AWS_ACCESS_KEY_ID"
+	ENV_AWS_SECRET_KEY     = "AWS_SECRET_ACCESS_KEY"
+	ENV_AWS_DEFAULT_REGION = "AWS_DEFAULT_REGION"
 )
 
 func abortWith(message string) {
