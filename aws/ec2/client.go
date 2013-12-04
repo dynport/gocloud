@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 func NewFromEnv() *Client {
@@ -115,7 +116,27 @@ func (client *Client) TerminateInstances(ids []string) error {
 	return nil
 }
 
+type Error struct {
+	Code    string `xml:"Code"`
+	Message string `xml:"Message"`
+}
+
+type ErrorResponse struct {
+	XMLName   xml.Name `xml:"Response"`
+	RequestID string   `xml:"RequestID"`
+	Errors    []*Error `xml:"Errors>Error"`
+}
+
+func (er *ErrorResponse) ErrorStrings() string {
+	out := []string{}
+	for _, e := range er.Errors {
+		out = append(out, fmt.Sprintf("%s: %s", e.Code, e.Message))
+	}
+	return strings.Join(out, ", ")
+}
+
 type RunInstancesResponse struct {
+	XMLName       xml.Name    `xml:"RunInstancesResponse"`
 	RequestId     string      `xml:"requestId"`
 	ReservationId string      `xml:"reservationId"`
 	OwnerId       string      `xml:"ownerId"`
@@ -161,6 +182,11 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 	raw, e := client.DoSignedRequest("POST", ENDPOINT, query, nil)
 	if e != nil {
 		return list, e
+	}
+	client.Debug("got status %d", raw.StatusCode)
+	er := &ErrorResponse{}
+	if e := xml.Unmarshal(raw.Content, er); e == nil {
+		return nil, fmt.Errorf(er.ErrorStrings())
 	}
 	rsp := &RunInstancesResponse{}
 	e = xml.Unmarshal(raw.Content, rsp)

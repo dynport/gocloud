@@ -19,6 +19,14 @@ type Client struct {
 	Key, Secret string
 }
 
+var Debug = os.Getenv("DEBUG") == "true"
+
+func (client *Client) Debug(format string, i ...interface{}) {
+	if Debug {
+		fmt.Printf(format+"\n", i...)
+	}
+}
+
 func NewFromEnv() *Client {
 	client := &Client{}
 	client.Key, client.Secret = os.Getenv(ENV_AWS_ACCESS_KEY), os.Getenv(ENV_AWS_SECRET_KEY)
