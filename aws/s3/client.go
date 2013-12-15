@@ -74,7 +74,7 @@ type Content struct {
 	Key              string    `xml:"Key"`
 	LastModified     time.Time `xml:"LastModified"`
 	Etag             string    `xml:"ETag"`
-	Size             int       `xml:"Size"`
+	Size             int64     `xml:"Size"`
 	StorageClass     string    `xml:"StorageClass"`
 	OwnerID          string    `xml:"Owner>ID"`
 	OwnerDisplayName string    `xml:"Owner>DisplayName"`
