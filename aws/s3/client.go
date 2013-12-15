@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"sort"
 	"strings"
 	"time"
@@ -91,8 +92,30 @@ type ListBucketResult struct {
 	Contents []*Content `xml:"Contents"`
 }
 
+type ListBucketOptions struct {
+	Marker string
+	Prefix string
+}
+
 func (client *Client) ListBucket(bucket string) (r *ListBucketResult, e error) {
-	req, e := http.NewRequest("GET", "http://"+bucket+"."+client.EndpointHost()+"/", nil)
+	return client.ListBucketWithOptions(bucket, nil)
+}
+
+func (client *Client) ListBucketWithOptions(bucket string, opts *ListBucketOptions) (r *ListBucketResult, e error) {
+	u := "http://" + bucket + "." + client.EndpointHost() + "/"
+	if opts != nil {
+		v := &url.Values{}
+		if opts.Marker != "" {
+			v.Add("marker", opts.Marker)
+		}
+		if opts.Prefix != "" {
+			v.Add("prefix", opts.Prefix)
+		}
+		if len(*v) > 0 {
+			u += "?" + v.Encode()
+		}
+	}
+	req, e := http.NewRequest("GET", u, nil)
 	if e != nil {
 		return r, e
 	}
