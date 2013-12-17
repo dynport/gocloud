@@ -283,6 +283,7 @@ func init() {
 }
 
 func RebuildDropletAction(a *gocli.Args) error {
+	account := CurrentAccount()
 	if len(a.Args) != 1 {
 		return fmt.Errorf("USAGE: droplet rebuild <id>")
 	}
