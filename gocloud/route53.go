@@ -6,11 +6,6 @@ import (
 	"github.com/dynport/gocloud/aws/route53"
 )
 
-const (
-	USAGE_LIST_RRS = "HOSTEDZONE"
-)
-
-// route53
 func init() {
 	router.RegisterFunc("aws/route53/hosted-zones/list", route53ListHostedZones, "List Hosted Zones")
 	router.Register("aws/route53/rrs/list", &route53ListResourceRecordSet{}, "List Resource Record Set")

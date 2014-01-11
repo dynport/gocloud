@@ -13,8 +13,6 @@ func init() {
 	router.Register("jb/backups/create", &JiffyBoxCreateBackup{}, "Create manual backup from box")
 }
 
-const USAGE_CREATE_BACKUP = "id"
-
 type JiffyBoxCreateBackup struct {
 	Id int `cli:"type=arg required=true"`
 }
@@ -45,8 +43,6 @@ func (a *JiffyBoxStopServer) Run() error {
 	printServer(s)
 	return nil
 }
-
-const USAGE_FREEZE_SERVER = "id"
 
 func init() {
 	router.Register("jb/servers/freeze", &JiffyBoxFreezeServer{}, "Freeze Server")
@@ -209,8 +205,6 @@ func JiffyBoxListBackups() error {
 	return nil
 }
 
-const USAGE_DELETE = "id"
-
 type JiffyBoxDeleteAction struct {
 	BoxId int `cli:"type=arg required=true"`
 }
@@ -244,20 +238,10 @@ func JiffyBoxListDistributionsAction() error {
 }
 
 const (
-	CLI_NAME             = "--name"
-	CLI_PLAN_ID          = "--plan-id"
-	CLI_DISTRIBUTION     = "--distribution"
-	DEFAULT_PLAN_ID      = 20
-	DEFAULT_DISTRIBUTION = "ubuntu_12_4_lts_64bit"
-	USAGE_CLONE_SERVER   = "id"
-	HOURS_PER_MONTH      = 365 * 24.0 / 12.0
+	HOURS_PER_MONTH    = 365 * 24.0 / 12.0
 )
 
 func init() {
-	args := gocli.NewArgs(nil)
-	args.RegisterString(CLI_NAME, "name", false, "", "Name of the new box")
-	args.RegisterInt(CLI_PLAN_ID, "plan_id", false, DEFAULT_PLAN_ID, "Plan id")
-	args.RegisterString(CLI_DISTRIBUTION, "distribution", false, DEFAULT_DISTRIBUTION, "Distribution")
 	router.Register("jb/servers/create", &JiffyBoxCreateAction{}, "Create new JiffyBox")
 }
 

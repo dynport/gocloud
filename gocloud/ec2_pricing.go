@@ -7,15 +7,7 @@ import (
 	"sort"
 )
 
-const (
-	CLI_REGION = "-r"
-	CLI_HEAVY  = "--heavy"
-)
-
 func init() {
-	args := gocli.NewArgs(nil)
-	args.RegisterString(CLI_REGION, "region", false, "eu-ireland", "AWS Region")
-	args.RegisterBool(CLI_HEAVY, "heavy", false, false, "Use prices for reserved instances, heavy")
 	router.Register("aws/ec2/prices", &ec2Prices{}, "EC2 Prices")
 }
 

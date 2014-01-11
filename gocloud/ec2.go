@@ -9,25 +9,6 @@ import (
 	"time"
 )
 
-const (
-	CLI_INSTANCE_TYPE  = "--instance-type"
-	CLI_SSH_KEY        = "--ssh-key"
-	CLI_SECURITY_GROUP = "--security-group"
-	CLI_CANONICAL      = "--canonical"
-	CLI_SELF           = "--self"
-	CLI_UBUNTU         = "--ubuntu"
-	CLI_UBUNTU_RARING  = "--raring"
-	CLI_UBUNTU_SAUCY   = "--saucy"
-
-	USAGE_IMAGE_ID            = "IMAGE"
-	USAGE_KEY_NAME            = "KEY_NAME"
-	USAGE_IMAGE_TYPE          = "IMAGE_TYPE"
-	USAGE_TERMINATE_INSTANCES = "INSTANCE [INSTANCE [...]]"
-	USAGE_CREATE_TAGS         = "RESOURCE KEY VALUE"
-
-	USAGE_RUN_INSTANCE = "IMAGE"
-)
-
 func ec2Client() *ec2.Client {
 	return ec2.NewFromEnv()
 }
@@ -126,8 +107,6 @@ func ec2DescribeKeyPairs() error {
 	fmt.Print(table)
 	return nil
 }
-
-const USAGE_CREATE_IMAGE = "INSTANCE"
 
 type ec2CreateImage struct {
 	ImageId string `cli:"type=arg required=true"`

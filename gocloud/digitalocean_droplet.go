@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-const RENAME_USAGE = "<droplet_id> <new_name>"
-
 func init() {
 	router.Register("do/droplet/rename", &RenameDroplet{}, "Rename Droplet")
 	router.Register("do/droplet/info", &DescribeDroplet{}, "Describe Droplet")
@@ -157,17 +155,9 @@ const (
 	DIGITAL_OCEAN_DEFAULT_REGION_ID = 2
 	DIGITAL_OCEAN_DEFAULT_SIZE_ID   = 66
 	DIGITAL_OCEAN_DEFAULT_IMAGE_ID  = 350076
-	DIGITAL_OCEAN_DEFAULT_SSH_KEY   = 22197
-	CLI_DIGITAL_OCEAN_SSH_KEY       = "-l"
 )
 
 func init() {
-	args := &gocli.Args{}
-	args.RegisterInt("-i", "image_id", false, DIGITAL_OCEAN_DEFAULT_IMAGE_ID, "Image id for new droplet")
-	args.RegisterInt("-r", "region_id", false, DIGITAL_OCEAN_DEFAULT_REGION_ID, "Region id for new droplet")
-	args.RegisterInt("-s", "size_id", false, DIGITAL_OCEAN_DEFAULT_SIZE_ID, "Size id for new droplet")
-	args.RegisterString(CLI_DIGITAL_OCEAN_SSH_KEY, "ssh_key_id", false, os.Getenv(ENV_DIGITAL_OCEAN_DEFAULT_SSH_KEY), "Ssh key to be used")
-
 	router.Register("do/droplet/create", &CreateDroplet{}, "Create new droplet")
 }
 
