@@ -12,16 +12,11 @@ const (
 
 // route53
 func init() {
-	router.Register("aws/route53/hosted-zones/list", &gocli.Action{
-		Handler: route53ListHostedZones, Description: "Describe load balancers",
-	})
-
-	router.Register("aws/route53/rrs/list", &gocli.Action{
-		Handler: route53ListResourceRecordSet, Description: "Describe load balancers", Usage: USAGE_LIST_RRS,
-	})
+	router.RegisterFunc("aws/route53/hosted-zones/list", route53ListHostedZones, "List Hosted Zones")
+	router.Register("aws/route53/rrs/list", &route53ListResourceRecordSet{}, "List Resource Record Set")
 }
 
-func route53ListHostedZones(args *gocli.Args) error {
+func route53ListHostedZones() error {
 	logger.Info("describing hosted zones")
 	client := route53.NewFromEnv()
 	zones, e := client.ListHostedZones()
@@ -37,12 +32,13 @@ func route53ListHostedZones(args *gocli.Args) error {
 	return nil
 }
 
-func route53ListResourceRecordSet(args *gocli.Args) error {
-	if len(args.Args) != 1 {
-		return fmt.Errorf(USAGE_LIST_RRS)
-	}
+type route53ListResourceRecordSet struct {
+	HostedZone string `cli:"type=arg required=true"`
+}
+
+func (r *route53ListResourceRecordSet) Run() error {
 	client := route53.NewFromEnv()
-	rrsets, e := client.ListResourceRecordSets(args.Args[0])
+	rrsets, e := client.ListResourceRecordSets(r.HostedZone)
 	if e != nil {
 		return e
 	}

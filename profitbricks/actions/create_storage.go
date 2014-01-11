@@ -24,31 +24,10 @@ const (
 )
 
 var (
-	logger             = gologger.NewFromEnv()
-	CreateStorage      *gocli.Action
-	StartServer        *gocli.Action
-	StopServer         *gocli.Action
-	DeleteServer       *gocli.Action
-	DeleteStorage      *gocli.Action
-	ListAllImages      *gocli.Action
-	ListAllDataCenters *gocli.Action
-	CreateServer       *gocli.Action
-
-	ListAllSnapshots *gocli.Action
-	RollbackSnapshot *gocli.Action
+	logger = gologger.NewFromEnv()
 )
 
 var defaultDataCenterId = os.Getenv("PROFITBRICKS_DEFAULT_DC_ID")
-
-func init() {
-	StartServer = &gocli.Action{Handler: StartServerHandler, Description: "Start Server"}
-	StopServer = &gocli.Action{Handler: StopServerHandler, Description: "Stop Server"}
-	DeleteServer = &gocli.Action{Handler: DeleteServerHandler, Description: "Delete Server"}
-	DeleteStorage = &gocli.Action{Handler: DeleteStorageHandler, Description: "Delete Storage"}
-	ListAllImages = &gocli.Action{Handler: ListAllImagesHandler, Description: "List Images"}
-	ListAllDataCenters = &gocli.Action{Handler: ListAllDataCentersHandler, Description: "List Snapshots"}
-
-}
 
 func dataCenterFlag() *gocli.Flag {
 	required := true
@@ -73,37 +52,35 @@ func init() {
 	args.RegisterString(CLI_NAME, "name", true, "", "Storage Name")
 	args.RegisterInt(CLI_SIZE, "size", true, 0, "Storage Size")
 	args.RegisterString(CLI_IMAGE_ID, "image_id", false, "", "Mount Image Id")
-	CreateStorage = &gocli.Action{Handler: CreateStorageHandler, Args: args, Description: "Create Storage"}
+	//CreateStorage = &gocli.Action{Handler: CreateStorageHandler, Args: args, Description: "Create Storage"}
 }
 
-func init() {
-	args := gocli.NewArgs(nil)
-	args.RegisterFlag(dataCenterFlag())
-	args.RegisterString(CLI_NAME, "name", true, "", "Name")
-	args.RegisterInt(CLI_RAM, "ram", false, 1024, "RAM")
-	args.RegisterInt(CLI_CORES, "cores", false, 1, "Cores")
-	args.RegisterString(CLI_OS_TYPE, "os_type", false, "Linux", "OsType")
-	args.RegisterBool(CLI_INTERNET_ACCESS, "internet_access", false, false, "Internet Access")
-	args.RegisterInt(CLI_LAN_ID, "lan_id", false, 1, "LanId")
-	args.RegisterString(CLI_IMAGE_ID, "image_id", false, "", "Image Id")
-	CreateServer = &gocli.Action{Handler: CreateServerHandler, Args: args, Description: "Create Server"}
+type CreateServer struct {
+	DataCenterId   string `cli:"type=opt short=d required=true"`
+	Name           string `cli:"type=arg required=true"`
+	Ram            int    `cli:"type=opt short=r default=1024"`
+	Cores          int    `cli:"type=opt short=c default=1"`
+	OsType         string `cli:"type=opt short=o default=Linux"`
+	InternetAccess bool   `cli:"type=opt long=internet-access"`
+	LanId          int    `cli:"type=opt short=l default=1"`
+	ImageId        string `cli:"type=opt short=i"`
 }
 
-func CreateServerHandler(args *gocli.Args) error {
+func (a *CreateServer) Run() error {
 	req := &profitbricks.CreateServerRequest{
-		DataCenterId:    args.MustGetString(CLI_DATACENTER_ID),
-		ServerName:      args.MustGetString(CLI_NAME),
-		Ram:             args.MustGetInt(CLI_RAM),
-		Cores:           args.MustGetInt(CLI_CORES),
-		OsType:          args.MustGetString(CLI_OS_TYPE),
-		InternetAccess:  args.GetBool(CLI_INTERNET_ACCESS),
-		LanId:           args.MustGetInt(CLI_LAN_ID),
-		BootFromImageId: args.MustGetString(CLI_IMAGE_ID),
+		DataCenterId:    a.DataCenterId,
+		ServerName:      a.Name,
+		Ram:             a.Ram,
+		Cores:           a.Cores,
+		OsType:          a.OsType,
+		InternetAccess:  a.InternetAccess,
+		LanId:           a.LanId,
+		BootFromImageId: a.ImageId,
 	}
 	return profitbricks.NewFromEnv().CreateServer(req)
 }
 
-func ListAllDataCentersHandler(args *gocli.Args) error {
+func ListAllDataCentersHandler() error {
 	dcs, e := profitbricks.NewFromEnv().GetAllDataCenters()
 	if e != nil {
 		return e
@@ -117,7 +94,7 @@ func ListAllDataCentersHandler(args *gocli.Args) error {
 	return nil
 }
 
-func ListAllImagesHandler(args *gocli.Args) error {
+func ListAllImagesHandler() error {
 	client := profitbricks.NewFromEnv()
 	images, e := client.GetAllImages()
 	if e != nil {
@@ -145,8 +122,29 @@ func doSomething(args *gocli.Args, f func(id string) error) error {
 	return nil
 }
 
-func DeleteStorageHandler(args *gocli.Args) error {
-	return doSomething(args, profitbricks.NewFromEnv().DeleteStorage)
+type CreateStorage struct {
+	DataCenterId string `cli:"type=opt short=d required=true"`
+	Name         string `cli:"type=arg required=true"`
+	Size         int    `cli:"type=opt short=s required=true"`
+	MountImageId string `cli:"type=opt short=i"`
+}
+
+func (a *CreateStorage) Run() error {
+	req := &profitbricks.CreateStorageRequest{
+		DataCenterId: a.DataCenterId,
+		StorageName:  a.Name,
+		Size:         a.Size,
+		MountImageId: a.MountImageId,
+	}
+	return profitbricks.NewFromEnv().CreateStorage(req)
+}
+
+type DeleteStorage struct {
+	Id string `cli:"type=arg required=true"`
+}
+
+func (a *DeleteStorage) Run() error {
+	return profitbricks.NewFromEnv().DeleteServer(a.Id)
 }
 
 func DeleteServerHandler(args *gocli.Args) error {
@@ -159,6 +157,30 @@ func StopServerHandler(args *gocli.Args) error {
 
 func StartServerHandler(args *gocli.Args) error {
 	return doSomething(args, profitbricks.NewFromEnv().StartServer)
+}
+
+type DeleteServer struct {
+	Id string `cli:"type=arg required=true"`
+}
+
+func (a *DeleteServer) Run() error {
+	return profitbricks.NewFromEnv().DeleteServer(a.Id)
+}
+
+type StopServer struct {
+	Id string `cli:"type=arg required=true"`
+}
+
+func (a *StopServer) Run() error {
+	return profitbricks.NewFromEnv().StopServer(a.Id)
+}
+
+type StartServer struct {
+	Id string `cli:"type=arg required=true"`
+}
+
+func (a *StartServer) Run() error {
+	return profitbricks.NewFromEnv().StartServer(a.Id)
 }
 
 func CreateStorageHandler(args *gocli.Args) error {

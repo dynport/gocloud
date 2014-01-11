@@ -8,10 +8,10 @@ import (
 )
 
 func init() {
-	router.Register("do/region/list", &gocli.Action{Description: "List available droplet regions", Handler: ListRegionsAction})
+	router.RegisterFunc("do/region/list", ListRegionsAction, "List available droplet regions")
 }
 
-func ListRegionsAction(args *gocli.Args) error {
+func ListRegionsAction() error {
 	logger.Debug("listing regions")
 	account, e := AccountFromEnv()
 	if e != nil {

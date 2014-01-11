@@ -38,7 +38,7 @@ func (droplet *Droplet) Reload() error {
 	}
 	dropletResponse := &DropletResponse{}
 	dropletResponse.Droplet = droplet
-	e := droplet.Account.loadResource("/droplets/"+strconv.Itoa(droplet.Id), dropletResponse)
+	e := droplet.Account.loadResource("/droplets/"+strconv.Itoa(droplet.Id), dropletResponse, nil)
 	if e != nil {
 		return e
 	}
@@ -82,6 +82,6 @@ func (account *Account) CreateDroplet(droplet *Droplet) (out *Droplet, e error) 
 	if droplet.SshKey > 0 {
 		path += "&ssh_key_ids=" + strconv.Itoa(droplet.SshKey)
 	}
-	e = account.loadResource(path, rsp)
+	e = account.loadResource(path, rsp, nil)
 	return rsp.Droplet, e
 }

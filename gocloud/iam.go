@@ -8,24 +8,13 @@ import (
 )
 
 func init() {
-	router.Register("aws/iam/users/get", &gocli.Action{
-		Handler: iamGetUser, Description: "Get user information",
-	})
-
-	router.Register("aws/iam/users/list", &gocli.Action{
-		Handler: iamListUsers, Description: "List users",
-	})
-
-	router.Register("aws/iam/account-summary", &gocli.Action{
-		Handler: iamGetAccountSummary, Description: "Get account summary",
-	})
-
-	router.Register("aws/iam/account-aliases/list", &gocli.Action{
-		Handler: iamListAccountAliases, Description: "List account aliases",
-	})
+	router.RegisterFunc("aws/iam/users/get", iamGetUser, "Get user information")
+	router.RegisterFunc("aws/iam/users/list", iamListUsers, "List users")
+	router.RegisterFunc("aws/iam/account-summary", iamGetAccountSummary, "Get account summary")
+	router.RegisterFunc("aws/iam/account-aliases/list", iamListAccountAliases, "List account aliases")
 }
 
-func iamGetUser(args *gocli.Args) error {
+func iamGetUser() error {
 	client := iam.NewFromEnv()
 	user, e := client.GetUser("")
 	if e != nil {
@@ -40,7 +29,7 @@ func iamGetUser(args *gocli.Args) error {
 	return nil
 }
 
-func iamGetAccountSummary(args *gocli.Args) error {
+func iamGetAccountSummary() error {
 	client := iam.NewFromEnv()
 	summary, e := client.GetAccountSummary()
 	if e != nil {
@@ -54,7 +43,7 @@ func iamGetAccountSummary(args *gocli.Args) error {
 	return nil
 }
 
-func iamListUsers(args *gocli.Args) error {
+func iamListUsers() error {
 	client := iam.NewFromEnv()
 	rsp, e := client.ListUsers()
 	if e != nil {
@@ -68,7 +57,7 @@ func iamListUsers(args *gocli.Args) error {
 	return nil
 }
 
-func iamListAccountAliases(args *gocli.Args) error {
+func iamListAccountAliases() error {
 	client := iam.NewFromEnv()
 	rsp, e := client.ListAccountAliases()
 	if e != nil {

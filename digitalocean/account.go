@@ -3,8 +3,6 @@ package digitalocean
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"strings"
 	"time"
 )
@@ -41,16 +39,20 @@ type SshKeysResponse struct {
 
 func (account *Account) SshKeys() (keys []*SshKey, e error) {
 	rsp := &SshKeysResponse{}
-	e = account.loadResource("/ssh_keys", rsp)
+	e = account.loadResource("/ssh_keys", rsp, cacheFor(1*time.Hour))
 	if e != nil {
 		return keys, e
 	}
 	return rsp.Keys, nil
 }
 
+func cacheFor(dur time.Duration) *fetchOptions {
+	return &fetchOptions{ttl: dur}
+}
+
 func (account *Account) Sizes() (sizes []*Size, e error) {
 	rsp := &SizeResponse{}
-	e = account.loadResource("/sizes", rsp)
+	e = account.loadResource("/sizes", rsp, cacheFor(24*time.Hour))
 	if e != nil {
 		return sizes, e
 	}
@@ -74,7 +76,7 @@ func (account *Account) CachedImages() (hash map[int]string, e error) {
 func (a *Account) RenameDroplet(id int, name string) (*EventResponse, error) {
 	rsp := &EventResponse{}
 	path := fmt.Sprintf("/droplets/%d/rename?name=%s", id, name)
-	if e := a.loadResource(path, rsp); e != nil {
+	if e := a.loadResource(path, rsp, nil); e != nil {
 		return nil, e
 	}
 	if rsp.Status != "OK" {
@@ -96,7 +98,7 @@ func (a *Account) RebuildDroplet(id int, imageId int) (*EventResponse, error) {
 	rsp := &EventResponse{}
 	logger.Infof("rebuilding droplet %d and image %d", id, imageId)
 	path := fmt.Sprintf("/droplets/%d/rebuild?image_id=%d", id, imageId)
-	if e := a.loadResource(path, rsp); e != nil {
+	if e := a.loadResource(path, rsp, nil); e != nil {
 		return nil, e
 	}
 	if rsp.Status != "OK" {
@@ -109,7 +111,7 @@ func (a *Account) RebuildDroplet(id int, imageId int) (*EventResponse, error) {
 
 func (account *Account) DestroyDroplet(id int) (*EventResponse, error) {
 	rsp := &EventResponse{}
-	if e := account.loadResource(fmt.Sprintf("/droplets/%d/destroy", id), rsp); e != nil {
+	if e := account.loadResource(fmt.Sprintf("/droplets/%d/destroy", id), rsp, nil); e != nil {
 		return nil, e
 	}
 	if rsp.Status != "OK" {
@@ -189,34 +191,18 @@ type ErrorResponse struct {
 	Error  string `json:"error_message"`
 }
 
-func (account *Account) getJSON(path string) (b []byte, e error) {
+func (account *Account) urlFor(path string) string {
 	url := fmt.Sprintf("%s%s", API_ROOT, path)
 	if !strings.Contains(url, "?") {
 		url += "?"
 	} else {
 		url += "&"
 	}
-	url += fmt.Sprintf("client_id=%s&api_key=%s", account.ClientId, account.ApiKey)
-	logger.Debug("fetching", url)
-	started := time.Now()
-	rsp, e := http.Get(url)
-	if e != nil {
-		return
-	}
-	defer rsp.Body.Close()
-	logger.Debugf("got status %s", rsp.Status)
-	if !strings.HasPrefix(rsp.Status, "2") {
-		b, e := ioutil.ReadAll(rsp.Body)
-		errorRsp := &ErrorResponse{}
-		e = json.Unmarshal(b, errorRsp)
-		if e == nil {
-			return b, fmt.Errorf("got status %s and error %q when fetching %s", rsp.Status, errorRsp.Error, url)
-		}
-		return b, fmt.Errorf("got status %s when fetching %s", rsp.Status, url)
-	}
-	logger.Debugf("fetched %s in %.06f", url, time.Now().Sub(started).Seconds())
-	b, e = ioutil.ReadAll(rsp.Body)
-	return
+	return url + fmt.Sprintf("client_id=%s&api_key=%s", account.ClientId, account.ApiKey)
+}
+
+type fetchOptions struct {
+	ttl time.Duration
 }
 
 type GenericResponse struct {
@@ -224,15 +210,16 @@ type GenericResponse struct {
 	ErrorMessage string `json:"error_message"`
 }
 
-func (account *Account) loadResource(path string, i interface{}) (e error) {
-	body, e := account.getJSON(path)
-	if e != nil {
-		logger.Error(string(body))
-		return
+func (account *Account) loadResource(path string, i interface{}, opts *fetchOptions) (e error) {
+	url := account.urlFor(path)
+	r := &resource{
+		Url: url,
 	}
-
+	if e := r.load(opts); e != nil {
+		return e
+	}
 	gr := &GenericResponse{}
-	e = json.Unmarshal(body, gr)
+	e = json.Unmarshal(r.Content, gr)
 	if e != nil {
 		return e
 	}
@@ -240,16 +227,16 @@ func (account *Account) loadResource(path string, i interface{}) (e error) {
 		return fmt.Errorf(gr.ErrorMessage)
 	}
 
-	e = json.Unmarshal(body, i)
+	e = json.Unmarshal(r.Content, i)
 	if e != nil {
-		logger.Error(string(body))
+		logger.Error(string(r.Content))
 	}
 	return e
 }
 
 func (self *Account) Droplets() (droplets []*Droplet, e error) {
 	dropletResponse := &DropletsResponse{}
-	e = self.loadResource("/droplets", dropletResponse)
+	e = self.loadResource("/droplets", dropletResponse, cacheFor(10*time.Second))
 	if e != nil {
 		return droplets, e
 	}

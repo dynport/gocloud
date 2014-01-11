@@ -33,62 +33,21 @@ func ec2Client() *ec2.Client {
 }
 
 func init() {
-	router.Register("aws/ec2/instances/describe", &gocli.Action{
-		Handler: ec2DescribeInstances, Description: "Describe ec2 instances",
-	})
+	router.RegisterFunc("aws/ec2/instances/describe", ec2DescribeInstances, "Describe ec2 instances")
+	router.Register("aws/ec2/instances/run", &ec2RunInstances{}, "Run ec2 instances")
+	router.Register("aws/ec2/images/create", &ec2CreateImage{}, "Create image from instance")
+	router.Register("aws/ec2/instances/terminate", &ec2TerminateInstances{}, "Terminate ec2 instances")
+	router.Register("aws/ec2/tags/create", &ec2CreateTags{}, "Create Tags")
+	router.RegisterFunc("aws/ec2/tags/describe", ec2DescribeTags, "Describe Tags")
+	router.Register("aws/ec2/images/describe", &ec2DescribeImages{}, "Describe ec2 Images")
 
-	args := gocli.NewArgs(nil)
-	args.RegisterString(CLI_INSTANCE_TYPE, "instance_type", false, "c1.medium", "Instance Type")
-	args.RegisterString(CLI_SSH_KEY, "ssh_key", true, "", "SSH Key")
-	args.RegisterString(CLI_SECURITY_GROUP, "security_group", true, "", "Security Group")
-
-	router.Register("aws/ec2/instances/run", &gocli.Action{
-		Handler: ec2RunInstances, Description: "Run ec2 instances", Args: args,
-	})
-
-	router.Register("aws/ec2/images/create", &gocli.Action{
-		Handler: ec2CreateImage, Description: "Create image from instance",
-	})
-
-	router.Register("aws/ec2/instances/terminate", &gocli.Action{
-		Handler: ec2TerminateInstances, Description: "Terminate ec2 instances", Usage: USAGE_TERMINATE_INSTANCES,
-	})
-
-	router.Register("aws/ec2/tags/create", &gocli.Action{
-		Handler: ec2CreateTags, Description: "Create Tags", Usage: USAGE_CREATE_TAGS,
-	})
-
-	router.Register("aws/ec2/tags/describe", &gocli.Action{Handler: ec2DescribeTags, Description: "Describe Tags"})
-
-	args = gocli.NewArgs(nil)
-	args.RegisterBool(CLI_CANONICAL, "canonical", false, false, "Filter canonical images")
-	args.RegisterBool(CLI_SELF, "self", false, false, "Filter own images")
-	args.RegisterBool(CLI_UBUNTU, "ubuntu", false, false, "Filter ubuntu images")
-	args.RegisterBool(CLI_UBUNTU_RARING, "raring", false, false, "Filter ubuntu raring images")
-	args.RegisterBool(CLI_UBUNTU_SAUCY, "saucy", false, false, "Filter ubuntu saucy images")
-
-	router.Register("aws/ec2/images/describe", &gocli.Action{
-		Handler: ec2DescribeImages, Description: "Describe ec2 images", Args: args,
-	})
-
-	router.Register("aws/ec2/key-pairs/describe", &gocli.Action{
-		Handler: ec2DescribeKeyPairs, Description: "Describe key pairs",
-	})
-
-	router.Register("aws/ec2/addresses/describe", &gocli.Action{
-		Handler: ec2DescribeAddresses, Description: "Describe Addresses",
-	})
-
-	router.Register("aws/ec2/security-groups/describe", &gocli.Action{
-		Handler: ec2DescribeSecurityGroups, Description: "Describe Security Groups",
-	})
-
-	router.Register("aws/ec2/spot-price-history/describe", &gocli.Action{
-		Handler: ec2DescribeSpotPriceHistory, Description: "Describe Spot Price History",
-	})
+	router.RegisterFunc("aws/ec2/key-pairs/describe", ec2DescribeKeyPairs, "Describe key pairs")
+	router.RegisterFunc("aws/ec2/addresses/describe", ec2DescribeAddresses, "Describe Addresses")
+	router.RegisterFunc("aws/ec2/security-groups/describe", ec2DescribeSecurityGroups, "Describe Security Groups")
+	router.RegisterFunc("aws/ec2/spot-price-history/describe", ec2DescribeSpotPriceHistory, "Describe Spot Price History")
 }
 
-func ec2DescribeSpotPriceHistory(args *gocli.Args) error {
+func ec2DescribeSpotPriceHistory() error {
 	filter := &ec2.SpotPriceFilter{
 		InstanceTypes:       []string{"c1.medium"},
 		ProductDescriptions: []string{ec2.DESC_LINUX_UNIX},
@@ -107,7 +66,7 @@ func ec2DescribeSpotPriceHistory(args *gocli.Args) error {
 	return nil
 }
 
-func ec2DescribeSecurityGroups(args *gocli.Args) error {
+func ec2DescribeSecurityGroups() error {
 	groups, e := ec2Client().DescribeSecurityGroups()
 	if e != nil {
 		return e
@@ -142,7 +101,7 @@ func ec2DescribeSecurityGroups(args *gocli.Args) error {
 
 }
 
-func ec2DescribeAddresses(args *gocli.Args) error {
+func ec2DescribeAddresses() error {
 	addresses, e := ec2Client().DescribeAddresses()
 	if e != nil {
 		return e
@@ -155,7 +114,7 @@ func ec2DescribeAddresses(args *gocli.Args) error {
 	return nil
 }
 
-func ec2DescribeKeyPairs(args *gocli.Args) error {
+func ec2DescribeKeyPairs() error {
 	pairs, e := ec2Client().DescribeKeyPairs()
 	if e != nil {
 		return e
@@ -170,56 +129,55 @@ func ec2DescribeKeyPairs(args *gocli.Args) error {
 
 const USAGE_CREATE_IMAGE = "INSTANCE"
 
-func ec2CreateImage(args *gocli.Args) error {
-	if len(args.Args) != 0 {
-		return fmt.Errorf(USAGE_CREATE_IMAGE)
-	}
-	instanceId := args.Args[0]
-	logger.Infof("creating image of instance %s", instanceId)
-	return nil
+type ec2CreateImage struct {
+	ImageId string `cli:"type=arg required=true"`
 }
 
-func ec2RunInstances(args *gocli.Args) error {
-	if len(args.Args) == 0 {
-		return fmt.Errorf(USAGE_IMAGE_ID)
-	}
-	imageId := args.Args[0]
-	imageType := args.MustGetString(CLI_INSTANCE_TYPE)
-	keyName := args.MustGetString(CLI_SSH_KEY)
-	securityGroup := args.MustGetString(CLI_SECURITY_GROUP)
+func (a *ec2CreateImage) Run() error {
+	logger.Infof("creating image of instance %s", a.ImageId)
+	return fmt.Errorf("implement me")
+}
 
+type ec2RunInstances struct {
+	InstanceType  string `cli:"type=opt short=t desc='Instance Type' required=true"`
+	ImageId       string `cli:"type=opt short=i desc='Image Id' required=true"`
+	KeyName       string `cli:"type=opt short=k desc='SSH Key' required=true"`
+	SecurityGroup string `cli:"type=opt short=g desc='Security Group' required=true"`
+}
+
+func (a *ec2RunInstances) Run() error {
 	config := &ec2.RunInstancesConfig{
-		ImageId:        imageId,
-		KeyName:        keyName,
-		InstanceType:   imageType,
-		SecurityGroups: []string{securityGroup},
+		ImageId:        a.ImageId,
+		KeyName:        a.KeyName,
+		InstanceType:   a.ImageId,
+		SecurityGroups: []string{a.SecurityGroup},
 	}
 	_, e := ec2Client().RunInstances(config)
 	return e
 }
 
-func ec2TerminateInstances(args *gocli.Args) error {
-	if len(args.Args) < 1 {
-		return fmt.Errorf(USAGE_TERMINATE_INSTANCES)
-	}
-	return ec2Client().TerminateInstances(args.Args)
+type ec2TerminateInstances struct {
+	InstanceIds []string `cli:"type=arg required=true"`
 }
 
-func ec2CreateTags(args *gocli.Args) error {
-	if len(args.Args) != 3 {
-		return fmt.Errorf(USAGE_CREATE_TAGS)
-	}
-	resourceId := args.Args[0]
+func (a *ec2TerminateInstances) Run() error {
+	return ec2Client().TerminateInstances(a.InstanceIds)
+}
+
+type ec2CreateTags struct {
+	ResourceId string `cli:"type=arg required=true"`
+	Key        string `cli:"type=arg required=true"`
+	Value      string `cli:"type=arg required=true"`
+}
+
+func (r *ec2CreateTags) Run() error {
 	tags := map[string]string{
-		args.Args[1]: args.Args[2],
+		r.Key: r.Value,
 	}
-	return ec2Client().CreateTags([]string{resourceId}, tags)
+	return ec2Client().CreateTags([]string{r.ResourceId}, tags)
 }
 
-func ec2DescribeTags(args *gocli.Args) error {
-	if len(args.Args) < 0 {
-		return fmt.Errorf("instance...")
-	}
+func ec2DescribeTags() error {
 	tags, e := ec2Client().DescribeTags()
 	if e != nil {
 		return e
@@ -233,7 +191,7 @@ func ec2DescribeTags(args *gocli.Args) error {
 	return nil
 }
 
-func ec2DescribeInstances(args *gocli.Args) error {
+func ec2DescribeInstances() error {
 	logger.Info("describing ec2 instances")
 	instances, e := ec2Client().DescribeInstances()
 	if e != nil {
@@ -264,20 +222,28 @@ func ec2DescribeInstances(args *gocli.Args) error {
 	return nil
 }
 
-func ec2DescribeImages(args *gocli.Args) error {
+type ec2DescribeImages struct {
+	Canonical bool `cli:"type=opt long=canonical"`
+	Self      bool `cli:"type=opt long=self"`
+	Ubuntu    bool `cli:"type=opt long=ubuntu"`
+	Raring    bool `cli:"type=opt long=raring"`
+	Saucy     bool `cli:"type=opt long=saucy"`
+}
+
+func (a *ec2DescribeImages) Run() error {
 	logger.Info("describing images")
 	filter := &ec2.ImageFilter{}
-	if args.GetBool(CLI_CANONICAL) {
+	if a.Canonical {
 		filter.Owner = ec2.CANONICAL_OWNER_ID
-	} else if args.GetBool(CLI_SELF) {
+	} else if a.Self {
 		filter.Owner = ec2.SELF_OWNER_ID
 	}
 
-	if args.GetBool(CLI_UBUNTU) {
+	if a.Ubuntu {
 		filter.Name = ec2.UBUNTU_PREFIX
-	} else if args.GetBool(CLI_UBUNTU_RARING) {
+	} else if a.Raring {
 		filter.Name = ec2.UBUNTU_RARING_PREFIX
-	} else if args.GetBool(CLI_UBUNTU_SAUCY) {
+	} else if a.Saucy {
 		filter.Name = ec2.UBUNTU_SAUCY_PREFIX
 	}
 

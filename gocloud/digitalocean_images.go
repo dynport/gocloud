@@ -8,16 +8,10 @@ import (
 )
 
 func init() {
-	router.Register(
-		"do/image/list",
-		&gocli.Action{
-			Description: "List available droplet images",
-			Handler:     ListImagesAction,
-		},
-	)
+	router.RegisterFunc("do/image/list", ListImagesAction, "List available droplet images")
 }
 
-func ListImagesAction(args *gocli.Args) error {
+func ListImagesAction() error {
 	logger.Debug("listing images")
 	logger.Debugf("account is %+v", CurrentAccount())
 	table := gocli.NewTable()

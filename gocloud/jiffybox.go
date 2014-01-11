@@ -5,50 +5,43 @@ import (
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/jiffybox"
 	"os"
-	"strconv"
 	"strings"
 )
 
 func init() {
-	router.Register("jb/backups/list", &gocli.Action{Handler: jiffyBoxListBackupsAction, Description: "List all running boxes"})
-	router.Register("jb/backups/create", &gocli.Action{Handler: jiffyBoxCreateBackupAction, Usage: USAGE_CREATE_BACKUP, Description: "Create manual backup from box"})
+	router.RegisterFunc("jb/backups/list", JiffyBoxListBackups, "List all running boxes")
+	router.Register("jb/backups/create", &JiffyBoxCreateBackup{}, "Create manual backup from box")
 }
 
 const USAGE_CREATE_BACKUP = "id"
 
-func jiffyBoxCreateBackupAction(args *gocli.Args) error {
-	if len(args.Args) != 1 {
-		return fmt.Errorf(USAGE_CREATE_BACKUP)
-	}
-	id, e := strconv.Atoi(args.Args[0])
-	if e != nil {
-		return fmt.Errorf("unable to use %s as server id", args.Args[0])
-	}
-	logger.Infof("creating backup for box %d", id)
-	e = client().CreateBackup(id)
-	if e != nil {
+type JiffyBoxCreateBackup struct {
+	Id int `cli:"type=arg required=true"`
+}
+
+func (a *JiffyBoxCreateBackup) Run() error {
+	logger.Infof("creating backup for box %d", a.Id)
+	if e := client().CreateBackup(a.Id); e != nil {
 		return e
 	}
-	logger.Infof("created backup for box %d", id)
+	logger.Infof("created backup for box %d", a.Id)
 	return nil
 }
 
-const USAGE_START_SERVER = "id"
-
 func init() {
-	router.Register("jb/servers/shutdown", &gocli.Action{Handler: jiffyBoxStopServer, Description: "Shutdown Server", Usage: USAGE_START_SERVER})
+	router.Register("jb/servers/shutdown", &JiffyBoxStopServer{}, "Shutdown Server")
 }
 
-func jiffyBoxStopServer(args *gocli.Args) error {
-	id, e := serverFromArgs(args.Args)
+type JiffyBoxStopServer struct {
+	Id int `cli:"type=arg required=true"`
+}
+
+func (a *JiffyBoxStopServer) Run() error {
+	s, e := client().ShutdownServer(a.Id)
 	if e != nil {
 		return e
 	}
-	s, e := client().ShutdownServer(id)
-	if e != nil {
-		return e
-	}
-	logger.Infof("stopped server %d", id)
+	logger.Infof("stopped server %d", a.Id)
 	printServer(s)
 	return nil
 }
@@ -56,101 +49,82 @@ func jiffyBoxStopServer(args *gocli.Args) error {
 const USAGE_FREEZE_SERVER = "id"
 
 func init() {
-	router.Register("jb/servers/freeze", &gocli.Action{Handler: jiffyBoxFreezeServer, Description: "Freeze Server", Usage: USAGE_FREEZE_SERVER})
+	router.Register("jb/servers/freeze", &JiffyBoxFreezeServer{}, "Freeze Server")
 }
 
-func jiffyBoxFreezeServer(args *gocli.Args) error {
-	id, e := serverFromArgs(args.Args)
-	if e != nil {
-		return e
-	}
-	s, e := client().JiffyBox(id)
+type JiffyBoxFreezeServer struct {
+	Id int `cli:"type=arg required=true"`
+}
+
+func (a *JiffyBoxFreezeServer) Run() error {
+	s, e := client().JiffyBox(a.Id)
 	if e != nil {
 		return e
 	}
 	if s.Running {
 		return fmt.Errorf("Server must not be running!")
 	}
-	s, e = client().FreezeServer(id)
+	s, e = client().FreezeServer(a.Id)
 	if e != nil {
 		return e
 	}
-	logger.Infof("froze server %d", id)
+	logger.Infof("froze server %d", a.Id)
 	printServer(s)
 	return nil
 }
 
 func init() {
-	args := gocli.NewArgs(nil)
-	args.RegisterInt(CLI_PLAN_ID, "plan_id", false, DEFAULT_PLAN_ID, "Plan id")
-	router.Register("jb/servers/start", &gocli.Action{Handler: jiffyBoxStartServer, Description: "Start Server", Usage: USAGE_START_SERVER, Args: args})
+	router.Register("jb/servers/start", &JiffyBoxStartServer{}, "Start Server")
 }
 
-func jiffyBoxStartServer(args *gocli.Args) error {
-	id, e := serverFromArgs(args.Args)
-	if e != nil {
-		return e
-	}
-	planId := args.MustGetInt(CLI_PLAN_ID)
-	s, e := client().StartServer(id, planId)
-	if e != nil {
-		return e
-	}
-	logger.Infof("started server %d", id)
-	printServer(s)
-	return nil
+type JiffyBoxStartServer struct {
+	PlanId int `cli:"type=opt required=true short=p"`
+	BoxId  int `cli:"type=arg required=true"`
 }
 
-const USAGE_THAW_SERVER = "id"
-
-func init() {
-	args := gocli.NewArgs(nil)
-	args.RegisterInt(CLI_PLAN_ID, "plan_id", false, DEFAULT_PLAN_ID, "Plan id")
-	router.Register("jb/servers/thaw", &gocli.Action{Handler: jiffyBoxThawServer, Description: "Thaw Server", Usage: USAGE_THAW_SERVER, Args: args})
-}
-
-func jiffyBoxThawServer(args *gocli.Args) error {
-	id, e := serverFromArgs(args.Args)
+func (a *JiffyBoxStartServer) Run() error {
+	s, e := client().StartServer(a.BoxId, a.PlanId)
 	if e != nil {
 		return e
 	}
-	planId := args.MustGetInt(CLI_PLAN_ID)
-	s, e := client().ThawServer(id, planId)
-	if e != nil {
-		return e
-	}
-	logger.Infof("thawed server %d", id)
+	logger.Infof("started server %d", a.BoxId)
 	printServer(s)
 	return nil
 }
 
 func init() {
-	router.Register("jb/servers/list", &gocli.Action{Handler: jiffyBoxListServersAction})
-	router.Register("jb/servers/show", &gocli.Action{Handler: jiffyBoxShowServersAction})
-
-	args := gocli.NewArgs(nil)
-	args.RegisterInt(CLI_PLAN_ID, "plan_id", false, DEFAULT_PLAN_ID, "Plan id")
-	args.RegisterString(CLI_NAME, "name", false, "", "Name of the new box")
-	router.Register("jb/servers/clone", &gocli.Action{Handler: jiffyBoxCloneServerAction, Usage: USAGE_CLONE_SERVER, Args: args})
+	router.Register("jb/servers/thaw", &JiffyBoxThawServer{}, "Thaw Server")
 }
 
-func serverFromArgs(args []string) (id int, e error) {
-	if len(args) != 1 {
-		return id, fmt.Errorf(USAGE_CREATE_BACKUP)
-	}
-	id, e = strconv.Atoi(args[0])
-	if e != nil {
-		return id, fmt.Errorf("unable to use %s as server id", args[0])
-	}
-	return id, nil
+type JiffyBoxThawServer struct {
+	PlanId int `cli:"type=opt short=p required=true"`
+	BoxId  int `cli:"type=arg required=true"`
 }
 
-func jiffyBoxCloneServerAction(args *gocli.Args) error {
-	id, e := serverFromArgs(args.Args)
+func (a *JiffyBoxThawServer) Run() error {
+	s, e := client().ThawServer(a.BoxId, a.PlanId)
 	if e != nil {
 		return e
 	}
-	s, e := client().JiffyBox(id)
+	logger.Infof("thawed server %d", a.BoxId)
+	printServer(s)
+	return nil
+}
+
+func init() {
+	router.RegisterFunc("jb/servers/list", JiffyBoxListServersAction, "List Servers")
+	router.Register("jb/servers/show", &JiffyBoxShowServersAction{}, "Show Server")
+	router.Register("jb/servers/clone", &JiffyBoxCloneServer{}, "Clone Server")
+}
+
+type JiffyBoxCloneServer struct {
+	BoxId  int    `cli:"type=arg required=true"`
+	Name   string `cli:"type=arg required=true"`
+	PlanId int    `cli:"type=opt short=p"`
+}
+
+func (a *JiffyBoxCloneServer) Run() error {
+	s, e := client().JiffyBox(a.BoxId)
 	if e != nil {
 		return e
 	}
@@ -158,31 +132,26 @@ func jiffyBoxCloneServerAction(args *gocli.Args) error {
 		return fmt.Errorf("Server must not be frozen!")
 	}
 	opts := &jiffybox.CreateOptions{
-		PlanId:   args.MustGetInt(CLI_PLAN_ID),
-		Name:     args.MustGetString(CLI_NAME),
+		PlanId:   a.PlanId,
+		Name:     a.Name,
 		Password: os.Getenv("JIFFYBOX_DEFAULT_PASSWORD"),
 	}
-	logger.Infof("cloning server %d with %#v", id, opts)
-	s, e = client().CloneServer(id, opts)
+	logger.Infof("cloning server %d with %#v", a.BoxId, opts)
+	s, e = client().CloneServer(a.BoxId, opts)
 	if e != nil {
 		return e
 	}
-	logger.Infof("cloned server %d", id)
+	logger.Infof("cloned server %d", a.BoxId)
 	printServer(s)
 	return nil
 }
 
-const USAGE_SHOW_SERVER = "id"
+type JiffyBoxShowServersAction struct {
+	BoxId int `cli:"type=arg required=true"`
+}
 
-func jiffyBoxShowServersAction(args *gocli.Args) error {
-	if len(args.Args) != 1 {
-		return fmt.Errorf(USAGE_SHOW_SERVER)
-	}
-	id, e := strconv.Atoi(args.Args[0])
-	if e != nil {
-		return fmt.Errorf("unable to use %s as server id", args.Args[0])
-	}
-	server, e := client().JiffyBox(id)
+func (a *JiffyBoxShowServersAction) Run() error {
+	server, e := client().JiffyBox(a.BoxId)
 	if e != nil {
 		return e
 	}
@@ -221,15 +190,12 @@ func printServer(server *jiffybox.Server) {
 }
 
 func init() {
-	router.Register("jb/plans/list", &gocli.Action{Handler: jiffyBoxListPlansAction})
-	router.Register("jb/distributions/list", &gocli.Action{Handler: jiffyBoxListDistributionsAction})
+	router.RegisterFunc("jb/plans/list", JiffyBoxListPlansAction, "List Plans")
+	router.RegisterFunc("jb/distributions/list", JiffyBoxListDistributionsAction, "List Distributions")
+	router.Register("jb/servers/delete", &JiffyBoxDeleteAction{}, "Delete Jiffybox")
 }
 
-func init() {
-	router.Register("jb/servers/delete", &gocli.Action{Handler: jiffyBoxDeleteAction})
-}
-
-func jiffyBoxListBackupsAction(args *gocli.Args) error {
+func JiffyBoxListBackups() error {
 	backups, e := client().Backups()
 	if e != nil {
 		return e
@@ -245,13 +211,13 @@ func jiffyBoxListBackupsAction(args *gocli.Args) error {
 
 const USAGE_DELETE = "id"
 
-func jiffyBoxDeleteAction(args *gocli.Args) error {
-	if len(args.Args) != 1 {
-		return fmt.Errorf(USAGE_DELETE)
-	}
-	id := args.Args[0]
-	logger.Infof("deleting box with id %s", id)
-	e := client().DeleteJiffyBox(id)
+type JiffyBoxDeleteAction struct {
+	BoxId int `cli:"type=arg required=true"`
+}
+
+func (a *JiffyBoxDeleteAction) Run() error {
+	logger.Infof("deleting box with id %s", a.BoxId)
+	e := client().DeleteJiffyBox(a.BoxId)
 	if e != nil {
 		return e
 	}
@@ -259,13 +225,11 @@ func jiffyBoxDeleteAction(args *gocli.Args) error {
 	return nil
 }
 
-//client().DeleteJiffyBox(id)
-
 func client() *jiffybox.Client {
 	return jiffybox.NewFromEnv()
 }
 
-func jiffyBoxListDistributionsAction(args *gocli.Args) error {
+func JiffyBoxListDistributionsAction() error {
 	distributions, e := client().Distributions()
 	if e != nil {
 		return e
@@ -294,10 +258,10 @@ func init() {
 	args.RegisterString(CLI_NAME, "name", false, "", "Name of the new box")
 	args.RegisterInt(CLI_PLAN_ID, "plan_id", false, DEFAULT_PLAN_ID, "Plan id")
 	args.RegisterString(CLI_DISTRIBUTION, "distribution", false, DEFAULT_DISTRIBUTION, "Distribution")
-	router.Register("jb/servers/create", &gocli.Action{Handler: jiffyBoxCreateAction, Args: args, Description: "Create new JiffyBox"})
+	router.Register("jb/servers/create", &JiffyBoxCreateAction{}, "Create new JiffyBox")
 }
 
-func jiffyBoxListPlansAction(args *gocli.Args) error {
+func JiffyBoxListPlansAction() error {
 	plans, e := client().Plans()
 	if e != nil {
 		return e
@@ -315,12 +279,18 @@ func jiffyBoxListPlansAction(args *gocli.Args) error {
 	return nil
 }
 
-func jiffyBoxCreateAction(args *gocli.Args) error {
+type JiffyBoxCreateAction struct {
+	Name         string `cli:"type=arg required=true"`
+	PlanId       int    `cli:"type=opt short=p required=true"`
+	Distribution string `cli:"type=opt short=d required=true"`
+}
+
+func (a *JiffyBoxCreateAction) Run() error {
 	logger.Infof("creating new jiffybox")
 	opts := &jiffybox.CreateOptions{
-		Name:         args.MustGetString(CLI_NAME),
-		PlanId:       args.MustGetInt(CLI_PLAN_ID),
-		Distribution: args.MustGetString(CLI_DISTRIBUTION),
+		Name:         a.Name,
+		PlanId:       a.PlanId,
+		Distribution: a.Distribution,
 		UseSshKey:    true,
 		Password:     os.Getenv("JIFFYBOX_DEFAULT_PASSWORD"),
 	}
@@ -335,7 +305,7 @@ func jiffyBoxCreateAction(args *gocli.Args) error {
 
 const TIME_FORMAT = "2006-01-02T15:04:05"
 
-func jiffyBoxListServersAction(args *gocli.Args) error {
+func JiffyBoxListServersAction() error {
 	servers, e := client().JiffyBoxes()
 	if e != nil {
 		return e

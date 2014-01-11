@@ -2,7 +2,6 @@ package s3
 
 import (
 	"encoding/xml"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -34,14 +33,9 @@ func (client *Client) ListBucketWithOptions(bucket string, opts *ListBucketOptio
 	if e != nil {
 		return r, e
 	}
-	client.SignS3Request(req, bucket)
-	rsp, e := http.DefaultClient.Do(req)
+	_, b, e := client.signAndDoRequest(bucket, req)
 	if e != nil {
-		return r, e
-	}
-	b, e := ioutil.ReadAll(rsp.Body)
-	if e != nil {
-		return r, e
+		return nil, e
 	}
 	r = &ListBucketResult{}
 	e = xml.Unmarshal(b, r)

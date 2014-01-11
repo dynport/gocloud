@@ -8,10 +8,10 @@ import (
 )
 
 func init() {
-	router.Register("do/key/list", &gocli.Action{Description: "List available ssh keys", Handler: ListKeysAction})
+	router.RegisterFunc("do/key/list", ListKeysAction, "List available ssh keys")
 }
 
-func ListKeysAction(args *gocli.Args) error {
+func ListKeysAction() error {
 	table := gocli.NewTable()
 	table.Add("Id", "Name")
 	keys, e := CurrentAccount().SshKeys()

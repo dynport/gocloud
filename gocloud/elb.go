@@ -7,38 +7,20 @@ import (
 	"strings"
 )
 
-const (
-	USAGE_LB           = "LB"
-	USAGE_ELB_REGISTER = "LB " + USAGE_TERMINATE_INSTANCES
-)
-
-// elb
 func init() {
-	router.Register("aws/elb/lbs/list", &gocli.Action{
-		Handler: elbListLoadBalancers, Description: "Describe load balancers",
-	})
-
-	router.Register("aws/elb/lbs/deregister", &gocli.Action{
-		Handler: elbDeregisterInstances, Description: "Deregister instances with load balancer",
-		Usage: USAGE_ELB_REGISTER,
-	})
-
-	router.Register("aws/elb/lbs/register", &gocli.Action{
-		Handler: elbRegisterInstances, Description: "Register instances with load balancer",
-		Usage: USAGE_ELB_REGISTER,
-	})
-
-	router.Register("aws/elb/lbs/describe", &gocli.Action{
-		Handler: elbDescribeLoadBalancer, Description: "Describe load balancers", Usage: USAGE_LB,
-	})
+	router.RegisterFunc("aws/elb/lbs/list", elbListLoadBalancers, "Describe load balancers")
+	router.Register("aws/elb/lbs/describe", &elbDescribeLoadBalancer{}, "Describe load balancers")
+	router.Register("aws/elb/lbs/deregister", &elbDeregisterInstances{}, "Deregister instances with load balancer")
+	router.Register("aws/elb/lbs/register", &elbRegisterInstances{}, "Register instances with load balancer")
 }
 
-func elbDescribeLoadBalancer(args *gocli.Args) error {
-	if len(args.Args) != 1 {
-		return fmt.Errorf(USAGE_LB)
-	}
+type elbDescribeLoadBalancer struct {
+	Name string `cli:"type=arg required=true"`
+}
+
+func (a *elbDescribeLoadBalancer) Run() error {
 	elbClient := elb.NewFromEnv()
-	states, e := elbClient.DescribeInstanceHealth(args.Args[0])
+	states, e := elbClient.DescribeInstanceHealth(a.Name)
 	if e != nil {
 		return e
 	}
@@ -56,23 +38,25 @@ func elbDescribeLoadBalancer(args *gocli.Args) error {
 	return nil
 }
 
-func elbRegisterInstances(args *gocli.Args) error {
-	if len(args.Args) < 2 {
-		return fmt.Errorf(USAGE_ELB_REGISTER)
-	}
-	elbClient := elb.NewFromEnv()
-	return elbClient.RegisterInstancesWithLoadBalancer(args.Args[0], args.Args[1:len(args.Args)])
+type elbRegisterInstances struct {
+	LbId        string   `cli:"type=arg required=true"`
+	InstanceIds []string `cli:"type=arg required=true"`
 }
 
-func elbDeregisterInstances(args *gocli.Args) error {
-	if len(args.Args) < 2 {
-		return fmt.Errorf(USAGE_ELB_REGISTER)
-	}
-	elbClient := elb.NewFromEnv()
-	return elbClient.DeregisterInstancesWithLoadBalancer(args.Args[0], args.Args[1:len(args.Args)])
+func (a *elbRegisterInstances) Run() error {
+	return elb.NewFromEnv().RegisterInstancesWithLoadBalancer(a.LbId, a.InstanceIds)
 }
 
-func elbListLoadBalancers(args *gocli.Args) error {
+type elbDeregisterInstances struct {
+	LbId        string   `cli:"type=arg required=true"`
+	InstanceIds []string `cli:"type=arg required=true"`
+}
+
+func (a *elbDeregisterInstances) Run() error {
+	return elb.NewFromEnv().RegisterInstancesWithLoadBalancer(a.LbId, a.InstanceIds)
+}
+
+func elbListLoadBalancers() error {
 	elbClient := elb.NewFromEnv()
 	logger.Info("describing load balancers")
 	lbs, e := elbClient.DescribeLoadBalancers()

@@ -8,12 +8,10 @@ import (
 )
 
 func init() {
-	router.Register("aws/cw", &gocli.Action{
-		Handler: cloudwatchList,
-	})
+	router.RegisterFunc("aws/cw", cloudwatchList, "List Cloudwatch metrics")
 }
 
-func cloudwatchList(args *gocli.Args) error {
+func cloudwatchList() error {
 	client := cloudwatch.Client{Client: aws.NewFromEnv()}
 	rsp, e := client.ListMetrics()
 	if e != nil {

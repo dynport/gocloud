@@ -1,2 +1,2 @@
 default:
-	go run *.go
+	go get github.com/dynport/gocloud/gocloud

@@ -4,4 +4,4 @@ import (
 	"github.com/dynport/gologger"
 )
 
-var logger = gologger.New()
+var logger = gologger.NewFromEnv()

@@ -7,22 +7,22 @@ import (
 )
 
 func init() {
-	router.Register("hetzner/servers/describe", &gocli.Action{Handler: describeServer, Description: "describe server"})
-	router.Register("hetzner/servers/list", &gocli.Action{Handler: listServers, Description: "list servers"})
-	router.Register("hetzner/servers/rename", &gocli.Action{Handler: renameServer, Description: "rename server"})
+	router.RegisterFunc("hetzner/servers/list", ListServers, "list servers")
+	router.Register("hetzner/servers/describe", &DescribeServer{}, "describe server")
+	router.Register("hetzner/servers/rename", &RenameServer{}, "rename server")
 }
 
-func describeServer(args *gocli.Args) error {
+type DescribeServer struct {
+	IP string `cli:"type=arg required=true"`
+}
+
+func (a *DescribeServer) Run() error {
 	account, e := hetzner.AccountFromEnv()
 	if e != nil {
 		return e
 	}
 
-	if len(args.Args) != 1 {
-		return fmt.Errorf("<ip>")
-	}
-	ip := args.Args[0]
-	server, e := account.LoadServer(ip)
+	server, e := account.LoadServer(a.IP)
 	if e != nil {
 		return e
 	}
@@ -40,7 +40,7 @@ func describeServer(args *gocli.Args) error {
 	return nil
 }
 
-func listServers(args *gocli.Args) error {
+func ListServers() error {
 	account, e := hetzner.AccountFromEnv()
 	if e != nil {
 		return e
@@ -58,15 +58,16 @@ func listServers(args *gocli.Args) error {
 	return nil
 }
 
-func renameServer(args *gocli.Args) error {
+type RenameServer struct {
+	Ip      string `cli:"type=arg required=true"`
+	NewName string `cli:"type=arg required=true"`
+}
+
+func (a *RenameServer) Run() error {
 	account, e := hetzner.AccountFromEnv()
 	if e != nil {
 		return e
 	}
-	if len(args.Args) != 2 {
-		return fmt.Errorf("<ip> <new_name>")
-	}
-	ip, name := args.Args[0], args.Args[1]
-	logger.Infof("renaming servers %s to %s", ip, name)
-	return account.RenameServer(ip, name)
+	logger.Infof("renaming servers %s to %s", a.Ip, a.NewName)
+	return account.RenameServer(a.Ip, a.NewName)
 }

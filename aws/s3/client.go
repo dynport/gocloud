@@ -70,6 +70,12 @@ type PutOptions struct {
 	AmzAcl      string
 }
 
+func NewPublicPut() *PutOptions {
+	return &PutOptions{
+		AmzAcl: AMZ_ACL_PUBLIC,
+	}
+}
+
 type Content struct {
 	Key              string    `xml:"Key"`
 	LastModified     time.Time `xml:"LastModified"`
@@ -91,25 +97,39 @@ type ListBucketResult struct {
 	Contents []*Content `xml:"Contents"`
 }
 
+type ApiError struct {
+	Message      string
+	Request      *http.Request
+	Response     *http.Response
+	ResponseBody []byte
+}
+
+func NewApiError(message string, req *http.Request, rsp *http.Response, body []byte) *ApiError {
+	return &ApiError{
+		Message:      message,
+		Request:      req,
+		Response:     rsp,
+		ResponseBody: body,
+	}
+}
+
+func (e ApiError) Error() string {
+	return fmt.Sprintf("%s: status=%s", e.Message, e.Response.Status)
+}
+
 func (client *Client) Service() (r *ListAllMyBucketsResult, e error) {
 	req, e := http.NewRequest("GET", client.Endpoint()+"/", nil)
 	if e != nil {
 		return r, e
 	}
-	client.SignS3Request(req, "")
-	rsp, e := http.DefaultClient.Do(req)
-	if e != nil {
-		return r, e
-	}
-	defer rsp.Body.Close()
-	b, e := ioutil.ReadAll(rsp.Body)
-	if e != nil {
-		return r, e
-	}
-	r = &ListAllMyBucketsResult{}
-	e = xml.Unmarshal(b, r)
+	rsp, body, e := client.signAndDoRequest("", req)
 	if e != nil {
 		return nil, e
+	}
+	r = &ListAllMyBucketsResult{}
+	e = xml.Unmarshal(body, r)
+	if e != nil {
+		return nil, NewApiError("Unmarshalling ListAllMyBucketsResult", req, rsp, body)
 	}
 	return r, e
 }
@@ -199,4 +219,15 @@ func signPayload(payload string, hash hash.Hash) string {
 	signature := make([]byte, b64.EncodedLen(hash.Size()))
 	b64.Encode(signature, hash.Sum(nil))
 	return string(signature)
+}
+
+func (client *Client) signAndDoRequest(bucket string, req *http.Request) (rsp *http.Response, body []byte, e error) {
+	client.SignS3Request(req, bucket)
+	rsp, e = http.DefaultClient.Do(req)
+	if e != nil {
+		return rsp, nil, e
+	}
+	defer rsp.Body.Close()
+	b, e := ioutil.ReadAll(rsp.Body)
+	return rsp, b, e
 }

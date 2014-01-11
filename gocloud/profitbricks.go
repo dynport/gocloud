@@ -5,21 +5,17 @@ import (
 )
 
 func init() {
-	router.Register("pb/dcs/describe", actions.DescribeDataCenter)
-	router.Register("pb/dcs/list", actions.ListAllDataCenters)
-
-	router.Register("pb/servers/start", actions.StartServer)
-	router.Register("pb/servers/stop", actions.StopServer)
-	router.Register("pb/servers/delete", actions.DeleteServer)
-	router.Register("pb/servers/create", actions.CreateServer)
-	router.Register("pb/servers/list", actions.ListAllServers)
-
-	router.Register("pb/storages/delete", actions.DeleteStorage)
-	router.Register("pb/storages/create", actions.CreateStorage)
-	router.Register("pb/storages/list", actions.ListAllStorages)
-
-	router.Register("pb/snapshots/list", actions.ListAllSnapshots)
-	router.Register("pb/snapshots/rollback", actions.RollbackSnapshot)
-
-	router.Register("pb/images/list", actions.ListAllImages)
+	router.Register("pb/dcs/describe", &actions.DescribeDataCenterHandler{}, "Describe Data Center")
+	router.RegisterFunc("pb/dcs/list", actions.ListAllDataCentersHandler, "List All DataCenters")
+	router.Register("pb/servers/start", &actions.StartServer{}, "Start Server")
+	router.Register("pb/servers/stop", &actions.StopServer{}, "Stop Server")
+	router.Register("pb/servers/delete", &actions.DeleteServer{}, "Delete Server")
+	router.RegisterFunc("pb/servers/list", actions.ListAllServersHandler, "List All Servers")
+	router.Register("pb/servers/create", &actions.CreateServer{}, "Create Server")
+	router.Register("pb/storages/delete", &actions.DeleteStorage{}, "Delete Storage")
+	router.Register("pb/storages/create", &actions.CreateStorage{}, "Create Storage")
+	router.RegisterFunc("pb/storages/list", actions.ListAllStorages, "List All Storages")
+	router.RegisterFunc("pb/snapshots/list", actions.ListAllSnapshotsHandler, "List all snapshots")
+	router.Register("pb/snapshots/rollback", &actions.RollbackSnapshotHandler{}, "Rollback Snapshot")
+	router.RegisterFunc("pb/images/list", actions.ListAllImagesHandler, "List images")
 }

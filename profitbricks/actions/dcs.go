@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/profitbricks"
-	"os"
 	"strings"
 )
 
@@ -14,22 +13,13 @@ const (
 
 var DescribeDataCenter *gocli.Action
 
-func init() {
-	args := gocli.NewArgs(nil)
-	defaultDatacCenterId := os.Getenv(ENV_PROFITBRICKS_DEFAULT_DATA_CENTER_ID)
-	required := false
-	if defaultDatacCenterId == "" {
-		required = true
-	}
-	args.RegisterString(CLI_DATACENTER_ID, "datacenter_id", required, defaultDatacCenterId, "Datacenter id")
-	DescribeDataCenter = &gocli.Action{
-		Handler: DescribeDataCenterHandler, Args: args,
-	}
+type DescribeDataCenterHandler struct {
+	DataCenterId string `cli:"type=arg required=true"`
 }
 
-func DescribeDataCenterHandler(args *gocli.Args) error {
+func (a *DescribeDataCenterHandler) Run() error {
 	client := profitbricks.NewFromEnv()
-	dc, e := client.GetDataCenter(args.MustGetString(CLI_DATACENTER_ID))
+	dc, e := client.GetDataCenter(a.DataCenterId)
 	if e != nil {
 		return e
 	}

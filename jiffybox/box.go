@@ -95,7 +95,7 @@ type JiffyBoxResponse struct {
 }
 
 type JiffyBoxesResponse struct {
-	Messages   []*Message `json:"messages:"`
+	Messages   []*Message         `json:"messages:"`
 	ServersMap map[string]*Server `json:"result"`
 }
 
@@ -132,8 +132,8 @@ func (client *Client) JiffyBox(id int) (server *Server, e error) {
 	return rsp.Server, nil
 }
 
-func (client *Client) DeleteJiffyBox(id string) (e error) {
-	req, e := http.NewRequest("DELETE", client.BaseUrl()+"/jiffyBoxes/"+id, nil)
+func (client *Client) DeleteJiffyBox(id int) (e error) {
+	req, e := http.NewRequest("DELETE", client.BaseUrl()+"/jiffyBoxes/"+strconv.Itoa(id), nil)
 	if e != nil {
 		return e
 	}

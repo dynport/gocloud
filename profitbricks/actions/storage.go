@@ -7,15 +7,7 @@ import (
 	"strings"
 )
 
-var ListAllStorages *gocli.Action
-
-func init() {
-	ListAllStorages = &gocli.Action{
-		Handler: ListAllStoragesHandler, Description: "List all Storages",
-	}
-}
-
-func ListAllStoragesHandler(args *gocli.Args) error {
+func ListAllStorages() error {
 	client := profitbricks.NewFromEnv()
 	storages, e := client.GetAllStorages()
 	if e != nil {

@@ -13,40 +13,31 @@ import (
 const RENAME_USAGE = "<droplet_id> <new_name>"
 
 func init() {
-	router.Register("do/droplet/rename", &gocli.Action{Handler: RenameDropletAction, Description: "Describe Droplet", Usage: RENAME_USAGE})
+	router.Register("do/droplet/rename", &RenameDroplet{}, "Rename Droplet")
+	router.Register("do/droplet/info", &DescribeDroplet{}, "Describe Droplet")
 }
 
-func RenameDropletAction(args *gocli.Args) error {
-	if len(args.Args) != 2 {
-		fmt.Errorf(RENAME_USAGE)
-	}
-	id, newName := args.Args[0], args.Args[1]
-	i, e := strconv.Atoi(id)
+type RenameDroplet struct {
+	Id      int    `cli:"type=arg required=true"`
+	NewName string `cli:"type=arg required=true"`
+}
+
+func (r *RenameDroplet) Run() error {
+	logger.Infof("renaming droplet %d to %s", r.Id, r.NewName)
+	_, e := CurrentAccount().RenameDroplet(r.Id, r.NewName)
 	if e != nil {
 		return e
 	}
-	logger.Infof("renaming droplet %d to %s", i, newName)
-	_, e = CurrentAccount().RenameDroplet(i, newName)
-	if e != nil {
-		return e
-	}
-	logger.Infof("renamed droplet %d to %s", i, newName)
+	logger.Infof("renamed droplet %d to %s", r.Id, r.NewName)
 	return nil
 }
 
-func init() {
-	router.Register("do/droplet/info", &gocli.Action{Handler: DescribeDropletAction, Description: "Describe Droplet"})
+type DescribeDroplet struct {
+	Id int `cli:"type=arg"`
 }
 
-func DescribeDropletAction(args *gocli.Args) error {
-	if len(args.Args) != 1 {
-		return fmt.Errorf("USAGE: <droplet_id>")
-	}
-	i, e := strconv.Atoi(args.Args[0])
-	if e != nil {
-		return e
-	}
-	droplet, e := CurrentAccount().GetDroplet(i)
+func (d *DescribeDroplet) Run() error {
+	droplet, e := CurrentAccount().GetDroplet(d.Id)
 	if e != nil {
 		return e
 	}
@@ -124,10 +115,10 @@ func AccountFromEnv() (*digitalocean.Account, error) {
 }
 
 func init() {
-	router.Register("do/droplet/list", &gocli.Action{Handler: ListDropletsAction, Description: "List active droplets"})
+	router.RegisterFunc("do/droplet/list", ListDropletsAction, "List active droplets")
 }
 
-func ListDropletsAction(args *gocli.Args) (e error) {
+func ListDropletsAction() (e error) {
 	logger.Debug("listing droplets")
 
 	droplets, e := CurrentAccount().Droplets()
@@ -177,41 +168,28 @@ func init() {
 	args.RegisterInt("-s", "size_id", false, DIGITAL_OCEAN_DEFAULT_SIZE_ID, "Size id for new droplet")
 	args.RegisterString(CLI_DIGITAL_OCEAN_SSH_KEY, "ssh_key_id", false, os.Getenv(ENV_DIGITAL_OCEAN_DEFAULT_SSH_KEY), "Ssh key to be used")
 
-	router.Register(
-		"do/droplet/create",
-		&gocli.Action{
-			Description: "Create new droplet",
-			Usage:       "<name>",
-			Handler:     CreateDropletAction,
-			Args:        args,
-		},
-	)
+	router.Register("do/droplet/create", &CreateDroplet{}, "Create new droplet")
 }
 
-func CreateDropletAction(a *gocli.Args) error {
+type CreateDroplet struct {
+	Name     string `cli:"type=arg required=true"`
+	ImageId  int    `cli:"type=opt short=i required=true"`
+	RegionId int    `cli:"type=opt short=r required=true"`
+	SizeId   int    `cli:"type=opt short=s required=true"`
+	SshKeyId int    `cli:"type=opt short=k"`
+}
+
+func (a *CreateDroplet) Run() error {
 	started := time.Now()
-	logger.Debugf("would create a new droplet with %#v", a.Args)
-	if len(a.Args) != 1 {
-		return fmt.Errorf("USAGE: create droplet <name>")
-	}
-	droplet := &digitalocean.Droplet{Name: a.Args[0]}
-
-	var e error
-	if droplet.SizeId, e = a.GetInt("-s"); e != nil {
-		return e
+	droplet := &digitalocean.Droplet{
+		Name:     a.Name,
+		SizeId:   a.SizeId,
+		RegionId: a.RegionId,
+		ImageId:  a.ImageId,
+		SshKey:   a.SshKeyId,
 	}
 
-	if droplet.ImageId, e = a.GetInt("-i"); e != nil {
-		return e
-	}
-
-	if droplet.RegionId, e = a.GetInt("-r"); e != nil {
-		return e
-	}
-
-	droplet.SshKey, _ = strconv.Atoi(a.MustGetString(CLI_DIGITAL_OCEAN_SSH_KEY))
-
-	droplet, e = CurrentAccount().CreateDroplet(droplet)
+	droplet, e := CurrentAccount().CreateDroplet(droplet)
 	if e != nil {
 		return e
 	}
@@ -223,85 +201,67 @@ func CreateDropletAction(a *gocli.Args) error {
 }
 
 func init() {
-	router.Register(
-		"do/droplet/destroy",
-		&gocli.Action{
-			Description: "Destroy droplet",
-			Handler:     DestroyDropletAction,
-			Usage:       "<droplet_id>",
-		},
-	)
+	router.Register("do/droplet/destroy", &DestroyDroplet{}, "Destroy Droplet")
 }
 
-func DestroyDropletAction(args *gocli.Args) error {
-	logger.Debugf("would destroy droplet with %#v", args)
-	if len(args.Args) == 0 {
-		return fmt.Errorf("USAGE: droplet destroy id1,id2,id3")
-	}
-	for _, id := range args.Args {
-		if i, e := strconv.Atoi(id); e == nil {
-			logger.Prefix = fmt.Sprintf("droplet-%d", i)
-			droplet, e := CurrentAccount().GetDroplet(i)
-			if e != nil {
-				logger.Errorf("unable to get droplet for %d", i)
-				continue
+type DestroyDroplet struct {
+	DropletIds []int `cli:"type=arg required=true"`
+}
+
+func (a *DestroyDroplet) Run() error {
+	logger.Debugf("would destroy droplet with %#v", a.DropletIds)
+	for _, id := range a.DropletIds {
+		logger.Prefix = fmt.Sprintf("droplet-%d", id)
+		droplet, e := CurrentAccount().GetDroplet(id)
+		if e != nil {
+			logger.Errorf("unable to get droplet for %d", id)
+			continue
+		}
+		logger.Infof("destroying droplet %d", droplet.Id)
+		rsp, e := CurrentAccount().DestroyDroplet(droplet.Id)
+		if e != nil {
+			return e
+		}
+		logger.Debugf("got response %+v", rsp)
+		started := time.Now()
+		archived := false
+		for i := 0; i < 300; i++ {
+			droplet.Reload()
+			if droplet.Status == "archive" || droplet.Status == "off" {
+				archived = true
+				break
 			}
-			logger.Infof("destroying droplet %d", droplet.Id)
-			rsp, e := CurrentAccount().DestroyDroplet(droplet.Id)
-			if e != nil {
-				return e
-			}
-			logger.Debugf("got response %+v", rsp)
-			started := time.Now()
-			archived := false
-			for i := 0; i < 300; i++ {
-				droplet.Reload()
-				if droplet.Status == "archive" || droplet.Status == "off" {
-					archived = true
-					break
-				}
-				logger.Debug("status " + droplet.Status)
-				fmt.Print(".")
-				time.Sleep(1 * time.Second)
-			}
-			fmt.Print("\n")
-			logger.Info("droplet destroyed")
-			if !archived {
-				logger.Errorf("error archiving %d", droplet.Id)
-			} else {
-				logger.Debugf("archived in %.06f", time.Now().Sub(started).Seconds())
-			}
+			logger.Debug("status " + droplet.Status)
+			fmt.Print(".")
+			time.Sleep(1 * time.Second)
+		}
+		fmt.Print("\n")
+		logger.Info("droplet destroyed")
+		if !archived {
+			logger.Errorf("error archiving %d", droplet.Id)
+		} else {
+			logger.Debugf("archived in %.06f", time.Now().Sub(started).Seconds())
 		}
 	}
 	return nil
 }
 
 func init() {
-	args := &gocli.Args{}
-	args.RegisterInt("-i", "image_id", false, 0, "Rebuild droplet")
-	router.Register("do/droplet/rebuild", &gocli.Action{Description: "Rebuild droplet", Handler: RebuildDropletAction, Usage: "<droplet_id>", Args: args})
+	router.Register("do/droplet/rebuild", &RebuildDroplet{}, "Rebuild droplet")
 }
 
-func RebuildDropletAction(a *gocli.Args) error {
+type RebuildDroplet struct {
+	DropletId int `cli:"type=arg required=true"`
+	ImageId   int `cli:"type=arg required=true"`
+}
+
+func (a *RebuildDroplet) Run() error {
 	account := CurrentAccount()
-	if len(a.Args) != 1 {
-		return fmt.Errorf("USAGE: droplet rebuild <id>")
-	}
-	i, e := strconv.Atoi(a.Args[0])
-	if e != nil {
-		return fmt.Errorf("USAGE: droplet rebuild <id>")
-	}
-
-	imageId, e := a.GetInt("-i")
-	if e != nil {
-		return e
-	}
-
-	rsp, e := account.RebuildDroplet(i, imageId)
+	rsp, e := account.RebuildDroplet(a.DropletId, a.ImageId)
 	if e != nil {
 		return e
 	}
 	logger.Debugf("got response %+v", rsp)
-	droplet := &digitalocean.Droplet{Id: i, Account: account}
+	droplet := &digitalocean.Droplet{Id: a.DropletId, Account: account}
 	return digitalocean.WaitForDroplet(droplet)
 }

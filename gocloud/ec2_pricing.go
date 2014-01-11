@@ -16,9 +16,7 @@ func init() {
 	args := gocli.NewArgs(nil)
 	args.RegisterString(CLI_REGION, "region", false, "eu-ireland", "AWS Region")
 	args.RegisterBool(CLI_HEAVY, "heavy", false, false, "Use prices for reserved instances, heavy")
-	router.Register("aws/ec2/prices", &gocli.Action{
-		Handler: AwsEc2Prices, Args: args,
-	})
+	router.Register("aws/ec2/prices", &ec2Prices{}, "EC2 Prices")
 }
 
 var regionMapping = map[string]string{
@@ -36,13 +34,18 @@ func normalizeRegion(raw string) string {
 	return raw
 }
 
-func AwsEc2Prices(args *gocli.Args) error {
+type ec2Prices struct {
+	Region string `cli:"type=opt short=r default=eu-ireland"`
+	Heavy  bool   `cli:"type=opt long=heavy"`
+}
+
+func (a *ec2Prices) Run() error {
 	configs := pricing.InstanceTypeConfigs
 	var pr *pricing.Pricing
 	var e error
-	regionName := args.MustGetString(CLI_REGION)
+	regionName := a.Region
 	typ := "od"
-	if args.GetBool(CLI_HEAVY) {
+	if a.Heavy {
 		regionName = normalizeRegion(regionName)
 		typ = "ri-heavy"
 		pr, e = pricing.LinuxReservedHeavy()

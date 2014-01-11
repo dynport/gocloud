@@ -7,15 +7,7 @@ import (
 	"strings"
 )
 
-var ListAllServers *gocli.Action
-
-func init() {
-	ListAllServers = &gocli.Action{
-		Handler: ListAllServersHandler, Description: "List all Servers",
-	}
-}
-
-func ListAllServersHandler(args *gocli.Args) error {
+func ListAllServersHandler() error {
 	client := profitbricks.NewFromEnv()
 	servers, e := client.GetAllServers()
 	if e != nil {
