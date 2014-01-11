@@ -5,11 +5,14 @@ import (
 	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws/ec2"
+	"github.com/dynport/gocloud/aws/pricing"
 	"log"
 	"sort"
 	"strings"
 	"time"
 )
+
+const HOURS_PER_MONTH = 365 * 24.0 / 12.0
 
 func Register(router *cli.Router) {
 	router.RegisterFunc("aws/ec2/instances/describe", DescribeInstances, "Describe ec2 instances")
@@ -23,10 +26,83 @@ func Register(router *cli.Router) {
 	router.RegisterFunc("aws/ec2/addresses/describe", DescribeAddresses, "Describe Addresses")
 	router.RegisterFunc("aws/ec2/security-groups/describe", DescribeSecurityGroups, "Describe Security Groups")
 	router.RegisterFunc("aws/ec2/spot-price-history/describe", DescribeSpotPriceHistory, "Describe Spot Price History")
+	router.Register("aws/ec2/prices", &Prices{}, "EC2 Prices")
 }
 
 func client() *ec2.Client {
 	return ec2.NewFromEnv()
+}
+
+type Prices struct {
+	Region string `cli:"type=opt short=r default=eu-ireland"`
+	Heavy  bool   `cli:"type=opt long=heavy"`
+}
+
+func (a *Prices) Run() error {
+	configs := pricing.InstanceTypeConfigs
+	var pr *pricing.Pricing
+	var e error
+	regionName := a.Region
+	typ := "od"
+	if a.Heavy {
+		regionName = normalizeRegion(regionName)
+		typ = "ri-heavy"
+		pr, e = pricing.LinuxReservedHeavy()
+	} else {
+		pr, e = pricing.LinuxOnDemand()
+	}
+	if e != nil {
+		return e
+	}
+	priceMapping := map[string]pricing.PriceList{}
+	region := pr.FindRegion(regionName)
+	if region == nil {
+		return fmt.Errorf("could not find prices for reagion %q. Known regions are %v", regionName, pr.RegionNames())
+	}
+	for _, t := range region.InstanceTypes {
+		for _, size := range t.Sizes {
+			priceMapping[size.Size] = size.ValueColumns.Prices()
+		}
+	}
+	table := gocli.NewTable()
+	table.Add("Type", "Cores", "ECUs", "GB RAM", "Region", "Type", "$/Hour", "$/Month", "$/Core", "$/GB")
+	for _, config := range configs {
+		cols := []interface{}{
+			config.Name, config.Cpus, config.ECUs, config.Memory,
+		}
+		if prices, ok := priceMapping[config.Name]; ok {
+			cols = append(cols, normalizeRegion(regionName), typ)
+			if len(prices) > 0 {
+				sort.Sort(prices)
+				price := prices[0].TotalPerHour()
+				perMonth := price * HOURS_PER_MONTH
+				perCore := perMonth / float64(config.Cpus)
+				perGb := perMonth / config.Memory
+				cols = append(cols, fmt.Sprintf("%.03f", price), monthlyPrice(perMonth), monthlyPrice(perCore), monthlyPrice(perGb))
+			}
+		}
+		table.Add(cols...)
+	}
+	fmt.Println(table)
+	return nil
+}
+
+var regionMapping = map[string]string{
+	"eu-ireland": "eu-west-1",
+	"eu-west":    "eu-west-1",
+	"apac-tokyo": "ap-northeast-1",
+	"apac-sin":   "ap-southeast-1",
+	"apac-syd":   "ap-southeast-2",
+}
+
+func normalizeRegion(raw string) string {
+	if v, ok := regionMapping[raw]; ok {
+		return v
+	}
+	return raw
+}
+func monthlyPrice(price float64) string {
+	return fmt.Sprintf("%.02f", price)
 }
 
 type DescribeImages struct {

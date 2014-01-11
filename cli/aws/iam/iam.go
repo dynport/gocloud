@@ -1,13 +1,14 @@
-package main
+package iam
 
 import (
 	"fmt"
+	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws/iam"
 	"strings"
 )
 
-func init() {
+func Register(router *cli.Router) {
 	router.RegisterFunc("aws/iam/users/get", iamGetUser, "Get user information")
 	router.RegisterFunc("aws/iam/users/list", iamListUsers, "List users")
 	router.RegisterFunc("aws/iam/account-summary", iamGetAccountSummary, "Get account summary")

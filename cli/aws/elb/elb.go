@@ -1,13 +1,15 @@
-package main
+package elb
 
 import (
 	"fmt"
+	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws/elb"
+	"log"
 	"strings"
 )
 
-func init() {
+func Register(router *cli.Router) {
 	router.RegisterFunc("aws/elb/lbs/list", elbListLoadBalancers, "Describe load balancers")
 	router.Register("aws/elb/lbs/describe", &elbDescribeLoadBalancer{}, "Describe load balancers")
 	router.Register("aws/elb/lbs/deregister", &elbDeregisterInstances{}, "Deregister instances with load balancer")
@@ -58,7 +60,7 @@ func (a *elbDeregisterInstances) Run() error {
 
 func elbListLoadBalancers() error {
 	elbClient := elb.NewFromEnv()
-	logger.Info("describing load balancers")
+	log.Print("describing load balancers")
 	lbs, e := elbClient.DescribeLoadBalancers()
 	if e != nil {
 		return e

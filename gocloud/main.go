@@ -2,15 +2,32 @@ package main
 
 import (
 	"github.com/dynport/dgtk/cli"
-	"github.com/dynport/gologger"
+	"github.com/dynport/gocloud/cli/aws/cloudwatch"
+	"github.com/dynport/gocloud/cli/aws/ec2"
+	"github.com/dynport/gocloud/cli/aws/elb"
+	"github.com/dynport/gocloud/cli/aws/iam"
+	"github.com/dynport/gocloud/cli/aws/route53"
+	"github.com/dynport/gocloud/cli/digitalocean"
+	"github.com/dynport/gocloud/cli/hetzner"
+	"github.com/dynport/gocloud/cli/jiffybox"
+	"github.com/dynport/gocloud/cli/profitbricks"
 	"log"
 	"os"
 )
 
-var (
-	logger = gologger.NewFromEnv()
-	router = cli.NewRouter()
-)
+var router = cli.NewRouter()
+
+func init() {
+	ec2.Register(router)
+	elb.Register(router)
+	digitalocean.Register(router)
+	hetzner.Register(router)
+	jiffybox.Register(router)
+	route53.Register(router)
+	iam.Register(router)
+	cloudwatch.Register(router)
+	profitbricks.Register(router)
+}
 
 func init() {
 	log.SetFlags(0)
@@ -18,7 +35,7 @@ func init() {
 
 func main() {
 	if e := router.RunWithArgs(); e != nil {
-		logger.Error(e.Error())
+		log.Println("ERROR: " + e.Error())
 		os.Exit(1)
 	}
 }

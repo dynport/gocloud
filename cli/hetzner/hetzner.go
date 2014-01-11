@@ -1,12 +1,16 @@
-package main
+package hetzner
 
 import (
 	"fmt"
+	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/hetzner"
+	"github.com/dynport/gologger"
 )
 
-func init() {
+var logger = gologger.NewFromEnv()
+
+func Register(router *cli.Router) {
 	router.RegisterFunc("hetzner/servers/list", ListServers, "list servers")
 	router.Register("hetzner/servers/describe", &DescribeServer{}, "describe server")
 	router.Register("hetzner/servers/rename", &RenameServer{}, "rename server")

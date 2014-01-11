@@ -1,10 +1,11 @@
-package main
+package profitbricks
 
 import (
+	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocloud/profitbricks/actions"
 )
 
-func init() {
+func Register(router *cli.Router) {
 	router.Register("pb/dcs/describe", &actions.DescribeDataCenterHandler{}, "Describe Data Center")
 	router.RegisterFunc("pb/dcs/list", actions.ListAllDataCentersHandler, "List All DataCenters")
 	router.Register("pb/servers/start", &actions.StartServer{}, "Start Server")

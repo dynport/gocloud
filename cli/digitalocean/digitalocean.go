@@ -1,25 +1,111 @@
-package main
+package digitalocean
 
 import (
 	"fmt"
+	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/digitalocean"
+	"github.com/dynport/gologger"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func init() {
+var logger = gologger.NewFromEnv()
+
+func Register(router *cli.Router) {
 	router.Register("do/droplet/rename", &RenameDroplet{}, "Rename Droplet")
 	router.Register("do/droplet/info", &DescribeDroplet{}, "Describe Droplet")
+	router.Register("do/droplet/rebuild", &RebuildDroplet{}, "Rebuild droplet")
+	router.RegisterFunc("do/droplet/list", ListDropletsAction, "List active droplets")
+	router.Register("do/droplet/create", &CreateDroplet{}, "Create new droplet")
+	router.Register("do/droplet/destroy", &DestroyDroplet{}, "Destroy Droplet")
+	router.RegisterFunc("do/image/list", ListImagesAction, "List available droplet images")
+	router.RegisterFunc("do/key/list", ListKeysAction, "List available ssh keys")
+	router.RegisterFunc("do/region/list", ListRegionsAction, "List available droplet regions")
+	router.RegisterFunc("do/size/list", ListSizesAction, "List available droplet sizes")
 }
+
+const (
+	DIGITAL_OCEAN_DEFAULT_REGION_ID = 2
+	DIGITAL_OCEAN_DEFAULT_SIZE_ID   = 66
+	DIGITAL_OCEAN_DEFAULT_IMAGE_ID  = 350076
+)
 
 type RenameDroplet struct {
 	Id      int    `cli:"type=arg required=true"`
 	NewName string `cli:"type=arg required=true"`
 }
 
+func ListSizesAction() error {
+	logger.Debug("listing sizes")
+	account, e := AccountFromEnv()
+	if e != nil {
+		return e
+	}
+	logger.Debugf("account is %+v", account)
+	table := gocli.NewTable()
+	table.Add("Id", "Name")
+	sizes, e := account.Sizes()
+	if e != nil {
+		return e
+	}
+	for _, size := range sizes {
+		table.Add(strconv.Itoa(size.Id), size.Name)
+	}
+	fmt.Fprintln(os.Stdout, table.String())
+	return nil
+}
+
+func ListRegionsAction() error {
+	logger.Debug("listing regions")
+	account, e := AccountFromEnv()
+	if e != nil {
+		return e
+	}
+	logger.Debugf("account is %+v", account)
+	table := gocli.NewTable()
+	table.Add("Id", "Name")
+	regions, e := account.Regions()
+	if e != nil {
+		return e
+	}
+	for _, region := range regions {
+		table.Add(strconv.Itoa(region.Id), region.Name)
+	}
+	fmt.Fprintln(os.Stdout, table.String())
+	return nil
+}
+func ListKeysAction() error {
+	table := gocli.NewTable()
+	table.Add("Id", "Name")
+	keys, e := CurrentAccount().SshKeys()
+	if e != nil {
+		return e
+	}
+	for _, key := range keys {
+		table.Add(strconv.Itoa(key.Id), key.Name)
+	}
+	fmt.Fprintln(os.Stdout, table.String())
+	return nil
+}
+
+func ListImagesAction() error {
+	logger.Debug("listing images")
+	logger.Debug("account is %+v", CurrentAccount())
+	table := gocli.NewTable()
+	table.Add("Id", "Name")
+	images, e := account.Images()
+	if e != nil {
+		return e
+	}
+	for _, image := range images {
+		table.Add(strconv.Itoa(image.Id), image.Name)
+	}
+	fmt.Fprintln(os.Stdout, table.String())
+	return nil
+}
 func (r *RenameDroplet) Run() error {
 	logger.Infof("renaming droplet %d to %s", r.Id, r.NewName)
 	_, e := CurrentAccount().RenameDroplet(r.Id, r.NewName)
@@ -112,10 +198,6 @@ func AccountFromEnv() (*digitalocean.Account, error) {
 	return account, nil
 }
 
-func init() {
-	router.RegisterFunc("do/droplet/list", ListDropletsAction, "List active droplets")
-}
-
 func ListDropletsAction() (e error) {
 	logger.Debug("listing droplets")
 
@@ -151,16 +233,6 @@ func ListDropletsAction() (e error) {
 	return nil
 }
 
-const (
-	DIGITAL_OCEAN_DEFAULT_REGION_ID = 2
-	DIGITAL_OCEAN_DEFAULT_SIZE_ID   = 66
-	DIGITAL_OCEAN_DEFAULT_IMAGE_ID  = 350076
-)
-
-func init() {
-	router.Register("do/droplet/create", &CreateDroplet{}, "Create new droplet")
-}
-
 type CreateDroplet struct {
 	Name     string `cli:"type=arg required=true"`
 	ImageId  int    `cli:"type=opt short=i required=true"`
@@ -188,10 +260,6 @@ func (a *CreateDroplet) Run() error {
 	e = digitalocean.WaitForDroplet(droplet)
 	logger.Infof("droplet %d ready, ip: %s. total_time: %.1fs", droplet.Id, droplet.IpAddress, time.Now().Sub(started).Seconds())
 	return e
-}
-
-func init() {
-	router.Register("do/droplet/destroy", &DestroyDroplet{}, "Destroy Droplet")
 }
 
 type DestroyDroplet struct {
@@ -234,10 +302,6 @@ func (a *DestroyDroplet) Run() error {
 		}
 	}
 	return nil
-}
-
-func init() {
-	router.Register("do/droplet/rebuild", &RebuildDroplet{}, "Rebuild droplet")
 }
 
 type RebuildDroplet struct {

@@ -1,18 +1,20 @@
-package main
+package route53
 
 import (
 	"fmt"
+	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws/route53"
+	"log"
 )
 
-func init() {
+func Register(router *cli.Router) {
 	router.RegisterFunc("aws/route53/hosted-zones/list", route53ListHostedZones, "List Hosted Zones")
 	router.Register("aws/route53/rrs/list", &route53ListResourceRecordSet{}, "List Resource Record Set")
 }
 
 func route53ListHostedZones() error {
-	logger.Info("describing hosted zones")
+	log.Print("describing hosted zones")
 	client := route53.NewFromEnv()
 	zones, e := client.ListHostedZones()
 	if e != nil {

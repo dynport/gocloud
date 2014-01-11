@@ -1,16 +1,29 @@
-package main
+package jiffybox
 
 import (
 	"fmt"
+	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/jiffybox"
+	"log"
 	"os"
 	"strings"
 )
 
-func init() {
+func Register(router *cli.Router) {
 	router.RegisterFunc("jb/backups/list", JiffyBoxListBackups, "List all running boxes")
 	router.Register("jb/backups/create", &JiffyBoxCreateBackup{}, "Create manual backup from box")
+	router.Register("jb/servers/shutdown", &JiffyBoxStopServer{}, "Shutdown Server")
+	router.Register("jb/servers/freeze", &JiffyBoxFreezeServer{}, "Freeze Server")
+	router.Register("jb/servers/start", &JiffyBoxStartServer{}, "Start Server")
+	router.Register("jb/servers/thaw", &JiffyBoxThawServer{}, "Thaw Server")
+	router.RegisterFunc("jb/servers/list", JiffyBoxListServersAction, "List Servers")
+	router.Register("jb/servers/show", &JiffyBoxShowServersAction{}, "Show Server")
+	router.Register("jb/servers/clone", &JiffyBoxCloneServer{}, "Clone Server")
+	router.RegisterFunc("jb/plans/list", JiffyBoxListPlansAction, "List Plans")
+	router.RegisterFunc("jb/distributions/list", JiffyBoxListDistributionsAction, "List Distributions")
+	router.Register("jb/servers/delete", &JiffyBoxDeleteAction{}, "Delete Jiffybox")
+	router.Register("jb/servers/create", &JiffyBoxCreateAction{}, "Create new JiffyBox")
 }
 
 type JiffyBoxCreateBackup struct {
@@ -18,16 +31,12 @@ type JiffyBoxCreateBackup struct {
 }
 
 func (a *JiffyBoxCreateBackup) Run() error {
-	logger.Infof("creating backup for box %d", a.Id)
+	log.Printf("creating backup for box %d", a.Id)
 	if e := client().CreateBackup(a.Id); e != nil {
 		return e
 	}
-	logger.Infof("created backup for box %d", a.Id)
+	log.Printf("created backup for box %d", a.Id)
 	return nil
-}
-
-func init() {
-	router.Register("jb/servers/shutdown", &JiffyBoxStopServer{}, "Shutdown Server")
 }
 
 type JiffyBoxStopServer struct {
@@ -39,13 +48,12 @@ func (a *JiffyBoxStopServer) Run() error {
 	if e != nil {
 		return e
 	}
-	logger.Infof("stopped server %d", a.Id)
+	log.Printf("stopped server %d", a.Id)
 	printServer(s)
 	return nil
 }
 
 func init() {
-	router.Register("jb/servers/freeze", &JiffyBoxFreezeServer{}, "Freeze Server")
 }
 
 type JiffyBoxFreezeServer struct {
@@ -64,13 +72,12 @@ func (a *JiffyBoxFreezeServer) Run() error {
 	if e != nil {
 		return e
 	}
-	logger.Infof("froze server %d", a.Id)
+	log.Printf("froze server %d", a.Id)
 	printServer(s)
 	return nil
 }
 
 func init() {
-	router.Register("jb/servers/start", &JiffyBoxStartServer{}, "Start Server")
 }
 
 type JiffyBoxStartServer struct {
@@ -83,13 +90,12 @@ func (a *JiffyBoxStartServer) Run() error {
 	if e != nil {
 		return e
 	}
-	logger.Infof("started server %d", a.BoxId)
+	log.Printf("started server %d", a.BoxId)
 	printServer(s)
 	return nil
 }
 
 func init() {
-	router.Register("jb/servers/thaw", &JiffyBoxThawServer{}, "Thaw Server")
 }
 
 type JiffyBoxThawServer struct {
@@ -102,15 +108,12 @@ func (a *JiffyBoxThawServer) Run() error {
 	if e != nil {
 		return e
 	}
-	logger.Infof("thawed server %d", a.BoxId)
+	log.Printf("thawed server %d", a.BoxId)
 	printServer(s)
 	return nil
 }
 
 func init() {
-	router.RegisterFunc("jb/servers/list", JiffyBoxListServersAction, "List Servers")
-	router.Register("jb/servers/show", &JiffyBoxShowServersAction{}, "Show Server")
-	router.Register("jb/servers/clone", &JiffyBoxCloneServer{}, "Clone Server")
 }
 
 type JiffyBoxCloneServer struct {
@@ -132,12 +135,12 @@ func (a *JiffyBoxCloneServer) Run() error {
 		Name:     a.Name,
 		Password: os.Getenv("JIFFYBOX_DEFAULT_PASSWORD"),
 	}
-	logger.Infof("cloning server %d with %#v", a.BoxId, opts)
+	log.Printf("cloning server %d with %#v", a.BoxId, opts)
 	s, e = client().CloneServer(a.BoxId, opts)
 	if e != nil {
 		return e
 	}
-	logger.Infof("cloned server %d", a.BoxId)
+	log.Printf("cloned server %d", a.BoxId)
 	printServer(s)
 	return nil
 }
@@ -186,9 +189,6 @@ func printServer(server *jiffybox.Server) {
 }
 
 func init() {
-	router.RegisterFunc("jb/plans/list", JiffyBoxListPlansAction, "List Plans")
-	router.RegisterFunc("jb/distributions/list", JiffyBoxListDistributionsAction, "List Distributions")
-	router.Register("jb/servers/delete", &JiffyBoxDeleteAction{}, "Delete Jiffybox")
 }
 
 func JiffyBoxListBackups() error {
@@ -210,12 +210,12 @@ type JiffyBoxDeleteAction struct {
 }
 
 func (a *JiffyBoxDeleteAction) Run() error {
-	logger.Infof("deleting box with id %s", a.BoxId)
+	log.Printf("deleting box with id %s", a.BoxId)
 	e := client().DeleteJiffyBox(a.BoxId)
 	if e != nil {
 		return e
 	}
-	logger.Info("deleted box")
+	log.Printf("deleted box")
 	return nil
 }
 
@@ -238,11 +238,10 @@ func JiffyBoxListDistributionsAction() error {
 }
 
 const (
-	HOURS_PER_MONTH    = 365 * 24.0 / 12.0
+	HOURS_PER_MONTH = 365 * 24.0 / 12.0
 )
 
 func init() {
-	router.Register("jb/servers/create", &JiffyBoxCreateAction{}, "Create new JiffyBox")
 }
 
 func JiffyBoxListPlansAction() error {
@@ -270,7 +269,7 @@ type JiffyBoxCreateAction struct {
 }
 
 func (a *JiffyBoxCreateAction) Run() error {
-	logger.Infof("creating new jiffybox")
+	log.Printf("creating new jiffybox")
 	opts := &jiffybox.CreateOptions{
 		Name:         a.Name,
 		PlanId:       a.PlanId,

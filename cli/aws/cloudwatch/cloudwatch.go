@@ -1,14 +1,15 @@
-package main
+package cloudwatch
 
 import (
 	"fmt"
+	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws"
 	"github.com/dynport/gocloud/aws/cloudwatch"
 )
 
-func init() {
-	router.RegisterFunc("aws/cw", cloudwatchList, "List Cloudwatch metrics")
+func Register(router *cli.Router) {
+	router.RegisterFunc("aws/cloudwatch", cloudwatchList, "List Cloudwatch metrics")
 }
 
 func cloudwatchList() error {
