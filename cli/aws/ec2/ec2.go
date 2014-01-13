@@ -231,18 +231,20 @@ func (a *CreateImage) Run() error {
 }
 
 type RunInstances struct {
-	InstanceType  string `cli:"type=opt short=t desc='Instance Type' required=true"`
-	ImageId       string `cli:"type=opt short=i desc='Image Id' required=true"`
-	KeyName       string `cli:"type=opt short=k desc='SSH Key' required=true"`
-	SecurityGroup string `cli:"type=opt short=g desc='Security Group' required=true"`
+	InstanceType     string `cli:"type=opt short=t desc='Instance Type' required=true"`
+	ImageId          string `cli:"type=opt short=i desc='Image Id' required=true"`
+	KeyName          string `cli:"type=opt short=k desc='SSH Key' required=true"`
+	SecurityGroup    string `cli:"type=opt short=g desc='Security Group' required=true"`
+	AvailabilityZone string `cli:"type=opt long=availability-zone desc='Availability Zone'"`
 }
 
 func (a *RunInstances) Run() error {
 	config := &ec2.RunInstancesConfig{
-		ImageId:        a.ImageId,
-		KeyName:        a.KeyName,
-		InstanceType:   a.ImageId,
-		SecurityGroups: []string{a.SecurityGroup},
+		ImageId:          a.ImageId,
+		KeyName:          a.KeyName,
+		InstanceType:     a.InstanceType,
+		SecurityGroups:   []string{a.SecurityGroup},
+		AvailabilityZone: a.AvailabilityZone,
 	}
 	_, e := client().RunInstances(config)
 	return e
