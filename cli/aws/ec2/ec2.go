@@ -246,7 +246,12 @@ func (a *RunInstances) Run() error {
 		SecurityGroups:   []string{a.SecurityGroup},
 		AvailabilityZone: a.AvailabilityZone,
 	}
-	_, e := client().RunInstances(config)
+	list, e := client().RunInstances(config)
+	ids := []string{}
+	for _, i := range list {
+		ids = append(ids, i.InstanceId)
+	}
+	log.Printf("started instances %v", ids)
 	return e
 }
 
