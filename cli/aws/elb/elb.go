@@ -55,7 +55,7 @@ type elbDeregisterInstances struct {
 }
 
 func (a *elbDeregisterInstances) Run() error {
-	return elb.NewFromEnv().RegisterInstancesWithLoadBalancer(a.LbId, a.InstanceIds)
+	return elb.NewFromEnv().DeregisterInstancesWithLoadBalancer(a.LbId, a.InstanceIds)
 }
 
 func elbListLoadBalancers() error {
