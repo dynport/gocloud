@@ -297,7 +297,7 @@ func DescribeInstances() error {
 		return e
 	}
 	table := gocli.NewTable()
-	table.Add("id", "image", "name", "key", "state", "type", "private_ip", "ip", "launched", "groups")
+	table.Add("id", "image", "name", "state", "type", "private_ip", "ip", "az", "launched")
 	for _, i := range instances {
 		sgs := []string{}
 		for _, g := range i.SecurityGroups {
@@ -307,13 +307,12 @@ func DescribeInstances() error {
 			i.InstanceId,
 			i.ImageId,
 			i.Name(),
-			i.KeyName,
 			i.InstanceStateName,
 			i.InstanceType,
 			i.PrivateIpAddress,
 			i.IpAddress,
-			i.LaunchTime.Format("2006-01-02T15:04:05"),
-			strings.Join(sgs, ","),
+			i.PlacementAvailabilityZone,
+			i.LaunchTime.Format("2006-01-02T15:04"),
 		)
 	}
 	fmt.Println(table)
