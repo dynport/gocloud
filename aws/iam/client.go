@@ -63,6 +63,9 @@ func (client *Client) GetAccountSummary() (m *SummaryMap, e error) {
 		return m, e
 	}
 	rsp := &GetAccountSummaryResponse{}
+	if e := aws.ExtractError(raw.Content); e != nil {
+		return nil, e
+	}
 	e = xml.Unmarshal(raw.Content, rsp)
 	if e != nil {
 		return m, e

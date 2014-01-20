@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -44,6 +45,34 @@ type Response struct {
 
 func QueryPrefix(version, action string) string {
 	return "Version=" + version + "&Action=" + action
+}
+
+type ErrorResponse struct {
+	XMLName   xml.Name `xml:"ErrorResponse"`
+	RequestID string   `xml:"RequestID"`
+	Errors    []*Error `xml:"Error"`
+}
+
+type Error struct {
+	Code    string `xml:"Code"`
+	Message string `xml:"Message"`
+}
+
+func (er *ErrorResponse) ErrorStrings() string {
+	out := []string{}
+	for _, e := range er.Errors {
+		out = append(out, fmt.Sprintf("%s: %s", e.Code, e.Message))
+	}
+	return strings.Join(out, ", ")
+}
+
+func ExtractError(b []byte) error {
+	rsp := &ErrorResponse{}
+	e := xml.Unmarshal(b, rsp)
+	if e == nil {
+		return fmt.Errorf(rsp.ErrorStrings())
+	}
+	return nil
 }
 
 // list of endpoints
