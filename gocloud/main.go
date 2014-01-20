@@ -35,7 +35,9 @@ func init() {
 
 func main() {
 	if e := router.RunWithArgs(); e != nil {
-		log.Println("ERROR: " + e.Error())
+		if e != cli.NoRouteError {
+			log.Println("ERROR: " + e.Error())
+		}
 		os.Exit(1)
 	}
 }
