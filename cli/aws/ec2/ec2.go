@@ -234,8 +234,11 @@ type RunInstances struct {
 	InstanceType     string `cli:"type=opt short=t desc='Instance Type' required=true"`
 	ImageId          string `cli:"type=opt short=i desc='Image Id' required=true"`
 	KeyName          string `cli:"type=opt short=k desc='SSH Key' required=true"`
-	SecurityGroup    string `cli:"type=opt short=g desc='Security Group' required=true"`
+	SecurityGroup    string `cli:"type=opt short=g desc='Security Group'"`
+	SubnetId         string `cli:"type=opt long=subnet-id desc='Subnet Id'"`
+	PublicIp         bool   `cli:"type=opt long=public-ip desc='Assign Public IP'"`
 	AvailabilityZone string `cli:"type=opt long=availability-zone desc='Availability Zone'"`
+	Name             string `cli:"type=opt long=name desc='Name of the Instanze'"`
 }
 
 func (a *RunInstances) Run() error {
@@ -243,13 +246,33 @@ func (a *RunInstances) Run() error {
 		ImageId:          a.ImageId,
 		KeyName:          a.KeyName,
 		InstanceType:     a.InstanceType,
-		SecurityGroups:   []string{a.SecurityGroup},
 		AvailabilityZone: a.AvailabilityZone,
+		SubnetId:         a.SubnetId,
+	}
+	if a.PublicIp {
+		nic := &ec2.CreateNetworkInterface{
+			DeviceIndex: 0, AssociatePublicIpAddress: true, SubnetId: a.SubnetId,
+		}
+		if a.SecurityGroup != "" {
+			nic.SecurityGroupIds = []string{a.SecurityGroup}
+		}
+		config.NetworkInterfaces = []*ec2.CreateNetworkInterface{nic}
+	} else {
+		if a.SecurityGroup != "" {
+			config.SecurityGroups = []string{a.SecurityGroup}
+		}
 	}
 	list, e := client().RunInstances(config)
 	ids := []string{}
 	for _, i := range list {
 		ids = append(ids, i.InstanceId)
+	}
+	if a.Name != "" {
+		log.Printf("tagging %v with %q", ids, a.Name)
+		e := client().CreateTags(ids, map[string]string{"Name": a.Name})
+		if e != nil {
+			log.Printf("ERROR: " + e.Error())
+		}
 	}
 	log.Printf("started instances %v", ids)
 	return e
@@ -300,6 +323,9 @@ func DescribeInstances() error {
 	table.Add("id", "image", "name", "state", "type", "private_ip", "ip", "az", "launched")
 	for _, i := range instances {
 		sgs := []string{}
+		if i.InstanceStateName != "running" {
+			continue
+		}
 		for _, g := range i.SecurityGroups {
 			sgs = append(sgs, g.GroupId)
 		}

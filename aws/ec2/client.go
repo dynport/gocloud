@@ -52,13 +52,15 @@ func (list ImageList) Less(a, b int) bool {
 }
 
 type RunInstancesConfig struct {
-	ImageId          string
-	MinCount         int
-	MaxCount         int
-	InstanceType     string
-	AvailabilityZone string
-	KeyName          string
-	SecurityGroups   []string
+	ImageId           string
+	MinCount          int
+	MaxCount          int
+	InstanceType      string
+	AvailabilityZone  string
+	KeyName           string
+	SecurityGroups    []string
+	SubnetId          string
+	NetworkInterfaces []*CreateNetworkInterface
 }
 
 func queryForAction(action string) string {
@@ -173,8 +175,22 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 		values.Add("Placement.AvailabilityZone", config.AvailabilityZone)
 	}
 
-	for i, sg := range config.SecurityGroups {
-		values.Add("SecurityGroup."+strconv.Itoa(i+1), sg)
+	if len(config.NetworkInterfaces) > 0 {
+		for i, nic := range config.NetworkInterfaces {
+			idx := strconv.Itoa(i)
+			values.Add("NetworkInterface."+idx+".DeviceIndex", idx)
+			values.Add("NetworkInterface."+idx+".AssociatePublicIpAddress", "true")
+			values.Add("NetworkInterface."+idx+".SubnetId", nic.SubnetId)
+
+			for i, sg := range nic.SecurityGroupIds {
+				values.Add("NetworkInterface."+idx+".SecurityGroupId."+strconv.Itoa(i), sg)
+			}
+		}
+	} else {
+		for i, sg := range config.SecurityGroups {
+			values.Add("SecurityGroup."+strconv.Itoa(i+1), sg)
+		}
+		values.Add("SubnetId", config.SubnetId)
 	}
 
 	query := queryForAction("RunInstances") + "&" + values.Encode()
