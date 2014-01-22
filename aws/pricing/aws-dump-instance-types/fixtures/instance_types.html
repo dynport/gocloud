@@ -1,0 +1,4003 @@
+<!DOCTYPE HTML>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--[if lt IE 7]>          <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7 lang-en lang-en_US" lang="en"> <![endif]-->
+<!--[if IE 7]>              <html class="no-js lt-ie10 lt-ie9 lt-ie8 lang-en lang-en_US" lang="en"> <![endif]-->
+<!--[if IE 8]>              <html class="no-js lt-ie10 lt-ie9 lang-en lang-en_US" lang="en"> <![endif]-->
+<!--[if IE 9]>              <html class="no-js lt-ie10 lang-en lang-en_US" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js lang-en lang-en_US" lang="en"> <!--<![endif]-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="description" content="">
+    
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+    
+    
+    
+    
+    <title>AWS | Amazon EC2 | Instance Types</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <link rel="stylesheet" href="//dhd3470rjj80p.cloudfront.net/css/20/style.css">
+    <script src="//dhd3470rjj80p.cloudfront.net/js/20/modernizr.js"></script>
+    <script>
+      var require = {
+        baseUrl: "//dhd3470rjj80p.cloudfront.net/js/20/",
+        paths: {
+            "jquery": "jquery.2.0",
+            "migrate": "http://code.jquery.com/jquery-migrate-1.2.1"
+        },
+        deps: ["scripts"],
+        shim: {
+            "scripts": ["jquery"],
+            "forms": ["jquery"],
+            "pricing-table": ["jquery", "scripts"],
+            "plugins/bootstrap.button": ["jquery"],
+            "plugins/bootstrap.collapse": ["jquery"],
+            "plugins/bootstrap.dropdown": ["jquery"],
+            "plugins/bootstrap.popover": ["jquery"],
+            "plugins/bootstrap.tab": ["jquery"],
+            "plugins/bootstrap.tooltip": ["jquery"],
+            "plugins/free-tier": ["jquery", "scripts"],
+            "plugins/jquery.animate-colors-min": ["jquery"],
+            "plugins/jquery.caroufredsel": ["jquery"],
+            "plugins/jquery.fancybox": ["jquery"],
+            "plugins/jquery.touchSwipe.min": ["jquery"],
+            "plugins/jwplayer.html5": ["jquery"],
+            "plugins/jwplayer": ["jquery"],
+            "plugins/pbSize": ["jquery"],
+            "plugins/pushstate": ["jquery", "scripts"],
+            "plugins/search-controller": ["jquery"],
+            "plugins/swap-tile": ["jquery"]
+        },
+        waitSeconds: 15
+      };
+    </script>
+    <script src="//dhd3470rjj80p.cloudfront.net/js/20/require.js"></script>
+    <!--[if lt IE 9]>
+    <script>
+      require.config({
+        paths: {
+            "jquery": "jquery.1.9",
+            "migrate": "http://code.jquery.com/jquery-migrate-1.2.1"
+        }
+      });
+    </script>
+    <![endif]-->
+</head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body>
+
+    <!-- Nav Bar -->
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Nav Bar -->
+<header class="top-nav">
+
+    <div class="site-meta clearfix">
+    <div class="wrapper row">
+      <a class="logo" href="//aws.amazon.com/">
+        <h1>
+          <img src="//dhd3470rjj80p.cloudfront.net/images/logos/aws_logo.png" alt="Amazon Web Services Inc." title="Click here to return to Amazon Web Services homepage">
+        </h1>
+      </a>
+     
+      <div class="aws-nav">
+          <div class="language dfo-wrapper">
+              <div class="dfo-link">English &nbsp;<i class="icon-caret-down">&#xf0d7;</i></div>
+    
+              <div class="dfo language-dfo">
+                <div class="nav-menu">
+                  <ul class="language-list">
+                    <li><a href="//aws.amazon.com/de/ec2/instance-types/" data-language="de">Deutsch</a></li>
+                    <li><a href="//aws.amazon.com/ec2/instance-types/" data-language="en">English</a></li>
+                    <li><a href="//aws.amazon.com/es/ec2/instance-types/" data-language="es">Espa&ntilde;ol</a></li>
+                    <li><a href="//aws.amazon.com/fr/ec2/instance-types/" data-language="fr">Fran&ccedil;ais</a></li>
+                    <li><a href="//aws.amazon.com/jp/ec2/instance-types/" data-language="jp">&#26085;&#26412;&#35486;</a></li> 
+                    <li><a href="//aws.amazon.com/pt/ec2/instance-types/" data-language="pt">Portugu&ecirc;s</a></li>
+                    <li><a href="//aws.amazon.com/ko/ec2/instance-types/" data-language="ko">&#54620;&#44397;&#50612;</a></li> 
+                    <li><a href="//aws.amazon.com/cn/ec2/instance-types/" data-language="cn">&#20013;&#25991; (&#31616;&#20307;)</a></li> 
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="account-console dfo-wrapper">
+              <div class="dfo-link"><a href="https://console.aws.amazon.com">My Account / Console</a> &nbsp;<i class="icon-caret-down">&#xf0d7;</i></div>
+
+              <div class="dfo account-console-dfo">
+                <div class="nav-menu">
+                  <ul class="account-console-list">
+                    <li><a id="gtl-console-link" href="https://console.aws.amazon.com">AWS Management Console</a></li>
+                    <li><a href="https://portal.aws.amazon.com/gp/aws/manageYourAccount">My Account</a></li>
+                    <li><a href="https://console.aws.amazon.com/billing/home">Billing & Cost Management</a></li>
+                    <li><a href="https://console.aws.amazon.com/iam/home?#security_credential">Security Credentials</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          
+            <a href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html" class="button btn-gold btn-sign-up">Sign Up</a>
+            
+            </div>
+        </div>
+  </div>
+
+  <div class="site-resources clearfix">
+    <div class="wrapper row">
+      <nav class="products dfo-wrapper">
+        <div class="dfo-link"><a href="//aws.amazon.com/products/">AWS Products & Solutions</a> &nbsp;<i class="icon-caret-down">&#xf0d7;</i></div>
+
+        <div class="dfo products-dfo">
+          <div class="nav-menu">
+            <ul class="site-list">
+              <li data-target="aws-info"><span>AWS & Cloud Computing</span></li>
+            </ul>
+            <ul class="product-list">
+              <li data-target="compute"><span>Compute & Networking</span></li>
+              <li data-target="storage"><span>Storage & CDN</span></li>
+              <li data-target="database"><span>Database</span></li>
+              <li data-target="analytics"><span>Analytics</span></li>
+              <li data-target="app-service"><span>Application Services</span></li>
+              <li data-target="deployment"><span>Deployment & Management</span></li>
+              <li data-target="marketplace"><span>AWS Marketplace Software</span></li>
+            </ul>
+            <ul class="use-case-list">
+              <li data-target="start-ups"><span>Start-ups</span></li>
+              <li data-target="enterprises"><span>Enterprises</span></li>
+              <li data-target="public"><span>Government & Education</span></li>
+            </ul>
+            <ul class="service-list">
+              <li data-target="web-mo-soc"><span>Web, Mobile, & Social Apps</span></li>
+              <li data-target="digital-media"><span>Digital Media & Marketing</span></li>
+              <li data-target="bus-apps"><span>Business Applications</span></li>
+              <li data-target="archive"><span>Backup, Archive, & DR</span></li>
+              <li data-target="hpc"><span>Big Data & HPC</span></li>
+            </ul>
+            <ul class="partner-list">
+              <li data-target="partners"><span>AWS Partner Network</span></li>
+            </ul>
+          </div>
+          <div class="product-info">
+            <div class="info-item" id="aws-info">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">AWS &amp; Cloud Computing</li>
+                  <li>
+                    <a href="//aws.amazon.com/what-is-cloud-computing/"><strong>What is Cloud Computing?</strong><br><span>Learn more about Cloud Computing with AWS</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/choosing-a-cloud-platform/"><strong>Choosing a Cloud Platform</strong><br><span>Cloud Platform Evaluation Checklist</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/about-aws/globalinfrastructure/"><strong>Global Infrastructure</strong><br><span>Find AWS Regions and Edge Locations around the world</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/solutions/case-studies/"><strong>Customer Success Stories</strong></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/about-aws/whats-new/"><strong>What's New</strong></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/about-aws/media-coverage/"><strong>Media Coverage</strong></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/about-aws/events/"><strong>Events</strong></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/resources/webinars/"><strong>Videos</strong></a>
+                  </li>
+                  <li>
+                    <a href="http://aws.typepad.com"><strong>AWS Blog</strong></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/premiumsupport/"><strong>AWS Support</strong><br><span>Technical support available 24x7 by AWS engineers</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/whitepapers/"><strong>Whitepapers</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="promo">
+                <a href="//aws.amazon.com/economics/" class="promo-boxlink">
+                  <div>
+                    <strong class="txt-green">Economics</strong>
+                    <p>Find calculators and other tools to help you lower costs with the AWS Cloud.</p>
+                    <span class="hlp-linkText">Learn more &raquo;</span>
+                  </div>
+                </a>
+                <a href="//aws.amazon.com/security/" class="promo-boxlink">
+                  <div>
+                    <strong class="txt-red">Security</strong>
+                    <p>Learn about AWS Cloud security and how to build secure applications.</p>
+                    <span class="hlp-linkText">Learn more &raquo;</span>
+                  </div>
+                </a>
+                <a href="//aws.amazon.com/architecture/" class="promo-boxlink">
+                  <div>
+                    <strong class="txt-blue">Architecture</strong>
+                    <p>Learn how to build scalable and reliable applications in the AWS Cloud.</p>
+                    <span class="hlp-linkText">Learn more &raquo;</span>
+                  </div>
+                </a>
+              </div>
+            </div><!-- END aws-info -->
+
+            <div class="info-item" id="compute">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Compute & Networking</li>
+                  <li>
+                    <a href="//aws.amazon.com/ec2/"><strong>Amazon EC2</strong><br><span>Virtual Servers in the Cloud</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/autoscaling/"><strong>Auto Scaling</strong></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/elasticloadbalancing/"><strong>Elastic Load Balancing</strong></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/workspaces/"><strong>Amazon WorkSpaces</strong><br><span>Virtual Desktops in the Cloud</span></a>
+                  </li>
+                  <li class="divider">
+                    <a href="//aws.amazon.com/vpc/"><strong>Amazon VPC</strong><br><span>Isolated Cloud Resources</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/route53/"><strong>Amazon Route 53</strong><br><span>Scalable Domain Name System (DNS)</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/directconnect/"><strong>AWS Direct Connect</strong><br><span>Dedicated Network Connection to AWS</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/search/results/ref=mkt_ste_l2_ec2?page=1&searchTerms=Netscaler"><strong>Citrix NetScaler</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B0097BIDUM/ref=mkt_ste_l2_ec2"><strong>Riverbed Stingray Traffic Manager</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B009I5TLOE"><strong>Brocade Vyatta vRouter</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649366011/ref=mkt_ste_l2_ec2_nw_cat"><strong>View All Related Products (130+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <b>750 hours</b> of Amazon EC2 running Linux or Windows Micro Instances each month for one year.<br><br>
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END compute -->
+
+            <div class="info-item" id="storage">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Storage & CDN</li>
+                  <li>
+                    <a href="//aws.amazon.com/s3/"><strong>Amazon S3</strong><br><span>Scalable Storage in the Cloud</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/glacier/"><strong>Amazon Glacier</strong><br><span>Low-Cost Archive Storage in the Cloud</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/ebs/"><strong>Amazon EBS</strong><br><span>EC2 Block Storage Volumes</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/importexport/"><strong>AWS Import/Export</strong><br><span>Large Volume Data Transfer</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/storagegateway/"><strong>AWS Storage Gateway</strong><br><span>Integrates on-premises IT environments with Cloud storage</span></a>
+                  </li>
+                  <li class="divider">
+                    <a href="//aws.amazon.com/cloudfront/"><strong>Amazon CloudFront</strong><br><span>Global Content Delivery Network (CDN)</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00EQE493U/ref=mkt_ste_l2_StorageCDN"><strong>SoftNAS Cloud</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00BJTMBEY/ref=mkt_ste_l2_StorageCDN"><strong>Helix Universal Server Pro</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B007OOJ2KE/ref=mkt_ste_l2_StorageCDN"><strong>aiScaler</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649337011/ref=mkt_ste_l2_StorageCDN_cat"><strong>View All Related Products (90+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <b>5 GB</b> of Amazon S3 standard storage and <b>30 GB</b> of Amazon EBS Storage for one year.<br><br>
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END storage -->
+
+            <div class="info-item" id="database">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Database</li>
+                  <li>
+                    <a href="//aws.amazon.com/rds/"><strong>Amazon RDS</strong><br><span>Managed Relational Database Service for MySQL, Oracle, SQL Server, and PostgreSQL</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/dynamodb/"><strong>Amazon DynamoDB</strong><br><span>Fast, Predictable, Highly-scalable NoSQL data store</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/elasticache/"><strong>Amazon ElastiCache</strong><br><span>In-Memory Caching Service</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/redshift/"><strong>Amazon Redshift</strong><br><span>Fast, Powerful, Fully Managed, Petabyte-scale Data Warehouse Service</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00909GAR4/ref=mkt_ste_l2_db"><strong>ScaleArc iDB Enterprise for MySQL</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00E6FKQ18/ref=mkt_ste_l2_db"><strong>ParElastic Database Virtualization Engine</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B008DWS6GC/ref=mkt_ste_l2_db"><strong>MONyog - RDS MySQL Monitor and Advisor</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649364011/ref=mkt_ste_l2_DB_Cat"><strong>View All Related Products (80+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <b>20 GB</b> of storage for Amazon RDS (MySQL, Oracle and MS SQL Server*)<br><br>
+                    <b>100 MB</b> of storage, <b>5 units</b> of write capacity, and <br><b>10 units</b> of read capacity for Amazon DynamoDB.<br><br>
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END database -->
+
+            <div class="info-item" id="analytics">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Analytics</li>
+                  <li>
+                    <a href="//aws.amazon.com/elasticmapreduce/"><strong>Amazon EMR</strong><br><span>Hosted Hadoop Framework</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/kinesis/"><strong>Amazon Kinesis</strong><br><span>Real-Time Data Stream Processing</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/datapipeline/"><strong>AWS Data Pipeline</strong><br><span>Orchestration Service for Periodic, Data-Driven Workflows</span></a>
+                  </li>
+
+                  <li class="divider">
+                    <a href="//aws.amazon.com/redshift/"><strong>Amazon Redshift</strong><br><span>Fast, Powerful, Fully Managed, Petabyte-scale Data Warehouse Service</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00B527JQ0/ref=mkt_ste_l2_analytics"><strong>Jaspersoft Reporting &amp; Analytics</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00A41ASWK/ref=mkt_ste_l2_analytics"><strong>MicroStrategy</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00CB2IV24/ref=mkt_ste_l2_analytics"><strong>SAP Business Objects</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649336011/ref=mkt_ste_l2_analytics_BI_cat"><strong>View All Related Products (90+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <b>750 hours</b> of Amazon EC2 running Linux or Windows Micro Instances each month for one year.<br><br>
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END analytics -->
+
+            <div class="info-item" id="app-service">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Application Services</li>
+                  <li>
+                    <a href="//aws.amazon.com/appstream/"><strong>Amazon AppStream</strong><br><span>Low-Latency Application Streaming</span></a>
+                  </li>
+
+                  <li>
+                    <a href="//aws.amazon.com/cloudsearch/"><strong>Amazon CloudSearch</strong><br><span>Managed Search Service</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/swf/"><strong>Amazon SWF</strong><br><span>Workflow service for coordinating application components</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/sqs/"><strong>Amazon SQS</strong><br><span>Message Queue Service</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/ses/"><strong>Amazon SES</strong><br><span>Email Sending Service</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/sns/"><strong>Amazon SNS</strong><br><span>Push Notification Service</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/fps/"><strong>Amazon FPS</strong><br><span>API based payment service</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/elastictranscoder/"><strong>Amazon Elastic Transcoder</strong><br><span>Easy-to-use scalable media transcoding</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00DIF4A6Y/ref=mkt_ste_l2_app_services"><strong>NGINX</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00BQNEX5S/ref=mkt_ste_l2_app_services"><strong>Adobe ColdFusion</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649362011/ref=mkt_ste_l2_app_services_cat"><strong>View All Related Products (230+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <b>100,000 requests</b> and <b>100,000 HTTP notifications</b> for Amazon SNS and <b>100,000</b> Amazon SQS requests each month for one year.<br><br>
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END deployment -->
+
+            <div class="info-item" id="deployment">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Deployment &amp; Management</li>
+                  <li>
+                    <a href="//aws.amazon.com/console/"><strong>AWS Management Console</strong><br><span>Web-Based User Interface</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/iam/"><strong>AWS Identity and Access Management (IAM)</strong><br><span>Configurable AWS Access Controls</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/cloudtrail/"><strong>AWS CloudTrail</strong><br><span>User Activity Logging</span></a>
+                  </li>
+
+                  <li>
+                    <a href="//aws.amazon.com/cloudwatch/"><strong>Amazon CloudWatch</strong><br><span>Resource and Application Monitoring</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/elasticbeanstalk/"><strong>AWS Elastic Beanstalk</strong><br><span>AWS Application Container</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/cloudformation/"><strong>AWS CloudFormation</strong><br><span>Templates for AWS Resource Creation</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/opsworks/"><strong>AWS OpsWorks</strong><br><span>DevOps Application Management Services</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/cloudhsm/"><strong>AWS CloudHSM</strong><br><span>Hardware-based Key Storage for Regulatory Compliance</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00EOA9VN4/ref=mkt_ste_l2_Deployment"><strong>Redmine by MBridge Systems</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00E8PL4JO/ref=mkt_ste_l2_Deployment"><strong>Trac by TurnKey Linux</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649274011/ref=mkt_ste_l2_Deployment_cat"><strong>View All Related Products (180+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <b>10 metrics</b>, <b>10 alarms</b>, <b>1M API requests</b> for Amazon CloudWatch each month for one year.<br><br>
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END deployment -->
+
+            <div class="info-item" id="marketplace">
+              <div class="item-list">
+                <ul>
+                  <li>
+                    <a href="//aws.amazon.com/marketplace/ref=mkt_ste_l2_mp_logo"><img src="//dhd3470rjj80p.cloudfront.net/images/logos/logo-mp-nav.png" alt="AWS Marketplace" style="display:block;"></a>
+                    <span>Partner software pre-configured to run on AWS</span>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649276011/ref=mkt_ste_l2_mpInfraSW" class="marketplace-heading">Infrastructure Software (820+)</a>
+                  </li>
+                  <li>
+                      <a href="https://aws.amazon.com/marketplace/b/2649362011/ref=mkt_ste_l2_mpAppStacks"><strong>Application Stacks</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649367011/ref=mkt_ste_l2_mpOpSys"><strong>Operating Systems</strong></a></li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649364011/ref=mkt_ste_l2_mpDB_caching"><strong>Databases & Caching</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649366011/ref=mkt_ste_l2_mpNWInfra"><strong>Network Infrastructure</strong></a>
+                  </li>
+                </ul>
+                <ul>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649275011/ref=mkt_ste_l2_mpBusinessSW" class="marketplace-heading">Business Software (610+)</a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649336011/ref=mkt_ste_l2_mpBusIntelSW"><strong>Business Intelligence</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/5018785011/ref=mkt_ste_l2_mpCollabSW"><strong>Collaboration</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649338011/ref=mkt_ste_l2_mpContentMgmtSW"><strong>Content Management</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649339011/ref=mkt_ste_l2_mpCRM"><strong>CRM</strong></a>
+                  </li>
+                </ul>
+                <ul>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649274011/ref=mkt_ste_l2_mpDevToolsSW" class="marketplace-heading">Developer Tools (180+)</a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649281011/ref=mkt_ste_l2_mpBugTrackingSW"><strong>Issue & Bug Tracking</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649280011/ref=mkt_ste_l2_mpMonitoringSW"><strong>Monitoring</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649282011/ref=mkt_ste_l2_mpSourceCTRLSW"><strong>Source Control</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649283011/ref=mkt_ste_l2_mpTestingSW"><strong>Testing</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="promo">
+                <div class="promo-stack-header">Featured Software</div>
+                <a href="https://aws.amazon.com/marketplace/pp/B00A9ZWU0Y/ref=mkt_ste_l2_mpL3Promo1" class="navpromo-boxLink">
+                  <div class="small-promo-box">
+                    <img src="//d36cz9buwru1tt.cloudfront.net/logo-citrix-mp-nav5.png" alt="Citrix"><br>
+                    <span>Citrix NetScaler VPX Platinum</span>
+                    <p>Gartner Magic Quadrant Leader in Application Delivery Controller</p>
+                  </div>
+                </a>
+                <a href="https://aws.amazon.com/marketplace/pp/B00B527JQ0/ref=mkt_ste_l2_mpL3Promo2" class="navpromo-boxLink">
+                  <div class="small-promo-box">
+                    <img src="//d36cz9buwru1tt.cloudfront.net/logo-jaspersoft-mp-nav4.png" alt="Jaspersoft"><br>
+                    <span>Jaspersoft Reporting &amp; Analytics</span>
+                    <p>Commercial open source reporting and analytics server built for AWS</p>
+                  </div>
+                </a>
+                <a href="https://aws.amazon.com/marketplace/pp/B00AA27RK4/ref=mkt_ste_l2_mpL3Promo3" class="navpromo-boxLink">
+                  <div class="small-promo-box" style="border-bottom: 0;">
+                    <img src="//d36cz9buwru1tt.cloudfront.net/logo-debian-mp-nav.png" alt="Debian"><br>
+                    <span>Debian 6.0 by Debian.org</span>
+                  </div>
+                </a>
+              </div>
+            </div><!-- END marketplace -->
+
+            <div class="info-item" id="start-ups">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Start-ups on AWS</li>
+                  <li>
+                    <a href="//aws.amazon.com/start-ups/"><p class="dfo-a-content">Start-ups use AWS for everything their app needs. Launch in a few clicks without up front costs.</p><span class="hlp-linkText">Learn more about Start-ups on AWS &raquo;</span></a>
+                  </li>
+                  <li class="divider">
+                    <a href="//aws.amazon.com/startupchallenge/"><strong>Start-Up Challenge</strong><br><span>Learn more about the annual AWS competition to celebrate start-ups running on AWS</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/web-mobile-social/"><strong>Web, Mobile, Social</strong><br><span>Power web, social and mobile apps in the Cloud</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/big-data/"><strong>Big Data</strong><br><span>Store and process large datasets to solve business problems</span></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <strong class="txt-green">Compute</strong><br>
+                    <b>750 hours</b> of Linux and Windows Micro Instances<br><br>
+
+                    <strong class="txt-red">Storage</strong><br>
+                    <b>30 GB</b> of Block Storage<br> <b>5 GB</b> of Object Storage<br><br>
+
+                    <strong class="txt-blue">SQL Database</strong><br>
+                    <b>750 hours</b> and <b>20 GB</b> of database storage<br><br>
+
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END start-up -->
+
+            <div class="info-item" id="enterprises">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Enterprises on AWS</li>
+                  <li>
+                    <a href="//aws.amazon.com/enterprise-it/"><p class="dfo-a-content">Enterprises use AWS to deliver IT innovation globally, improving agility and resiliency while reducing costs.</p><span class="hlp-linkText">Learn more about Enterprises on AWS &raquo;</span></a></li>
+
+                  <li class="divider">
+                    <a href="//aws.amazon.com/business-applications/"><strong>Business Applications</strong><br><span>Run enterprise applications in the Cloud</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/backup-storage/"><strong>Backup &amp; Storage</strong><br><span>Store and retrieve any data, anywhere, any time</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/security/"><strong>Security Center</strong><br><span>Learn about AWS Cloud security and how to build secure applications</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/economics/"><strong>Economics Center</strong><br><span>Find calculators and other tools to help you lower costs</span></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <strong class="txt-green">Compute</strong><br>
+                    <b>750 hours</b> of Linux and Windows Micro Instances<br><br>
+
+                    <strong class="txt-red">Storage</strong><br>
+                    <b>30 GB</b> of Block Storage<br> <b>5 GB</b> of Object Storage<br><br>
+
+                    <strong class="txt-blue">SQL Database</strong><br>
+                    <b>750 hours</b> and <b>20 GB</b> of database storage<br><br>
+
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END enterprises -->
+
+            <div class="info-item" id="public">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Government & Education</li>
+                  <li>
+                    <a href="//aws.amazon.com/government-education/"><p class="dfo-a-content">Public Sector organizations use AWS to deliver IT innovation globally, improving agility and resiliency while reducing costs.</p><span class="hlp-linkText">Learn more about Government & Education &raquo;</span></a>
+                  </li>
+                  <li class="divider">
+                    <a href="//aws.amazon.com/federal/"><strong>Federal Government</strong><br><span>Run mission-critical applications in the Cloud for your agency</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/stateandlocal/"><strong>State and Local Government</strong><br><span>Drive efficiencies through the cloud at every level of Government</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/education/"><strong>Education</strong><br><span>Facilitate demanding research and course objectives with Cloud solutions</span></a>
+                  </li>
+                  <li class="divider">
+                    <a href="//aws.amazon.com/govcloud-us/"><strong>AWS GovCloud (US) Region</strong><br><span>Featuring FIPS 140-2 Compliant End Points for Government Oriented Workloads</span></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <strong class="txt-green">Compute</strong><br>
+                    <b>750 hours</b> of Linux and Windows Micro Instances<br><br>
+
+                    <strong class="txt-red">Storage</strong><br>
+                    <b>30 GB</b> of Block Storage<br> <b>5 GB</b> of Object Storage<br><br>
+
+                    <strong class="txt-blue">SQL Database</strong><br>
+                    <b>750 hours</b> and <b>20 GB</b> of database storage<br><br>
+
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END public -->
+
+            <div class="info-item" id="web-mo-soc">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Web, Mobile, & Social Apps</li>
+                  <li>
+                    <a href="//aws.amazon.com/web-mobile-social/"><strong>Web, Mobile, & Social Apps on AWS</strong><br><span>Power web, social and mobile apps in the Cloud</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/web-applications/social-media/"><strong>Social Apps on AWS</strong><br><span>Run apps that easily respond to viral growth</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/game-hosting/"><strong>Gaming on AWS</strong><br><span>Deliver casual or Massive Multiplayer Online (MMO) games</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/media-sharing/"><strong>Media Sharing on AWS</strong><br><span>Share photos, videos, and other content</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/ecommerce-applications/"><strong>E-commerce Site on AWS</strong><br><span>Run secure, scalable, and low-cost online stores</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/mobile-apps/"><strong>Mobile Apps on AWS</strong><br><span>Quickly create powerful back-end services in the cloud</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B007OOIW8M/ref=mkt_ste_L2_WMS"><strong>aiMobile Mobile Content Management</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00AEY1KME/ref=mkt_ste_L2_WMS"><strong>Magento by BitNami</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00AEXYMPW/ref=mkt_ste_L2_WMS"><strong>Zurmo by Turnkey</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649338011/ref=mkt_ste_l2_WMS_cat"><strong>View All Related Products (220+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <strong class="txt-green">Compute</strong><br>
+                    <b>750 hours</b> of Linux and Windows Micro Instances<br><br>
+
+                    <strong class="txt-red">Storage</strong><br>
+                    <b>30 GB</b> of Block Storage<br> <b>5 GB</b> of Object Storage<br><br>
+
+                    <strong class="txt-blue">SQL Database</strong><br>
+                    <b>750 hours</b> and <b>20 GB</b> of database storage<br><br>
+
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END web-mo-soc -->
+
+            <div class="info-item" id="digital-media">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Digital Media & Marketing</li>
+                  <li>
+                    <a href="//aws.amazon.com/digital-media/"><strong>Digital Media</strong><br><span>Ingest, store, encode, protect, and stream your media</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/digital-marketing/"><strong>Digital Marketing</strong><br><span>Run your marketing campaigns, apps, and websites in the cloud</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/websites/"><strong>Marketing Websites</strong><br><span>Run highly available, scalable, and low-cost sites in the cloud</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B007IVS646/ref=mkt_ste_L2_DMM"><strong>OpenEMM by JumpBox</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00BEP74L8/ref=mkt_ste_L2_DMM"><strong>ProMedia Carbon MP</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B007IP8BKQ/ref=mkt_ste_L2_DMM"><strong>WordPress by Bitnami</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649341011/ref=mk_ste_l2_DMM_cat"><strong>View All Related Products (50+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+             <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <strong class="txt-green">Compute</strong><br>
+                    <b>750 hours</b> of Linux and Windows Micro Instances<br><br>
+
+                    <strong class="txt-red">Storage</strong><br>
+                    <b>30 GB</b> of Block Storage<br> <b>5 GB</b> of Object Storage<br><br>
+
+                    <strong class="txt-blue">SQL Database</strong><br>
+                    <b>750 hours</b> and <b>20 GB</b> of database storage<br><br>
+
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END digital-media-->
+
+            <div class="info-item" id="bus-apps">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Business Applications</li>
+                  <li>
+                    <a href="//aws.amazon.com/enterprise-applications/"><strong>Enterprise Applications on AWS</strong><br><span>Run enterprise applications in the Cloud</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/enterprise-applications/oracle/"><strong>Oracle</strong><br><span>Oracle E-Business Suite, Hyperion</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/enterprise-applications/sap/"><strong>SAP</strong><br><span>Rapid Deployment Solutions, SAP Business Objects</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/enterprise-applications/windows-server/"><strong>Microsoft</strong><br><span>Windows Server, SharePoint Server, SQL Server</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00CB3EPH8/ref=mkt_ste_L2_BizApps"><strong>SAP BusinessObjects</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B008A6QPSW/ref=mkt_ste_L2_BizApps"><strong>SharePoint Server 2010</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00847RC6G/ref=mkt_ste_L2_BizApps"><strong>JD Edwards EnterpriseOne by Oracle</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/2649275011/ref=mkt_ste_L2_BizApps_cat"><strong>View All Related Products (610+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <strong class="txt-green">Compute</strong><br>
+                    <b>750 hours</b> of Linux and Windows Micro Instances<br><br>
+
+                    <strong class="txt-red">Storage</strong><br>
+                    <b>30 GB</b> of Block Storage<br> <b>5 GB</b> of Object Storage<br><br>
+
+                    <strong class="txt-blue">SQL Database</strong><br>
+                    <b>750 hours</b> and <b>20 GB</b> of database storage<br><br>
+
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END bus-apps -->
+
+            <div class="info-item" id="archive">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Backup, Archive, & DR</li>
+                  <li>
+                    <a href="//aws.amazon.com/backup-storage/"><strong>Backup and Storage on AWS</strong><br><span>Store and retrieve any data, anywhere, any time</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/disaster-recovery/"><strong>Disaster Recovery on AWS</strong><br><span>Recover your systems  and data quickly from a disaster</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/archive/"><strong>Archiving on AWS</strong><br><span>Archive your data for long-term retention</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/search/results/ref=mkt_ste_l2_BADR?page=1&searchTerms=CloudBerry"><strong>CloudBerry Backup</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/search/results/ref=mkt_ste_l2_BADR?page=1&searchTerms=Message+Logic"><strong>Message Logic ML Archiver for AWS</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B009P2J7IK/ref=mkt_ste_l2_BADR"><strong>CloudyScripts AMI</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/search/results/ref=mkt_ste_l2_backup?searchTerms=backup&search="><strong>View All Related Products (100+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <strong class="txt-green">Compute</strong><br>
+                    <b>750 hours</b> of Linux and Windows Micro Instances<br><br>
+
+                    <strong class="txt-red">Storage</strong><br>
+                    <b>30 GB</b> of Block Storage<br> <b>5 GB</b> of Object Storage<br><br>
+
+                    <strong class="txt-blue">SQL Database</strong><br>
+                    <b>750 hours</b> and <b>20 GB</b> of database storage<br><br>
+
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END archive -->
+
+            <div class="info-item" id="hpc">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">Big Data & HPC</li>
+                  <li>
+                    <a href="//aws.amazon.com/big-data/"><strong>Big Data on AWS</strong><br><span>Store and process large datasets to solve business problems</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/hpc-applications/"><strong>HPC on AWS</strong><br><span>Run tightly-coupled and IO-intensive workloads to solve complex science, engineering and business problems</span></a>
+                  </li>
+                </ul>
+
+                <ul class="marketplace-links">
+                  <li class="marketplace-header">
+                    <a href="https://aws.amazon.com/marketplace"><strong>AWS Marketplace &raquo;</strong></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B00GBFUO9A/ref=mkt_ste_l2_BigDataHPC"><strong>Intel Cloud Edition for Lustre</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B0078U7Z9Y/ref=mkt_ste_l2_BigDataHPC"><strong>Univa Grid Engine One Click</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/pp/B007ORV9MK/ref=mkt_ste_l2_BigDataHPC"><strong>StackIQ Rocks+</strong> <span class="hlp-if">&#xf08e;</span></a>
+                  </li>
+                  <li>
+                    <a href="https://aws.amazon.com/marketplace/b/6153421011/ref=mkt_ste_l2_BigDataHPC_Cat"><strong>View All Related Products (90+)&nbsp;&raquo;</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <a href="//aws.amazon.com/free/">
+                <div class="promo promo-pad">
+                  <div class="promo-title">Try AWS for Free</div>
+                  <span class="button btn-gold btn-block">Get Started Now &raquo;</span>
+                  <p><b>AWS Free Tier Includes:</b></p>
+                  <p>
+                    <strong class="txt-green">Compute</strong><br>
+                    <b>750 hours</b> of Linux and Windows Micro Instances<br><br>
+
+                    <strong class="txt-red">Storage</strong><br>
+                    <b>30 GB</b> of Block Storage<br> <b>5 GB</b> of Object Storage<br><br>
+
+                    <strong class="txt-blue">SQL Database</strong><br>
+                    <b>750 hours</b> and <b>20 GB</b> of database storage<br><br>
+
+                    <span class="hlp-linkText">AWS Free Tier Details &raquo;</span>
+                  </p>
+                </div>
+              </a>
+            </div><!-- END hpc -->
+
+            <div class="info-item" id="partners">
+              <div class="item-list">
+                <ul>
+                  <li class="heading">AWS Partner Network</li>
+                  <li>
+                    <a href="//aws.amazon.com/solutions/solution-providers/"><strong>Find AWS Partners</strong><br><span>Find qualified APN Partners to help you with your AWS projects</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/partners/overview/"><strong>Join the AWS Partner Network</strong><br><span>Learn about the benefits and requirements of the APN program</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/partners/overview/apn-portal/"><strong>Login to the APN Portal</strong><br><span>Download content and engage with AWS through the partner-only section of the AWS website</span></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/solutions/premier-consulting-partners/"><strong>Premier Consulting Partners</strong></a>
+                  </li>
+                  <li>
+                    <a href="//aws.amazon.com/solutions/global-technology-partners/"><strong>Global Technology Partners</strong></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="promo">
+                <div class="promo-stack-header">FEATURED PARTNERS</div>
+                <a href="//aws.amazon.com/solution-providers/si/2nd-watch-1321046684/" class="navpromo-boxLink">
+                  <div class="small-promo-box">
+                    <img src="//d36cz9buwru1tt.cloudfront.net/logo_2nd-watch2.gif" alt="2nd Watch"><br>
+                    <span>2nd Watch</span>
+                    <p>Enterprise Consulting, Solutions, and Managed Services on AWS</p>
+                  </div>
+                </a>
+                <a href="//aws.amazon.com/solutions/global-solution-providers/redhat/" class="navpromo-boxLink">
+                  <div class="small-promo-box">
+                    <img src="//d36cz9buwru1tt.cloudfront.net/logo_redhat_APN.gif" alt="redhat"><br>
+                    <span>Red Hat</span>
+                    <p>Deploy Enterprise-Class Red Hat Technologies in Minutes on AWS</p>
+                  </div>
+                </a>
+                <a href="//aws.amazon.com/solution-providers/si/8k-miles" class="navpromo-boxLink">
+                  <div class="small-promo-box" style="border-bottom: 0;">
+                    <img src="//d36cz9buwru1tt.cloudfront.net/logo_8kmiles_APN.png" alt="8K Miles"><br>
+                    <span>8K Miles</span>
+                    <p>Providing End-to-End Turnkey Mobility and Big Data Solutions</p>
+                  </div>
+                </a>
+              </div>
+            </div><!-- END partners -->
+
+          </div>
+        </div>
+
+      </nav>
+
+      <div class="top-search">
+        <form id="nav-search" method="get" action="//aws.amazon.com/search">
+          <div class="input-wrapper">
+            <input name="searchQuery" type="text" class="search-field">
+            <span class="postfix button search-facet"><span class="current-facet">Entire Site</span> &nbsp;<i class="icon-caret-down">&#xf0d7;</i>
+              <select name="searchPath" id="nav-search-dropdown">
+                <option value="all">Entire Site</option>
+                <option value="AWSMarketplace">AMIs from AWS Marketplace</option>
+                <option value="amis">AMIs from All Sources</option>
+                <option value="articles">Articles & Tutorials</option>
+                <option value="products_and_info">AWS Product Information</option>
+                <option value="case_studies">Case Studies</option>
+                <option value="customerapps">Customer Apps</option>
+                <option value="developertools">Developer Tools</option>
+                <option value="documentation">Documentation</option>
+                <option value="datasets">Public Data Sets</option>
+                <option value="releasenotes">Release Notes</option>
+                <option value="solution_providers">Partners</option>
+                <option value="code">Sample Code & Libraries</option>
+              </select>
+            </span>
+          </div>
+          <div class="facet-wrapper btn-group">
+            <button class="postfix button btn-black search-button" type="submit" form="nav-search" value="Search">
+              <i class="icon-search">&#xf002;</i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="resource-wrapper">
+        <div class="developers dfo-wrapper">
+          <div class="dfo-link"><a href="//aws.amazon.com/developers/">Developers</a> &nbsp;<i class="icon-caret-down">&#xf0d7;</i></div>
+
+          <div class="dfo developers-dfo">
+            <div class="nav-menu">
+              <ul class="developer-list">
+                <li><a href="https://console.aws.amazon.com">AWS Management Console</a></li>
+                <li><a href="https://aws.amazon.com/documentation">Documentation</a></li>
+
+                <li class="sdk-tools-list list-heading">SDKs & Tools</li>
+                <li><a href="//aws.amazon.com/developers/getting-started/">Get Started</a></li>
+                <li><a href="//aws.amazon.com/tools/">Downloads</a></li>
+
+                <li class="developer-center-list list-heading">Platforms</li>
+                <li><a href="//aws.amazon.com/java/">Java</a></li>
+                <li><a href="//aws.amazon.com/javascript/">JavaScript</a></li>
+                <li><a href="//aws.amazon.com/mobile/">Mobile</a></li>
+                <li><a href="//aws.amazon.com/php/">PHP</a></li>
+                <li><a href="//aws.amazon.com/ruby/">Ruby</a></li>
+                <li><a href="//aws.amazon.com/python/">Python</a></li>
+                <li><a href="//aws.amazon.com/net/">Windows & .NET</a></li>
+
+                <li class="resources-list list-heading">Resources</li>
+                <li><a href="https://forums.aws.amazon.com">Forums</a></li>
+                <li><a href="//aws.amazon.com/articles/">Tutorials & Articles</a></li>
+                <li><a href="https://aws.amazon.com/marketplace/ref=mkt_ste_dev_resources_nav">AWS Marketplace</a></li>
+                <li><a href="//aws.amazon.com/whitepapers/">Whitepapers</a></li>
+                <li><a href="//aws.amazon.com/training/">Training & Certification</a></li>
+                <li><a href="//aws.amazon.com/usergroups/">AWS User Groups</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="support dfo-wrapper">
+          <div class="dfo-link"><a href="//aws.amazon.com/support/">Support</a> &nbsp;<i class="icon-caret-down">&#xf0d7;</i></div>
+
+          <div class="dfo support-dfo">
+            <div class="nav-menu">
+              <ul class="support-center-list">
+                <li><a href="https://aws.amazon.com/support">Support Center</a></li>
+              </ul>
+              <ul class="support-list">
+                <li><a href="https://forums.aws.amazon.com">Forums</a></li>
+                <li><a href="https://aws.amazon.com/documentation">Documentation</a></li>
+                <li><a href="//aws.amazon.com/faqs/">Technical FAQs</a></li>
+                <li><a href="http://status.aws.amazon.com/">Service Health Dashboard</a></li>
+                <li><a href="//aws.amazon.com/premiumsupport/">AWS Support Plans</a></li>
+                <li><a href="//aws.amazon.com/contact-us/">Contact Us</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a class="mobile-logo" href="//aws.amazon.com/">
+      <h1>
+        <img src="//dhd3470rjj80p.cloudfront.net/images/logos/aws_mobile_logo.png" alt="Amazon Web Services Inc." title="Click here to return to Amazon Web Services homepage">
+      </h1>
+    </a>
+
+    <div class="mobile-nav-group">
+      <button class="btn icon-search" data-dropdown="mobile-dropdown-search"></button>
+      <button class="btn icon-reorder" data-dropdown="mobile-dropdown-menu"></button>
+    </div>
+
+</header>
+
+<div class="mobile-nav">
+
+  <div id="mobile-dropdown-search" class="dropdown search">
+    <div class="row mobile-search-wrapper">
+      <form action="//aws.amazon.com/search">
+        <div class="search-input columns">
+          <input name="searchQuery" type="text" placeholder="Search">
+        </div>
+        <div class="search-filter columns">
+          <span class="button btn-black expand postfix">
+            <i class="icon-caret-down"></i>
+            <select name="searchPath" class="searchfield-select">
+              <option value="AWSMarketplace">AMIs from AWS Marketplace</option>
+              <option value="amis">AMIs from All Sources</option>
+              <option value="articles">Articles & Tutorials</option>
+              <option value="products_and_info">AWS Product Information</option>
+              <option value="case_studies">Case Studies</option>
+              <option value="customerapps">Customer Apps</option>
+              <option value="developertools">Developer Tools</option>
+              <option value="documentation">Documentation</option>
+              <option value="datasets">Public Data Sets</option>
+              <option value="releasenotes">Release Notes</option>
+              <option value="solution_providers">Partners</option>
+              <option value="code">Sample Code & Libraries</option>
+            </select>
+          </span>
+        </div>
+        <div class="search-button columns">
+          <input class="button btn-black expand postfix" type="submit" value="Go" title="Go">
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <nav id="mobile-dropdown-menu" class="dropdown menu">
+    <ul>
+      <li class="parent">
+        <a href="javascript:void(0)">AWS & Cloud Computing <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/what-is-cloud-computing/">What is Cloud Computing?</a></li>
+          <li><a href="//aws.amazon.com/choosing-a-cloud-platform/">Choosing a Cloud Platform</a></li>
+          <li><a href="//aws.amazon.com/about-aws/globalinfrastructure/">Global Infrastructure</a></li>
+          <li><a href="//aws.amazon.com/solutions/case-studies/">Customer Success Stories</a></li>
+          <li><a href="//aws.amazon.com/about-aws/whats-new/">What's New</a></li>
+          <li><a href="//aws.amazon.com/about-aws/media-coverage/">Media Coverage</a></li>
+          <li><a href="//aws.amazon.com/about-aws/events/">Events</a></li>
+          <li><a href="//aws.amazon.com/resources/webinars/">Videos</a></li>
+          <li><a href="http://aws.typepad.com">AWS Blog</a></li>
+          <li><a href="//aws.amazon.com/support/">AWS Support</a></li>
+          <li><a href="//aws.amazon.com/whitepapers/">Whitepapers</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Compute & Networking <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/ec2/">Amazon EC2</a></li>
+          <li><a href="//aws.amazon.com/autoscaling/">Auto Scaling</a></li>
+          <li><a href="//aws.amazon.com/elasticloadbalancing/">Elastic Load Balancing</a></li>
+          <li><a href="//aws.amazon.com/workspaces/">Amazon WorkSpaces</a></li>
+          <li><a href="//aws.amazon.com/vpc/">Amazon VPC</a></li>
+          <li><a href="//aws.amazon.com/route53/">Amazon Route 53</a></li>
+          <li><a href="//aws.amazon.com/directconnect/">AWS Direct Connect</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/ref=mkt_ste_l2_compute">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Storage & CDN <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/s3/">Amazon S3</a></li>
+          <li><a href="//aws.amazon.com/glacier/">Amazon Glacier</a></li>
+          <li><a href="//aws.amazon.com/ebs/">Amazon EBS</a></li>
+          <li><a href="//aws.amazon.com/importexport/">AWS Import/Export</a></li>
+          <li><a href="//aws.amazon.com/storagegateway/">AWS Storage Gateway</a></li>
+          <li><a href="//aws.amazon.com/cloudfront/">Amazon CloudFront</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/search/results/ref=mkt_ste_l2_storage?searchTerms=S3&amp;search">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Database <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/rds/">Amazon RDS</a></li>
+          <li><a href="//aws.amazon.com/dynamodb/">Amazon DynamoDB</a></li>
+          <li><a href="//aws.amazon.com/elasticache/">Amazon ElastiCache</a></li>
+          <li><a href="//aws.amazon.com/redshift/">Amazon Redshift</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/search/ref=mkt_ste_l2_database?ie=UTF8&amp;node=2649280011&amp;searchTerms=mysql">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Analytics <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/elasticmapreduce/">Amazon EMR</a></li>
+          <li><a href="//aws.amazon.com/kinesis/">Amazon Kinesis</a></li>
+          <li><a href="//aws.amazon.com/datapipeline/">AWS Data Pipeline</a></li>
+          <li><a href="//aws.amazon.com/redshift/">Amazon Redshift</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/b/2649336011/ref=mkt_ste_l2_analytics?navclick=true">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Application Services <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/appstream/">Amazon AppStream</a></li>
+          <li><a href="//aws.amazon.com/cloudsearch/">Amazon CloudSearch</a></li>
+          <li><a href="//aws.amazon.com/swf/">Amazon SWF</a></li>
+          <li><a href="//aws.amazon.com/sqs/">Amazon SQS</a></li>
+          <li><a href="//aws.amazon.com/ses/">Amazon SES</a></li>
+          <li><a href="//aws.amazon.com/sns/">Amazon SNS</a></li>
+          <li><a href="//aws.amazon.com/fps/">Amazon FPS</a></li>
+          <li><a href="//aws.amazon.com/elastictranscoder/">Amazon Elastic Transcoder</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/b/2649362011/ref=mkt_ste_l2_appsvcs">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Deployment & Management <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/console/">AWS Management Console</a></li>
+          <li><a href="//aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a></li>
+          <li><a href="//aws.amazon.com/cloudtrail/">AWS CloudTrail</a></li>
+          <li><a href="//aws.amazon.com/cloudwatch/">Amazon CloudWatch</a></li>
+          <li><a href="//aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
+          <li><a href="//aws.amazon.com/cloudformation/">AWS CloudFormation</a></li>
+          <li><a href="//aws.amazon.com/opsworks/">AWS OpsWorks</a></li>
+          <li><a href="//aws.amazon.com/cloudhsm/">AWS CloudHSM</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">AWS Marketplace Software <i class="icon-caret-right"></i></a>
+        <ul>
+          <li class="parent">
+            <a href="javascript:void(0)">Infrastructure Software (820+) <i class="icon-caret-right"></i></a>
+            <ul>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649362011/ref=mkt_ste_l2_mpAppStacks">Application Stacks</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649367011/ref=mkt_ste_l2_mpOpSys">Operating Systems</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649364011/ref=mkt_ste_l2_mpDB_caching">Databases & Caching</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649366011/ref=mkt_ste_l2_mpNWInfra">Network Infrastructure</a></li>
+            </ul>
+          </li>
+          <li class="parent">
+            <a href="javascript:void(0)">Business Software (610+) <i class="icon-caret-right"></i></a>
+            <ul>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649336011/ref=mkt_ste_l2_mpBusIntelSW">Business Intelligence</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/5018785011/ref=mkt_ste_l2_mpCollabSW">Collaboration</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649338011/ref=mkt_ste_l2_mpContentMgmtSW">Content Management</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649339011/ref=mkt_ste_l2_mpCRM">CRM</a></li>
+            </ul>
+          </li>
+          <li class="parent">
+            <a href="javascript:void(0)">Developer Tools (180+) <i class="icon-caret-right"></i></a>
+            <ul>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649281011/ref=mkt_ste_l2_mpBugTrackingSW">Issue & Bug Tracking</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649280011/ref=mkt_ste_l2_mpMonitoringSW">Monitoring</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649282011/ref=mkt_ste_l2_mpSourceCTRLSW">Source Control</a></li>
+              <li><a href="https://aws.amazon.com/marketplace/b/2649283011/ref=mkt_ste_l2_mpTestingSW">Testing</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Start-ups <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/start-ups/">Start-ups on AWS</a></li>
+          <li><a href="//aws.amazon.com/startupchallenge/">Start-Up Challenge</a></li>
+          <li><a href="//aws.amazon.com/web-mobile-social/">Web, Mobile, Social</a></li>
+          <li><a href="//aws.amazon.com/big-data/">Big Data</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Enterprises <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/enterprise-it/">Enterprises on AWS</a></li>
+          <li><a href="//aws.amazon.com/business-applications/">Business Applications</a></li>
+          <li><a href="//aws.amazon.com/backup-storage/">Backup &amp; Storage</a></li>
+          <li><a href="//aws.amazon.com/security/">Security Center</a></li>
+          <li><a href="//aws.amazon.com/economics/">Economics Center</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Government & Education <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/government-education/">Government & Education</a></li>
+          <li><a href="//aws.amazon.com/federal/">Federal Government</a></li>
+          <li><a href="//aws.amazon.com/stateandlocal/">State and Local Government</a></li>
+          <li><a href="//aws.amazon.com/education/">Education</a></li>
+          <li><a href="//aws.amazon.com/govcloud-us/">AWS GovCloud (US) Region</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Web, Mobile, & Social Apps <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/web-mobile-social/">Web, Mobile, & Social Apps on AWS</a></li>
+          <li><a href="//aws.amazon.com/web-applications/social-media/">Social Apps on AWS</a></li>
+          <li><a href="//aws.amazon.com/game-hosting/">Gaming on AWS</a></li>
+          <li><a href="//aws.amazon.com/media-sharing/">Media Sharing on AWS</a></li>
+          <li><a href="//aws.amazon.com/ecommerce-applications/">E-commerce Site on AWS</a></li>
+          <li><a href="//aws.amazon.com/mobile-apps/">Mobile Apps on AWS</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/ref=mkt_ste_l2_wms">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Digital Media & Marketing <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/digital-media/">Digital Media</a></li>
+          <li><a href="//aws.amazon.com/digital-marketing/">Digital Marketing</a></li>
+          <li><a href="//aws.amazon.com/websites/">Marketing Websites</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/search/results/ref=mkt_ste_l2_dmm?searchTerms=media&amp;search=">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Business Applications <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/enterprise-applications/">Enterprise Applications on AWS</a></li>
+          <li><a href="//aws.amazon.com/enterprise-applications/oracle/">Oracle</a></li>
+          <li><a href="//aws.amazon.com/enterprise-applications/sap/">SAP</a></li>
+          <li><a href="//aws.amazon.com/enterprise-applications/windows-server/">Microsoft</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/b/2649275011/ref=mkt_ste_l2_bizapps">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Backup, Archive, & DR <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/backup-storage/">Backup and Storage on AWS</a></li>
+          <li><a href="//aws.amazon.com/disaster-recovery/">Disaster Recovery on AWS</a></li>
+          <li><a href="//aws.amazon.com/archive/">Archiving on AWS</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/search/results/ref=mkt_ste_l2_badr?searchTerms=backup&search=">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">Big Data & HPC <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/big-data/">Big Data on AWS</a></li>
+          <li><a href="//aws.amazon.com/hpc-applications/">HPC on AWS</a></li>
+          <li><a href="https://aws.amazon.com/marketplace/b/2649340011/ref=mkt_ste_l2_HPC">AWS Marketplace</a></li>
+        </ul>
+      </li>
+
+      <li class="parent">
+        <a href="javascript:void(0)">AWS Partner Network <i class="icon-caret-right"></i></a>
+        <ul>
+          <li><a href="//aws.amazon.com/solutions/solution-providers/">Find AWS Partners</a></li>
+          <li><a href="//aws.amazon.com/partners/overview/">Join the AWS Partner Network</a></li>
+          <li><a href="//aws.amazon.com/partners/overview/apn-portal/">Login to the APN Portal</a></li>
+          <li><a href="//aws.amazon.com/solutions/premier-consulting-partners/">Premier Consulting Partners</a></li>
+          <li><a href="//aws.amazon.com/solutions/global-technology-partners/">Global Technology Partners</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+</div>
+<!-- End Nav -->
+    <!-- End Nav -->
+    
+    <div id="page-content">
+    <!-- Content -->
+    <div class="wrapper row" role="content">
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+<aside class="three columns leftnavcontainer" role="complementary">
+    <div class="leftnav">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="parsys iparsys sidebar"><div class="section"><div class="new"></div>
+</div><div class="iparys_inherited"><div class="parsys iparsys sidebar"><div class="section"><div class="parbase sidenav">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+<div class="breadcrumb-wrapper clearfix">
+    <div class="breadcrumb">
+        <div class="small-logo-wrapper"><a href="#top"><div class="small-logo">Amazon Web Services</div></a></div>
+        <span class="breadcrumb-small"><a href="/products/">Products & Services</a></span>
+    </div>
+ 
+    <div class="go-to-top">
+        <a href="#top"><i class="icon-angle-up button">&#xf106;</i></a>
+    </div>
+</div>
+ 
+<ul class="side-navbar nav">
+ 
+    <li>
+        <a href="/ec2/">
+            Amazon EC2 
+            <i class="icon-angle-right">&#xf105;</i>
+        </a>
+    </li>
+    <li><a href="/ec2/details/">Product Details<i class="icon-angle-right">&#xf105;</i></a></li><li class="active"><a href="/ec2/instance-types/">Instances<i class="icon-angle-right">&#xf105;</i></a></li><li><a href="/ec2/pricing/">Pricing<i class="icon-angle-right">&#xf105;</i></a><ul></ul></li><li><a href="/ec2/purchasing-options/">Purchasing Options<i class="icon-angle-right">&#xf105;</i></a><ul><li><a href="/ec2/purchasing-options/spot-instances/">Amazon EC2 Spot Instances<i class="icon-angle-right">&#xf105;</i></a></li><li><a href="/ec2/purchasing-options/reserved-instances/">Amazon EC2 Reserved Instances<i class="icon-angle-right">&#xf105;</i></a></li></ul></li><li><a href="/ec2/developer-resources/">Developer Resources<i class="icon-angle-right">&#xf105;</i></a></li><li><a href="/ec2/faqs/">FAQs<i class="icon-angle-right">&#xf105;</i></a></li><li><a href="/ec2/sla/">Amazon EC2 SLA<i class="icon-angle-right">&#xf105;</i></a></li>
+</ul>
+
+<script>                
+    require(["jquery", "scripts"], function($) {
+        $.awsComponent.leftSideBar();
+    });
+</script></div>
+</div><div class="section"><div class="related-link">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+            
+
+            
+            
+                <p>Related Links</p>
+                <ul>
+                
+                  
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+    <a class="related-item" href="/windows/">
+        Windows Instances
+    </a>
+</li> 
+
+                  
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+    <a class="related-item" href="/ec2/vm-import/">
+        VM Import/Export
+    </a>
+</li> 
+
+                  
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+    <a class="related-item" href="https://console.aws.amazon.com/ec2/">
+        Management Console
+    </a>
+</li> 
+
+                  
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+    <a class="related-item" href="http://aws.amazon.com/documentation/ec2/">
+        Documentation
+    </a>
+</li> 
+
+                  
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+    <a class="related-item" href="http://aws.amazon.com/releasenotes/Amazon-EC2">
+        Release Notes
+    </a>
+</li> 
+
+                  
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+    <a class="related-item" href="https://forums.aws.amazon.com/forum.jspa?forumID=30">
+        Discussion Forum
+    </a>
+</li> 
+
+                
+                </ul>
+            
+        
+
+
+
+</div>
+</div><div class="section"><div class="call-to-action parbase">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sidebar-cta ">
+  <p>Get Started for Free</p>
+  <a class="button btn-gold" href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html">Create Free Account</a>
+</div></div>
+</div></div>
+</div>
+</div>
+
+    </div>
+</aside>
+
+<div class="nine columns content-with-nav" role="main">
+    <section>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="title row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+     
+		
+			class="eight columns"
+		
+    
+ >
+    
+    
+        
+           
+               <h1 
+               >
+               Amazon EC2 Instances 
+               </h1>
+                      
+                      
+     
+</div>
+
+
+
+        <div 
+        
+			class="four columns"
+		 >
+        
+        
+            <a href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html" class="button btn-gold btn-block btn-large-cta btn-offset">
+                Create Free Account
+            </a>
+        
+
+        
+    </div>
+</div>
+
+<div class="content parsys"><div class="lead-copy section">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="lead">
+    <p>     <b>Amazon EC2 instances</b>     are the fundamental building block for your computing needs in the AWS cloud. You     can think of instances as virtual servers that can run applications. Instances are created from an       <a adhocenable="false" href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html">Amazon Machine Image (AMI)</a> and choosing an appropriate instance  type. An AMI is a template that contains a software configuration,  including an operating system, which defines     your operating environment. You can select an AMI provided by AWS,  our user community,     or on the <a adhocenable="false" href="http://aws.amazon.com/marketplace">AWS Marketplace</a>. You can also create and optionally     share your own AMIs. A single AMI can be used to launch one or thousands of instances.<br>
+</p>
+
+</div></div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h2
+               >
+               Selecting Instance Types 
+               </h2>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>Amazon EC2 provides a wide selection of instance types optimized to fit different use cases. Instance types comprise varying combinations of CPU, memory, storage, and networking capacity and give you the flexibility to choose the appropriate mix of resources for your applications. Each instance type includes one or more instance sizes, allowing you to scale your resources to the requirements of your target workload. For the best experience, you should launch on instance types that are appropriate for your applications. You have the flexibility to choose the combination of instance types most appropriate for your application today, and then choose a different instance size as your business and application needs change. To make it easier for you to select the best option for your applications, Amazon EC2 instance types are grouped together into families based on target application profiles. Below is a quick guide to help you think about choosing the right instance type.&amp;nbsp;</p>
+<p>Amazon EC2 instances are available in the following families:<br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               General Purpose 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>This family includes the M1 and M3 instance types, and provides a balance of compute, memory, and network resources, and it is a good choice for many applications. General-purpose instances are recommended for small and mid-size databases, data processing tasks that require additional memory, caching fleets, and for running backend servers for SAP, Microsoft SharePoint, and other enterprise applications.</p>
+<p>M3 instances are the newest generation of this family. M3 instances feature high frequency Intel Xeon E5-2670 (Sandy Bridge or Ivy Bridge) processors. &nbsp;These instances offer SSD-based instance storage for fast instance store I/O performance. Compared to M1 instances, M3 instances provide better, more consistent perfromance at lower prices.&nbsp;</p>
+<ul>
+<li><b>Popular use cases</b>: Small and mid-size databases, data processing, encoding, caching, SAP, Microsoft SharePoint and other enterprise applications.</li>
+</ul>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Compute-optimized 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>     This family includes the C1, CC2, and C3 instance types, and is  optimized for applications that benefit from high compute power.  Compute-optimized instances have a higher ratio of vCPUs to memory than  other families, and the lowest cost per vCPU among all Amazon EC2  instance types. We recommend compute-optimized instances for running  compute-bound scale out applications. Examples of such applications  include high performance front-end fleets and web-servers, on-demand  batch processing, distributed analytics, and high performance science  and engineering applications. </p>
+<p>  C3 instances are the latest generation of compute-optimized  instances, providing customers with the highest performing processors  and the lowest price/compute performance available in EC2 currently.  Each virtual CPU (vCPU) on C3 instances is a hardware hyper-thread from a  2.8 GHz Intel Xeon E5-2680v2 (Ivy Bridge) processor allowing you to  benefit from the latest generation of Intel processors. C3 instances  support Enhanced Networking that delivers improved inter-instance  latencies, lower network jitter and significantly higher packet per  second (PPS) performance. This feature provides hundreds of teraflops of  floating point performance by creating high performance clusters of C3  instances. Compared to C1 instances, C3 instances provide faster  processors, approximately double the memory per vCPU, support for  clustering and SSD-based instance storage.</p>
+<p>  CC2 instances feature 2.6GHz Intel Xeon E5-2670 processors, high core  count (32 vCPUs) and support for cluster networking. CC2 instances are  optimized specifically for HPC applications that benefit from high  bandwidth, low latency networking and high compute capacity. <br>
+</p>
+<ul>
+<li><b>Popular use cases</b>: High-traffic web applications,             ad serving, batch processing, video encoding, distributed analytics, high-energy             physics, genome analysis, and computational fluid dynamics.<br>
+</li>
+</ul>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+                GPU Instances 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>This family includes G2 and CG1 instance types, which provide you  with Intel Xeon processors and high-performance NVIDIA GPUs intended for  graphics and general purpose GPU compute applications.  Currently,  there are two types of GPU instances.  G2 instances provide access to  NVIDIA GRID GPUs (“Kepler” GK104) each with 1,536 CUDA cores and 4GB of  video memory.  This GPU also features an on-board hardware video encoder  designed to support up to eight real-time HD video streams (720p@30fps)  or up to four real-time FHD video streams (1080p at 30 fps).  The  initial driver release provides support for OpenGL 4.3, DirectX 9, 10,  and 11, CUDA 5.5, OpenCL 1.1, and GRID SDK.  The GRID SDK provides  low-level access to the capture and encoding capabilities of GRID GPUs.   Combined with the hardware resources of G2 instances, the GRID SDK  enables low-latency frame capture and encoding for either the full  operating system or select render targets, enabling high-quality  interactive streaming experiences.    </p>
+<p> CG1 instances provide access to NVIDIA Tesla M2050 GPUs (“Fermi”  GF100) each with 448 CUDA cores and 3GB of video memory.  The latest  driver release provides support for CUDA 5.5, OpenCL 1.1, and  DirectCompute.  The NVIDIA GPU Computing SDK provides hundreds of code  samples and white papers to help you get started writing software with  CUDA or DirectCompute, allowing you to take advantage of the parallel  performance of NVIDIA GPUs. </p>
+<p> You can be up and running with Amazon EC2 GPU instances in minutes by leveraging our GPU Amazon Machine Images found in the <a adhocenable="false" href="https://aws.amazon.com/marketplace/search/results/?searchTerms=GPU">AWS Marketplace</a>.   For immediate access to 3D graphics streaming capabilities, the AWS  Marketplace also provides offerings that integrate the NVIDIA GRID SDK  and G2 instances.      </p>
+<ul>
+<li><b>G2 popular use cases</b>: Game streaming, 3D application streaming, and other server-side graphics workloads.</li>
+<li><b>CG1 popular use cases</b>: Computational chemistry, rendering,             financial modeling, and engineering design.<br>
+</li>
+</ul>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Memory-optimized 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>     This family includes the M2 and CR1 instance types and is optimized  for memory-intensive applications. Memory-optimized instances use Intel  Xeon processors and have the lowest cost per GiB of RAM among Amazon EC2  instance types. We recommend memory-optimized instances for many  database applications, for memcached and other distributed caches, and  larger deployments of enterprise applications like SAP and Microsoft  SharePoint. CR1 instances are the latest generation of memory-optimized  instances and provide even more memory (244 GiB), run on faster CPUs  (Intel Xeon E5-2670 with NUMA support) compared to M2 instances, and  support cluster networking for bandwidth intensive applications. M2  instances are available in smaller sizes, and are an excellent option  for many memory-bound applications.     <br>
+</p>
+<ul>
+<li><b>M2 and CR1 popular use cases</b>: High performance databases,             distributed memory caches, in-memory analytics, genome assembly and analysis, and             larger deployments of SAP, Microsoft SharePoint and other enterprise applications.
+</li>
+</ul>
+<p></p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Storage-optimized 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>     This family includes the High Storage Instances, HS1 and High I/O  Instances, I2 and HI1.  These instances provide you with Intel Xeon  processors and direct-attached storage options optimized for  applications with specific storage capacity and random I/O requirements.  HS1 instances are optimized for very high storage density, low storage  cost, and high sequential I/O performance. I2 and HI1 instances provide  very fast SSD-backed instance storage optimized for very high random I/O  performance, and provide high IOPS at a low cost. We recommend using I2  and HI1 instances for NoSQL databases like Cassandra and MongoDB which  benefit from very high random I/O performance and the low request  latency of direct-attached SSDs, and are an excellent choice for  transactional systems that can manage their own resiliency.       <br>
+     <br>
+  HS1 instances provide you with 48 TB of storage capacity across 24 hard  disk drives, high network performance, fast CPU performance (Intel Xeon  E5-2650), and offer throughput performance of up to 2.6 GB per second.  We recommend HS1 instances for customers running large-scale data  warehouses or parallel file systems such as an always-on Hadoop cluster  with 100s of terabytes of data.   <br>
+   <br>
+ HI1 instances are the first generation of High I/O instances. HI1  instances feature Intel processors - each CPU (vCPU) is a 2.4 GHz thread  from a hyper-threaded Intel Xeon E5-2620 (Westmere) processor.   Hi1.4xlarge instances include 60.5 GiB of RAM and 1990 GB of SSD-based  instance storage.  <br>
+   <br>
+ I2 instances are the latest generation of High I/O instances, providing  customers with the highest IOPS compared to all other Amazon EC2  instances. I2 instances feature the latest generation of Intel  processors - each virtual CPU (vCPU) is a hardware hyperthread from an  Intel Xeon E5-2670 v2 (Ivy Bridge) processor.  I2.8xlarge instances  include 244 GiB of RAM, 6400 GB of SSD-based instance storage, and  supports TRIM for better successive SSD write performance. I2 instances  also support <a adhocenable="false" href="/ec2/">Enhanced Networking</a> for low latency, low jitter, and very high packet per second performance.     </p>
+<ul>
+<li><b>I2 and HI1 popular use cases</b>: NoSQL databases like Cassandra and MongoDB, and scale out transactional databases.</li>
+<li><b>HS1 popular use cases</b>: Data warehousing, Hadoop, and cluster             file systems.<br>
+</li>
+</ul>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Micro Instances 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>     Micro instances are a very low-cost instance option, providing a  small amount of     CPU resources. Micro instances may opportunistically increase CPU  capacity in short     bursts when additional cycles are available. They are well suited  for lower throughput     applications and websites that require additional compute cycles  periodically, but are not appropriate for applications that require  sustained CPU performance.     <br>
+</p>
+<ul>
+<li><b>T1 popular use cases</b>: Low traffic websites or blogs, small             administrative applications, bastion hosts, and free trials to explore EC2             functionality</li>
+</ul>
+<p>For a complete list of instance families, sizes, and specifications of Amazon EC2     instance types please see <a adhocenable="false" href="/ec2/">Amazon EC2 Instance Details</a>       </p>
+<p>We recommend that you select the instance type that is most  appropriate for your workload profile and scale, and then change your  instance type if your application's requirements change. In all cases,  we strongly recommend application  profiling and load testing. The  availability of multiple instance types, combined with features like  EBS-optimization and cluster networking allow applications to be  optimized for increased performance, improved application resilience,  and lower costs. In particular, you should evaluate the most important  performance metrics for your application. For applications that benefit  from a low     cost per CPU, we recommend choosing compute-optimized instances (C1  or CC2 instances).  For applications that require the lowest cost per  GiB of memory, we recommend choosing memory-optimized instances (M2 or  CR1 instances). Additionally, we recommend that if you are running a  database, you should choose instances that support EBS-optimization or  instances that support cluster networking. For applications with high  inter-node network requirements, you should choose instances that  support cluster networking. Micro instances provide short-lived CPU  resources opportunistically and are not recommended for applications  that require sustained CPU performance. <br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h2
+               >
+               Instance Features 
+               </h2>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>Amazon EC2 instances provide a number of additional features to help you deploy, manage, and scale your applications.<br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Multiple Storage Options 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>Amazon EC2 allows you to choose between multiple storage options based on your requirements.  <a adhocenable="false" href="/ebs/">Amazon EBS</a>  is a durable, block-level storage volume that you can attach to a  single, running Amazon EC2 instance. You can use Amazon EBS as a primary  storage device for data that requires frequent and granular updates.  For example, Amazon EBS is the recommended storage option when you run a  database on Amazon EC2.  Amazon EBS volumes persist independently from  the running life of an Amazon EC2 instance. Once a volume is attached to  an instance you can use it like any other physical hard drive. Amazon  EBS provides two volume types: Standard volumes and Provisioned IOPS  volumes. They differ in performance characteristics and price, allowing  you to tailor your storage performance and cost to the needs of your  applications.</p>
+<p>  Standard volumes offer storage for applications with moderate or  bursty I/O requirements. Standard volumes deliver approximately 100 IOPS  on average with a best effort ability to burst to hundreds of IOPS.  Standard volumes are also well suited for use as boot volumes, where the  burst capability provides fast instance start-up times.</p>
+<p>  Provisioned IOPS volumes are designed to deliver predictable, high  performance for I/O intensive workloads such as databases. With  Provisioned IOPS, you specify an IOPS rate when creating a volume, and  then Amazon EBS provisions that rate for the lifetime of the volume.  Amazon EBS currently supports up to 4000 IOPS per Provisioned IOPS  volume. You can stripe multiple volumes together to deliver thousands of  IOPS per Amazon EC2 instance to your application.</p>
+<p>   Many Amazon EC2 instances can also include storage from disks that  are physically attached to the host computer. This disk storage is  referred to as instance store. Instance store provides temporary  block-level storage for Amazon EC2 instances. The data on an instance  store volume persists only during the life of the associated Amazon EC2  instance.</p>
+<p>   In addition to block level storage via Amazon EBS or instance store,  you can also use Amazon S3 for highly durable, highly available object  storage.  Learn more about Amazon EC2 storage options from the&nbsp;<a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Storage.html" adhocenable="false">Amazon EC2 documentation</a>.<br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               EBS-optimized Instances 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>For an additional low, hourly fee, customers can launch selected Amazon EC2 instances types as EBS-optimized instances. EBS-optimized instances enable EC2 instances to fully use the IOPS provisioned on an EBS volume. EBS-optimized instances deliver dedicated throughput between Amazon EC2 and Amazon EBS, with options between 500 and 2,000 Megabits per second (Mbps) depending on the instance type used. The dedicated throughput minimizes contention between Amazon EBS I/O and other traffic from your EC2 instance, providing the best performance for your EBS volumes. EBS-optimized instances are designed for use with both Standard and Provisioned IOPS Amazon EBS volumes. When attached to EBS-optimized instances, Provisioned IOPS volumes can achieve single digit millisecond latencies and are designed to deliver within 10% of the provisioned IOPS performance 99.9% of the time.&nbsp;We recommend using Provisioned IOPS volumes with EBS-optimized instances or instances that support cluster networking for applications with high storage I/O requirements.<br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Enhanced Networking 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>Enhanced Networking enables you to get significantly higher packet per second (PPS) performance, lower network jitter and lower latencies. This feature uses a new network virtualization stack that provides higher I/O performance and lower CPU utilization compared to traditional implementations. In order to take advantage of Enhanced Networking, you should launch an HVM AMI in VPC, and install the appropriate driver. Enhanced Networking is currently supported in C3 and I2 instances. For instructions on how to enable Enhanced Networking on EC2 instances, see the <a adhocenable="false" href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html">Enhanced Networking on Linux</a> and <a adhocenable="false" href="http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/enhanced-networking-windows.html">Enhanced Networking on Windows</a> tutorials. To learn more about this feature, check out the <a adhocenable="false" href="/ec2/faqs/">Enhanced Networking FAQ</a> section.<br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Cluster Networking 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>     C3, I2, CC2, CR1, CG1, G2, HI1, and HS1 instances support cluster networking. Instances launched into a     common cluster placement group are placed into a logical cluster that provides high-bandwidth,     low-latency networking between all instances in the cluster. Cluster networking     is ideal for high performance analytics systems and many science and engineering     applications, especially those using the MPI library standard for parallel     programming. <br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Dedicated Instances 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p><a adhocenable="false" href="/dedicated-instances/">Dedicated Instances</a> are Amazon EC2 instances that run on single-tenant hardware dedicated to a single customer. They are ideal for workloads where corporate policies or industry regulations require that your EC2 instances be physically isolated at the host hardware level from instances that belong to other customers. Dedicated Instances let you take full advantage of the benefits of the AWS cloud – on-demand elastic provisioning, pay only for what you use, all while ensuring that your Amazon EC2 compute instances are isolated at the hardware level.<br>
+</p>
+</div>
+<div class="columnbuilder parbase section">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+<div class="row  " id="2751">      
+    
+    
+    
+        <div class="eight columns">
+            <div class="parsys col1"><div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Dedicated Instances 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>Amazon EC2 instances provide access to the following processor features from Intel including:</p>
+<ul>
+<li> <b>Intel® AES New Instructions (AES-NI)</b>:  Intel AES-NI  encryption instruction set improves upon the original Advanced  Encryption Standard (AES) algorithm to provide faster data protection  and greater security.</li>
+<li><b>Intel® Advanced Vector Extensions (Intel® AVX)</b>:  Intel AVX is  a 256-bit instruction set extension designed for applications that are  Floating Point (FP) intensive. It improves performance for applications  like image and audio/video processing, scientific simulations, financial  analytics, and 3D modeling and analysis.</li>
+<li><b>Intel® Turbo Boost Technology</b>:  Intel Turbo Boost Technology  provides more performance when needed. The processor is able to  automatically run cores faster than the base operating frequency to help  you get more done faster. </li>
+</ul>
+<p> Not all processor features are available in all instance types, check out the <a adhocenable="false" href="/ec2/faqs/">instance type processor details table</a> for more detailed information on which features are available from which instance types.<br>
+</p>
+</div>
+</div>
+
+        </div>
+        
+        <div class="four columns">
+            <div class="parsys col2"><figure class="image section">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <div class="parbase image"><div id="img-1392"><img title="logo_intel_marketplace" alt="logo_intel_marketplace" src="//d2c8pv72mjay80.cloudfront.net/logos/marketplace/logo_intel_marketplace.jpg"></div></div>
+
+    
+
+<figcaption>
+    
+</figcaption></figure>
+</div>
+
+        </div>
+        
+    
+</div>
+
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h2
+               >
+               Measuring Instance Performance 
+               </h2>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Why should you measure instance performance&#x3f; 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>     Amazon EC2 allows you to provision a variety of instances types,  which provide different     combinations of CPU, memory, disk, and networking. Launching     new instances and running tests in parallel is easy, and we  recommend measuring the performance of applications to identify  appropriate instance types and validate application architecture. We  also recommend rigorous load/scale testing to ensure that your  applications can scale     as you intend. <br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Considerations for Amazon EC2 performance evaluation 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>Amazon EC2 provides you with a large number of options across ten different instance types, each with one or more size options, organized into six distinct instance families optimized for different types of applications. We recommend that you assess the requirements of your applications and select the appropriate instance family as a starting point for application performance testing. You should start evaluating the performance of your applications by (a) identifying how your application needs compare to different instance families (e.g. is the application compute-bound, memory-bound, etc.?), and (b) sizing your workload to identify the appropriate instance size. There is no substitute for measuring the performance of your full application since application performance can be impacted by the underlying infrastructure or by software and architectural limitations. We recommend application-level testing, including the use of application profiling and load testing tools and services.</p>
+<p><a name="instance-details"></a><br>
+</p>
+<p></p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h2
+               >
+               Instance Types 
+               </h2>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Instance Type Details 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>The following table list the specifications for each Amazon EC2 Instance Type:<br>
+</p>
+</div>
+<div class="aws-table section">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table width="100%" cellspacing="0" cellpadding="1" border="0" jcr:primarytype="nt:unstructured">
+<tbody><tr><td><b>Instance Family&nbsp;&nbsp;&nbsp; <br>
+ </b></td>
+<td><b>Instance Type</b></td>
+<td><b>Processor Arch</b></td>
+<td><b>vCPU</b></td>
+<td><b>ECU</b></td>
+<td><b>Memory (GiB)</b></td>
+<td><b>Instance Storage (GB)</b></td>
+<td><b>EBS-optimized Available</b></td>
+<td><b>Network Performance</b></td>
+</tr><tr><td>General purpose</td>
+<td>m3.medium</td>
+<td>64-bit</td>
+<td>1</td>
+<td>3</td>
+<td>3.75</td>
+<td>1 x 4 SSD*6</td>
+<td>-</td>
+<td>Moderate</td>
+</tr><tr><td>General purpose</td>
+<td>m3.large</td>
+<td>64-bit</td>
+<td>2</td>
+<td>6.5</td>
+<td>7.5</td>
+<td>1 x 32 SSD*6</td>
+<td>-</td>
+<td>Moderate</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m3.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">13</td>
+<td valign="top">15</td>
+<td valign="top">2 x 40 SSD*6</td>
+<td valign="top">Yes</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m3.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">26</td>
+<td valign="top">30</td>
+<td valign="top">2 x 80 SSD*6</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m1.small</td>
+<td valign="top">32-bit or<br>
+64-bit</td>
+<td valign="top">1*1</td>
+<td valign="top">1</td>
+<td valign="top">1.7</td>
+<td valign="top">1 x 160</td>
+<td valign="top">-</td>
+<td valign="top">Low</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m1.medium</td>
+<td valign="top">32-bit or<br>
+64-bit</td>
+<td valign="top">1</td>
+<td valign="top">2</td>
+<td valign="top">3.75</td>
+<td valign="top">1 x 410</td>
+<td valign="top">-</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m1.large</td>
+<td valign="top">64-bit</td>
+<td valign="top">2</td>
+<td valign="top">4</td>
+<td valign="top">7.5</td>
+<td valign="top">2 x 420</td>
+<td valign="top">Yes</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m1.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">8</td>
+<td valign="top">15</td>
+<td valign="top">4 x 420</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.large</td>
+<td valign="top">64-bit</td>
+<td valign="top">2</td>
+<td valign="top">7</td>
+<td valign="top">3.75</td>
+<td valign="top">2 x 16 SSD</td>
+<td valign="top">-</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">14</td>
+<td valign="top">7.5</td>
+<td valign="top">2 x 40 SSD</td>
+<td valign="top">Yes</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">28</td>
+<td valign="top">15</td>
+<td valign="top">2 x 80 SSD</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">55</td>
+<td valign="top">30</td>
+<td valign="top">2 x 160 SSD</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">32</td>
+<td valign="top">108</td>
+<td valign="top">60</td>
+<td valign="top">2 x 320 SSD</td>
+<td valign="top">-</td>
+<td valign="top">10 Gigabit*4</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c1.medium</td>
+<td valign="top">32-bit or<br>
+64-bit</td>
+<td valign="top">2</td>
+<td valign="top">5</td>
+<td valign="top">1.7</td>
+<td valign="top">1 x 350</td>
+<td valign="top">-</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c1.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">20</td>
+<td valign="top">7</td>
+<td valign="top">4 x 420</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">cc2.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">32</td>
+<td valign="top">88</td>
+<td valign="top">60.5</td>
+<td valign="top">4 x 840</td>
+<td valign="top">-</td>
+<td valign="top">10 Gigabit*4</td>
+</tr><tr><td valign="top">GPU instances</td>
+<td valign="top">g2.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">26</td>
+<td valign="top">15</td>
+<td valign="top">1 x 60 SSD</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">GPU instances</td>
+<td valign="top">cg1.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">33.5</td>
+<td valign="top">22.5</td>
+<td valign="top">2 x 840</td>
+<td valign="top">-</td>
+<td valign="top">10 Gigabit*4</td>
+</tr><tr><td valign="top">Memory optimized</td>
+<td valign="top">m2.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">2</td>
+<td valign="top">6.5</td>
+<td valign="top">17.1</td>
+<td valign="top">1 x 420</td>
+<td valign="top">-</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">Memory optimized</td>
+<td valign="top">m2.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">13</td>
+<td valign="top">34.2</td>
+<td valign="top">1 x 850</td>
+<td valign="top">Yes</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">Memory optimized</td>
+<td valign="top">m2.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">26</td>
+<td valign="top">68.4</td>
+<td valign="top">2 x 840</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">Memory optimized</td>
+<td valign="top">cr1.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">32</td>
+<td valign="top">88</td>
+<td valign="top">244</td>
+<td valign="top">2 x 120<br>
+SSD</td>
+<td valign="top">-</td>
+<td valign="top">10 Gigabit*4</td>
+</tr><tr><td valign="top">Storage optimized</td>
+<td valign="top">i2.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">14</td>
+<td valign="top">30.5</td>
+<td valign="top">1 x 800 SSD</td>
+<td valign="top">Yes</td>
+<td valign="top">Moderate</td>
+</tr><tr><td valign="top">Storage optimized</td>
+<td valign="top">i2.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">27</td>
+<td valign="top">61</td>
+<td valign="top">2 x 800 SSD</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">Storage optimized</td>
+<td valign="top">i2.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">53</td>
+<td valign="top">122</td>
+<td valign="top">4 x 800 SSD</td>
+<td valign="top">Yes</td>
+<td valign="top">High</td>
+</tr><tr><td valign="top">Storage optimized</td>
+<td valign="top">i2.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">32</td>
+<td valign="top">104</td>
+<td valign="top">244</td>
+<td valign="top">8 x 800 SSD</td>
+<td valign="top">-</td>
+<td valign="top">10 Gigabit*4</td>
+</tr><tr><td valign="top">Storage optimized</td>
+<td valign="top">hs1.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">35</td>
+<td valign="top">117</td>
+<td valign="top">24 x 2,048*3</td>
+<td valign="top">-</td>
+<td valign="top">10 Gigabit*4</td>
+</tr><tr><td valign="top">Storage optimized</td>
+<td valign="top">hi1.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">35</td>
+<td valign="top">60.5</td>
+<td valign="top">2 x 1,024<br>
+SSD*2</td>
+<td valign="top">-</td>
+<td valign="top">10 Gigabit*4</td>
+</tr><tr><td valign="top">Micro instances</td>
+<td valign="top">t1.micro</td>
+<td valign="top">32-bit or<br>
+64-bit</td>
+<td valign="top">1</td>
+<td valign="top">Variable*5</td>
+<td valign="top">0.615</td>
+<td valign="top">EBS only</td>
+<td valign="top">-</td>
+<td valign="top">Very Low</td>
+</tr></tbody></table>
+</div>
+<div class="text section"><p>*1 - M1, C1, M2, and HI1 instances are based on Intel Xeon processors.&nbsp;<br>
+- For G2, M3, CC2 and CR1 instances, each vCPU is a hardware hyperthread from Intel Xeon E5-2670 processors<br>
+- For C3 instances, each vCPU is a hardware hyperthread from 2.8 GHz Intel Xeon E5-2680v2 (Ivy Bridge) processors<br>
+- For HS1 instances, each vCPU is a hardware hyperthread from Intel Xeon E5-2650 processors<br>
+- CG1 instances are backed by 2 x Intel Xeon X5570, quad-core with hyperthread plus 2 NVIDIA Tesla M2050 GPUs<br>
+- G2 instances are backed by 1 x NVIDIA GRID GPU (Kepler GK104)<br>
+*2 HI1 instances can deliver more than 120,000 4 KB random read IOPS and between 10,000 and 85,000 4 KB random write IOPS (depending on active logical block addressing span) to applications. The maximum sequential throughput on is approximately 2 GB/s read and 1.1 GB/s write.<br>
+*3 HS1 instances can deliver 2.4 GB/s of 2 MB sequential read performance and 2.6 GB/s of sequential write performance.<br>
+*4 Instances launched into the same cluster placement group are placed into a non-blocking 10 Gigabit ethernet network<br>
+*5 For more information on the Micro instances see the<a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts_micro_instances.html" adhocenable="false">AWS Documentation</a><br>
+</p>
+<p>*6 Instance storage for M3 instances will be provided when these block device mappings are specified in the instance launch parameters.<br>
+</p>
+</div>
+<div class="title section row">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div 
+    
+		class="twelve columns"
+	
+ >
+    
+    
+        
+           
+               <h3 
+               >
+               Instance Type Processor Details 
+               </h3>
+                      
+                      
+     
+</div>
+
+
+</div>
+<div class="text section"><p>The following table list the processor specifications for each Amazon EC2 Instance Type:<br>
+</p>
+</div>
+<div class="aws-table section">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table width="100%" cellspacing="0" cellpadding="1" border="0" jcr:primarytype="nt:unstructured">
+<tbody><tr><td valign="bottom"><b>Instance Family </b></td>
+<td width="73" valign="bottom"><b>Instance Type</b></td>
+<td valign="bottom"><b>Processor Arch</b></td>
+<td width="38" valign="bottom"><b>vCPU</b></td>
+<td valign="bottom"><b>ECU</b></td>
+<td width="56" valign="bottom"><b>Physical Processor</b></td>
+<td width="70" valign="bottom"><b>Intel® AES-NI</b></td>
+<td width="60" valign="bottom"><b>Intel® AVX</b><sup>†</sup></td>
+<td width="90" valign="bottom"><b>Intel® Turbo</b></td>
+</tr><tr><td>General purpose
+</td>
+<td>m3.medium
+</td>
+<td>64-bit
+</td>
+<td>1
+</td>
+<td>3
+</td>
+<td>Intel Xeon E5-2670
+</td>
+<td>Yes
+</td>
+<td>Yes
+</td>
+<td>Yes
+</td>
+</tr><tr><td>General purpose
+</td>
+<td>m3.large
+</td>
+<td>64-bit
+</td>
+<td>2
+</td>
+<td>6.5
+</td>
+<td>Intel Xeon E5-2670
+</td>
+<td>Yes
+</td>
+<td>Yes
+</td>
+<td>Yes
+</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m3.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">13</td>
+<td valign="top">Intel Xeon E5-2670</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m3.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">26</td>
+<td valign="top">Intel Xeon E5-2670</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m1.small</td>
+<td valign="top">32-bit or<br>
+64-bit</td>
+<td valign="top">1</td>
+<td valign="top">1</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m1.medium</td>
+<td valign="top">32-bit or<br>
+64-bit</td>
+<td valign="top">1</td>
+<td valign="top">2</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m1.large</td>
+<td valign="top">64-bit</td>
+<td valign="top">2</td>
+<td valign="top">4</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">General purpose</td>
+<td valign="top">m1.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">8</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.large</td>
+<td valign="top">64-bit</td>
+<td valign="top">2</td>
+<td valign="top">7</td>
+<td valign="top">Intel Xeon E5-2680</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">14</td>
+<td valign="top">Intel Xeon E5-2680</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">28</td>
+<td valign="top">Intel Xeon E5-2680</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">55</td>
+<td valign="top">Intel Xeon E5-2680</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c3.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">32</td>
+<td valign="top">108</td>
+<td valign="top">Intel Xeon E5-2680</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c1.medium</td>
+<td valign="top">64-bit</td>
+<td valign="top">2</td>
+<td valign="top">5</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">Yes</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">c1.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">20</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">Yes</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Compute optimized</td>
+<td valign="top">cc2.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">32</td>
+<td valign="top">88</td>
+<td valign="top">Intel Xeon E5-2670</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">GPU instances</td>
+<td valign="top">g2.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">26</td>
+<td valign="top">Intel Xeon E5-2670</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">GPU instances</td>
+<td valign="top">cg1.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">33.5</td>
+<td valign="top">Intel Xeon x5570</td>
+<td valign="top">Yes</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Memory optimized</td>
+<td valign="top">m2.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">2</td>
+<td valign="top">6.5</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">Yes</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Memory optimized</td>
+<td valign="top">m2.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">13</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">Yes</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Memory optimized</td>
+<td valign="top">m2.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">26</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">Yes</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Memory optimized</td>
+<td valign="top">cr1.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">32</td>
+<td valign="top">88</td>
+<td valign="top">Intel Xeon E5-2670</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Storage Optimized</td>
+<td valign="top">i2.xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">4</td>
+<td valign="top">14</td>
+<td valign="top">Intel Xeon E5-2670v2</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Storage Optimized</td>
+<td valign="top">i2.2xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">8</td>
+<td valign="top">27</td>
+<td valign="top">Intel Xeon E5-2670v2</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Storage Optimized</td>
+<td valign="top">i2.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">53</td>
+<td valign="top">Intel Xeon E5-2670v2</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Storage Optimized</td>
+<td valign="top">i2.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">32</td>
+<td valign="top">104</td>
+<td valign="top">Intel Xeon E5-2670v2</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+<td valign="top">Yes</td>
+</tr><tr><td valign="top">Storage optimized</td>
+<td valign="top">hs1.8xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">35</td>
+<td valign="top">Intel Xeon E5-2650</td>
+<td valign="top">Yes</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Storage Optimized</td>
+<td valign="top">hi1.4xlarge</td>
+<td valign="top">64-bit</td>
+<td valign="top">16</td>
+<td valign="top">35</td>
+<td valign="top">Intel Xeon Family</td>
+<td valign="top">Yes</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr><tr><td valign="top">Micro instances</td>
+<td valign="top">t1.micro</td>
+<td valign="top">32-bit or<br>
+64-bit</td>
+<td valign="top">1</td>
+<td valign="top">Variable*1</td>
+<td valign="top">Variable</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+<td valign="top">-</td>
+</tr></tbody></table>
+</div>
+<div class="text section"><p>*1 For more information on the Micro  instances see the <a adhocenable="false" href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts_micro_instances.html">AWS  documentation</a>.<br>
+† AVX is only available on HVM instances.      <br>
+</p>
+</div>
+</div>
+
+    </section>
+</div>
+    </div>
+    <!-- End Content -->
+    
+    <!-- Footer -->
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer class="footer">
+  <div class="wrapper row">
+    <div class="three columns push-nine">
+      <a href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html" class="button btn-gold btn-sign-up">Create a Free Account</a>
+    </div>
+    
+    <div class="nine columns pull-three social-media">
+      <ul>
+        <li class="twitter"><a href="http://twitter.com/#!/awscloud"><i class="icon-twitter"></i> &nbsp;AWS on Twitter</a></li>
+        <li class="facebook"><a href="https://www.facebook.com/amazonwebservices"><i class="icon-facebook"></i> &nbsp;AWS on Facebook</a></li>
+        <li class="gplus"><a href="https://plus.google.com/+amazonwebservices" rel="publisher" target="_top"><i class="icon-google-plus"></i> &nbsp;AWS on Google+</a></li>
+        <li class="blog"><a href="http://aws.typepad.com"><i class="icon-list-alt"></i> &nbsp;AWS Blog</a></li>
+        <li class="rss"><a href="http://aws.amazon.com/rss/whats-new.rss"><i class="icon-rss"></i> &nbsp;What's New? RSS</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrapper row footer-nav">
+    <div class="eight columns nav-wrapper">
+      <div class="row">
+        <div class="three columns">
+          <ul class="unstyled">
+            <li class="title">AWS & Cloud Computing</li>
+            <li><a href="//aws.amazon.com/what-is-cloud-computing/">What is Cloud Computing?</a></li>
+            <li><a href="//aws.amazon.com/solutions/case-studies/">Customer Success</a></li>
+            <li><a href="//aws.amazon.com/economics/">Economics Center</a></li>
+            <li><a href="//aws.amazon.com/architecture/">Architecture Center</a></li>
+            <li><a href="//aws.amazon.com/security/">Security Center</a></li>
+            <li><a href="//aws.amazon.com/whitepapers/">Whitepapers</a></li>
+            <li><a href="http://aws.typepad.com/aws/">AWS Blog</a></li>
+            <li><a href="//aws.amazon.com/about-aws/events/">Events</a></li>
+            <li><a href="http://phx.corporate-ir.net/phoenix.zhtml?c=176060&p=irol-newsWebServices">Press Releases</a></li>
+            <li><a href="//aws.amazon.com/legal/">Legal</a></li>
+          </ul>
+        </div>
+        
+        <div class="three columns">
+          <ul class="unstyled">
+            <li class="title">Developer Resources</li>
+            <li><a href="//aws.amazon.com/developers/">Developers</a></li>
+            <li><a href="//aws.amazon.com/java/">Java on AWS</a></li>
+            <li><a href="//aws.amazon.com/javascript/">JavaScript on AWS</a></li>
+            <li><a href="//aws.amazon.com/mobile/">Mobile on AWS</a></li>
+            <li><a href="//aws.amazon.com/php/">PHP on AWS</a></li>
+            <li><a href="//aws.amazon.com/python/">Python on AWS</a></li>
+            <li><a href="//aws.amazon.com/ruby/">Ruby on AWS</a></li>
+            <li><a href="//aws.amazon.com/net/">Windows & .NET on AWS</a></li>
+            <li><a href="//aws.amazon.com/tools">SDKs & Tools</a></li>
+            <li><a href="https://aws.amazon.com/marketplace/ref=mkt_ste_dev_resources_ftr">AWS Marketplace</a></li>
+            <li><a href="//aws.amazon.com/usergroups/">User Groups</a></li>
+          </ul>
+        </div>
+        
+        <div class="three columns">
+          <ul class="unstyled">
+            <li class="title">Developer Centers</li>
+            <li><a href="//aws.amazon.com/premiumsupport/">Support Plans</a></li>
+            <li><a href="http://status.aws.amazon.com/">Service Health Dashboard</a></li>
+            <li><a href="https://forums.aws.amazon.com/">Discussion Forums</a></li>
+            <li><a href="//aws.amazon.com/faqs/">FAQs</a></li>
+            <li><a href="//aws.amazon.com/documentation/">Documentation</a></li>
+            <li><a href="//aws.amazon.com/articles/">Articles & Tutorials</a></li>
+            <li><a href="//aws.amazon.com/contact-us/">Contact Support</a></li>
+          </ul>
+        </div>
+        
+        <div class="three columns">
+          <ul class="unstyled">
+            <li class="title">Manage Your Account</li>
+            <li><a href="//aws.amazon.com/console/">Management Console</a></li>
+            <li><a href="https://console.aws.amazon.com/billing/home">Billing & Cost Management</a></li>
+            <li><a href="https://portal.aws.amazon.com/gp/aws/developer/account/index.html?action=edit-aws-profile">Personal Information</a></li>
+            <li><a href="https://portal.aws.amazon.com/gp/aws/developer/account/index.html?action=edit-payment-method">Payment Method</a></li>
+            <li><a href="//aws.amazon.com/iam/">AWS Identity & Access Management</a></li>
+            <li><a href="https://portal.aws.amazon.com/gp/aws/developer/account/index.html?action=access-key">Security Credentials</a></li>
+            <li><a href="//aws.amazon.com/contact-us/">Request Service Limit Increases</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="four columns hiring">
+      <p><b>Amazon Web Services is Hiring.</b></p>
+      <p>Amazon Web Services (AWS) is a dynamic, growing business unit within Amazon.com. We are currently hiring Software Development Engineers, Product Managers, Account Managers, Solution Architects, Support Engineers, System Engineers, Designers and more. Visit our <a href="//aws.amazon.com/careers/">Careers</a> page or our <a href="//aws.amazon.com/sdejobs">Developer-specific Careers</a> page to learn more.</p>
+      <p>Amazon Web Services is an Equal Opportunity Employer.</p>
+      <a href="//amazon.com"><div class="footer-logo hlp-ir">An Amazon.com Company</div></a>
+    </div>
+  </div>
+  
+  <div class="wrapper row language">
+    <div class="twelve column">
+      <ul class="language-list">
+        <li>Language</li>
+        <li><a href="//aws.amazon.com/de/ec2/instance-types/" data-language="de">Deutsch</a></li>
+        <li><a href="//aws.amazon.com/ec2/instance-types/" data-language="en">English</a></li>
+        <li><a href="//aws.amazon.com/es/ec2/instance-types/" data-language="es">Espa&ntilde;ol</a></li>
+        <li><a href="//aws.amazon.com/fr/ec2/instance-types/" data-language="fr">Fran&ccedil;ais</a></li>
+        <li><a href="//aws.amazon.com/jp/ec2/instance-types/" data-language="jp">&#26085;&#26412;&#35486;</a></li> 
+        <li><a href="//aws.amazon.com/pt/ec2/instance-types/" data-language="pt">Portugu&ecirc;s</a></li>
+        <li><a href="//aws.amazon.com/ko/ec2/instance-types/" data-language="ko">&#54620;&#44397;&#50612;</a></li> 
+        <li><a href="//aws.amazon.com/cn/ec2/instance-types/" data-language="cn">&#20013;&#25991; (&#31616;&#20307;)</a></li> 
+      </ul>
+    </div>
+  </div>
+  
+  <div class="wrapper row meta">
+    <div class="four columns">
+      <a href="//aws.amazon.com/terms/">Site Terms</a> | <a href="//aws.amazon.com/privacy/">Privacy</a>
+    </div>
+    <div class="eight columns copyright">
+      &copy; 2013, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+    </div>
+  </div>
+</footer>
+    <!-- End Footer -->
+    </div>
+    
+    <script>
+        require(["jquery", "scripts"]);
+    </script>
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- SiteCatalyst code version: H.25.1.
+Copyright 1996-2012 Adobe, Inc. All Rights Reserved
+More info available at http://www.omniture.com -->
+
+<script language="JavaScript" type="text/javascript" src="//d6v6lrej8cf1v.cloudfront.net/s_code/js/1.0/awshome_s_code.min.js"></script>
+ 
+<script language="JavaScript" type="text/javascript"><!--
+/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+var s_code=s.t();if(s_code)document.write(s_code)//--></script>
+<script language="JavaScript" type="text/javascript"><!--
+if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')
+//--></script><noscript><img src="//amazonwebservices.d2.sc.omtrdc.net/b/ss/awsamazonalldev2/1/H.25.1--NS/0" height="1" width="1" border="0" alt=""/></noscript><!--/DO NOT REMOVE/-->
+<!-- End SiteCatalyst code version: H.25.1. -->
+    
+
+</body>
+</html>
