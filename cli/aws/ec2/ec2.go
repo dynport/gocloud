@@ -7,6 +7,7 @@ import (
 	"github.com/dynport/gocloud/aws/ec2"
 	"github.com/dynport/gocloud/aws/pricing"
 	"log"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -26,7 +27,7 @@ func Register(router *cli.Router) {
 	router.RegisterFunc("aws/ec2/addresses/describe", DescribeAddresses, "Describe Addresses")
 	router.RegisterFunc("aws/ec2/security-groups/describe", DescribeSecurityGroups, "Describe Security Groups")
 	router.RegisterFunc("aws/ec2/spot-price-history/describe", DescribeSpotPriceHistory, "Describe Spot Price History")
-	router.Register("aws/ec2/prices", &Prices{}, "EC2 Prices")
+	router.Register("aws/ec2/prices", &Prices{Region: os.Getenv("AWS_DEFAULT_REGION")}, "EC2 Prices")
 }
 
 func client() *ec2.Client {
