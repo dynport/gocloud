@@ -1,4 +1,7 @@
-default:
+default: build
+
+build:
+	cd aws/pricing && make assets
 	go get ./...
 
 test:

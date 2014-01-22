@@ -39,9 +39,12 @@ type Prices struct {
 }
 
 func (a *Prices) Run() error {
-	configs := pricing.InstanceTypeConfigs
+	configs, e := pricing.AllInstanceTypeConfigs()
+	if e != nil {
+		return e
+	}
+	sort.Sort(configs)
 	var pr *pricing.Pricing
-	var e error
 	regionName := a.Region
 	typ := "od"
 	if a.Heavy {
@@ -67,6 +70,10 @@ func (a *Prices) Run() error {
 	table := gocli.NewTable()
 	table.Add("Type", "Cores", "ECUs", "GB RAM", "Region", "Type", "$/Hour", "$/Month", "$/Core", "$/GB")
 	for _, config := range configs {
+		if config.Cpus == 0 {
+			// no idea where those are coming from
+			continue
+		}
 		cols := []interface{}{
 			config.Name, config.Cpus, config.ECUs, config.Memory,
 		}

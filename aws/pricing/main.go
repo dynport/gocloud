@@ -2,7 +2,6 @@ package pricing
 
 import (
 	"encoding/json"
-	"github.com/dynport/gocloud/aws/pricing/assets"
 	"strconv"
 )
 
@@ -89,9 +88,57 @@ func LinuxReservedHeavy() (p *Pricing, e error) {
 }
 
 func loadPricesFor(t string) (p *Pricing, e error) {
-	b, e := assets.Get(t)
+	b, e := ReadAsset(t)
 	if e != nil {
 		return nil, e
 	}
 	return LoadPricing(b)
+}
+
+type InstanceTypeConfigs []*InstanceTypeConfig
+
+func (config InstanceTypeConfigs) Len() int {
+	return len(config)
+}
+
+func (config InstanceTypeConfigs) Swap(a, b int) {
+	config[a], config[b] = config[b], config[a]
+}
+
+var sortOrder = map[string]int{
+	"General purpose":   1,
+	"Compute optimized": 2,
+	"GPU instances":     3,
+	"Memory optimized":  4,
+	"Storage optimized": 5,
+	"Micro Instances":   6,
+}
+
+func (config InstanceTypeConfigs) Less(a, b int) bool {
+	instanceA := config[a]
+	instanceB := config[b]
+	famA, okA := sortOrder[instanceA.Family]
+	famB, okB := sortOrder[instanceB.Family]
+	if okA && okB {
+		if famA == famB {
+			return instanceA.Cpus < instanceB.Cpus
+		} else {
+			return famA < famB
+		}
+	} else if okA {
+		return true
+	} else if okB {
+		return false
+	} else {
+		return instanceA.Cpus < instanceB.Cpus
+	}
+}
+
+func AllInstanceTypeConfigs() (configs InstanceTypeConfigs, e error) {
+	b, e := ReadAsset("instance_types.json")
+	if e != nil {
+		return nil, e
+	}
+	e = json.Unmarshal(b, &configs)
+	return configs, e
 }
