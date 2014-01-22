@@ -52,6 +52,7 @@ func (a *Prices) Run() error {
 		typ = "ri-heavy"
 		pr, e = pricing.LinuxReservedHeavy()
 	} else {
+		regionName = normalizeRegionForOd(regionName)
 		pr, e = pricing.LinuxOnDemand()
 	}
 	if e != nil {
@@ -94,12 +95,32 @@ func (a *Prices) Run() error {
 	return nil
 }
 
+
+// http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region
 var regionMapping = map[string]string{
 	"eu-ireland": "eu-west-1",
 	"eu-west":    "eu-west-1",
 	"apac-tokyo": "ap-northeast-1",
 	"apac-sin":   "ap-southeast-1",
 	"apac-syd":   "ap-southeast-2",
+}
+
+// http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region
+var regionMappingForOd = map[string]string{
+	"eu-west-1":      "eu-ireland",
+	"us-east-1":      "us-east",
+	"us-west-1":      "us-west",
+	"ap-northeast-1": "apac-tokyo",
+	"ap-southeast-1": "apac-sin",
+	"ap-southeast-2": "apac-syd",
+}
+
+func normalizeRegionForOd(region string) string {
+	normalized, ok := regionMappingForOd[region]
+	if ok {
+		return normalized
+	}
+	return region
 }
 
 func normalizeRegion(raw string) string {
