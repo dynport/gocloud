@@ -30,7 +30,7 @@ func TestParseInstanceTypes(t *testing.T) {
 		types, e := parseInstanceTypes(b)
 		So(e, ShouldBeNil)
 		So(types, ShouldNotBeNil)
-		So(len(types), ShouldEqual, 31)
+		So(len(types), ShouldEqual, 29)
 
 		micro := pickInstance(types, "t1.micro")
 		So(micro, ShouldNotBeNil)
@@ -55,5 +55,10 @@ func TestParseInstanceTypes(t *testing.T) {
 		So(m1xlarge.Storage, ShouldEqual, "4 x 420")
 		So(m1xlarge.EbsOptimizable, ShouldEqual, true)
 		So(m1xlarge.NetworkPerformance, ShouldEqual, "High")
+
+		m3medium := pickInstance(types, "m3.medium")
+		So(m3medium, ShouldNotBeNil)
+		So(m3medium.Cpus, ShouldEqual, 1)
+		So(m3medium.ECUs, ShouldEqual, 3)
 	})
 }

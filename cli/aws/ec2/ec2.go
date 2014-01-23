@@ -5,7 +5,6 @@ import (
 	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws/ec2"
-	"github.com/dynport/gocloud/aws/pricing"
 	"log"
 	"os"
 	"sort"
@@ -33,69 +32,6 @@ func Register(router *cli.Router) {
 func client() *ec2.Client {
 	return ec2.NewFromEnv()
 }
-
-type Prices struct {
-	Region string `cli:"type=opt short=r default=eu-ireland"`
-	Heavy  bool   `cli:"type=opt long=heavy"`
-}
-
-func (a *Prices) Run() error {
-	configs, e := pricing.AllInstanceTypeConfigs()
-	if e != nil {
-		return e
-	}
-	sort.Sort(configs)
-	var pr *pricing.Pricing
-	regionName := a.Region
-	typ := "od"
-	if a.Heavy {
-		regionName = normalizeRegion(regionName)
-		typ = "ri-heavy"
-		pr, e = pricing.LinuxReservedHeavy()
-	} else {
-		regionName = normalizeRegionForOd(regionName)
-		pr, e = pricing.LinuxOnDemand()
-	}
-	if e != nil {
-		return e
-	}
-	priceMapping := map[string]pricing.PriceList{}
-	region := pr.FindRegion(regionName)
-	if region == nil {
-		return fmt.Errorf("could not find prices for reagion %q. Known regions are %v", regionName, pr.RegionNames())
-	}
-	for _, t := range region.InstanceTypes {
-		for _, size := range t.Sizes {
-			priceMapping[size.Size] = size.ValueColumns.Prices()
-		}
-	}
-	table := gocli.NewTable()
-	table.Add("Type", "Cores", "ECUs", "GB RAM", "Region", "Type", "$/Hour", "$/Month", "$/Core", "$/GB")
-	for _, config := range configs {
-		if config.Cpus == 0 {
-			// no idea where those are coming from
-			continue
-		}
-		cols := []interface{}{
-			config.Name, config.Cpus, config.ECUs, config.Memory,
-		}
-		if prices, ok := priceMapping[config.Name]; ok {
-			cols = append(cols, normalizeRegion(regionName), typ)
-			if len(prices) > 0 {
-				sort.Sort(prices)
-				price := prices[0].TotalPerHour()
-				perMonth := price * HOURS_PER_MONTH
-				perCore := perMonth / float64(config.Cpus)
-				perGb := perMonth / config.Memory
-				cols = append(cols, fmt.Sprintf("%.03f", price), monthlyPrice(perMonth), monthlyPrice(perCore), monthlyPrice(perGb))
-			}
-		}
-		table.Add(cols...)
-	}
-	fmt.Println(table)
-	return nil
-}
-
 
 // http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region
 var regionMapping = map[string]string{

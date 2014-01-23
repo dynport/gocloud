@@ -37,7 +37,7 @@ func parseInstanceTypes(b []byte) (instances []*pricing.InstanceTypeConfig, e er
 				var instance *pricing.InstanceTypeConfig
 				if len(tds) > 2 {
 					family := tds[0].Content()
-					instanceType := tds[1].Content()
+					instanceType := strings.TrimSpace(tds[1].Content())
 					var ok bool
 					instance, ok = types[instanceType]
 					if !ok {
@@ -51,7 +51,7 @@ func parseInstanceTypes(b []byte) (instances []*pricing.InstanceTypeConfig, e er
 						return nil, fmt.Errorf("tried to acces header %d but I only got %#v", i, headers)
 					}
 					header := headers[i]
-					value := td.Content()
+					value := strings.TrimSpace(td.Content())
 					switch header {
 					case "Processor Arch":
 						instance.Arch = strings.Replace(value, "\n", " ", -1)

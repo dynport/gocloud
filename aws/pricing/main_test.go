@@ -17,6 +17,16 @@ func mustReadFile(t *testing.T, path string) []byte {
 
 func TestLoadPricing(t *testing.T) {
 	b := mustReadFile(t, "fixtures/linux-od.json")
+	Convey("Instance configs", t, func() {
+		configs, e := AllInstanceTypeConfigs()
+		So(e, ShouldBeNil)
+		for _, c := range configs {
+			switch c.Name {
+			case "m3.large":
+				So(c.Cpus, ShouldEqual, 2)
+			}
+		}
+	})
 	Convey("marshall pricing", t, func() {
 		pricing, e := LoadPricing(b)
 		So(e, ShouldBeNil)
