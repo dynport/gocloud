@@ -196,6 +196,7 @@ func (a *CreateImage) Run() error {
 }
 
 type RunInstances struct {
+	Name             string `cli:"type=opt long=name desc='Name of the Instanze'"`
 	InstanceType     string `cli:"type=opt short=t desc='Instance Type' required=true"`
 	ImageId          string `cli:"type=opt short=i desc='Image Id' required=true"`
 	KeyName          string `cli:"type=opt short=k desc='SSH Key' required=true"`
@@ -203,7 +204,7 @@ type RunInstances struct {
 	SubnetId         string `cli:"type=opt long=subnet-id desc='Subnet Id'"`
 	PublicIp         bool   `cli:"type=opt long=public-ip desc='Assign Public IP'"`
 	AvailabilityZone string `cli:"type=opt long=availability-zone desc='Availability Zone'"`
-	Name             string `cli:"type=opt long=name desc='Name of the Instanze'"`
+	UserData         string `cli:"type=opt long=userdata desc='UserData to be given to instance'"`
 }
 
 func (a *RunInstances) Run() error {
@@ -213,6 +214,7 @@ func (a *RunInstances) Run() error {
 		InstanceType:     a.InstanceType,
 		AvailabilityZone: a.AvailabilityZone,
 		SubnetId:         a.SubnetId,
+		UserData:         a.UserData,
 	}
 	if a.PublicIp {
 		nic := &ec2.CreateNetworkInterface{

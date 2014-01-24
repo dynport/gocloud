@@ -1,6 +1,7 @@
 package ec2
 
 import (
+	"encoding/base64"
 	"encoding/xml"
 	"fmt"
 	"github.com/dynport/gocloud/aws"
@@ -61,6 +62,7 @@ type RunInstancesConfig struct {
 	SecurityGroups    []string
 	SubnetId          string
 	NetworkInterfaces []*CreateNetworkInterface
+	UserData          string
 }
 
 func queryForAction(action string) string {
@@ -145,6 +147,8 @@ type RunInstancesResponse struct {
 	Instances     []*Instance `xml:"instancesSet>item"`
 }
 
+var b64 = base64.StdEncoding
+
 func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceList, e error) {
 	if config.MinCount == 0 {
 		config.MinCount = 1
@@ -162,6 +166,10 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 	values.Add("MinCount", strconv.Itoa(config.MinCount))
 	values.Add("MaxCount", strconv.Itoa(config.MaxCount))
 	values.Add("ImageId", config.ImageId)
+
+	if config.UserData != "" {
+		values.Add("UserData", b64.EncodeToString([]byte(config.UserData)))
+	}
 
 	if config.InstanceType != "" {
 		values.Add("InstanceType", config.InstanceType)
