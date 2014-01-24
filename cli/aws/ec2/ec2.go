@@ -5,6 +5,7 @@ import (
 	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws/ec2"
+	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -204,7 +205,7 @@ type RunInstances struct {
 	SubnetId         string `cli:"type=opt long=subnet-id desc='Subnet Id'"`
 	PublicIp         bool   `cli:"type=opt long=public-ip desc='Assign Public IP'"`
 	AvailabilityZone string `cli:"type=opt long=availability-zone desc='Availability Zone'"`
-	UserData         string `cli:"type=opt long=userdata desc='UserData to be given to instance'"`
+	UserDataFile     string `cli:"type=opt long=userdata desc='Path to file with userdata'"`
 }
 
 func (a *RunInstances) Run() error {
@@ -214,7 +215,13 @@ func (a *RunInstances) Run() error {
 		InstanceType:     a.InstanceType,
 		AvailabilityZone: a.AvailabilityZone,
 		SubnetId:         a.SubnetId,
-		UserData:         a.UserData,
+	}
+	if a.UserDataFile != "" {
+		b, e := ioutil.ReadFile(a.UserDataFile)
+		if e != nil {
+			return e
+		}
+		config.UserData = string(b)
 	}
 	if a.PublicIp {
 		nic := &ec2.CreateNetworkInterface{
