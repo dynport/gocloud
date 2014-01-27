@@ -101,7 +101,7 @@ func (action *Action) Run() error {
 	if e != nil {
 		return e
 	}
-	log.Print("created entry for %s", action.Domain)
+	log.Printf("created entry for %s", action.Domain)
 	return nil
 }
 
