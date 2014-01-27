@@ -2,10 +2,32 @@ package route53
 
 import (
 	"encoding/xml"
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"testing"
 )
+
+func TestSerialize(t *testing.T) {
+	req := NewChangeResourceRecordSets(
+		&ChangeBatch{
+			Comment: "This is a comment",
+			Changes: []*Change{
+				{Action: "CREATE"},
+			},
+		},
+	)
+	Convey("Serialize", t, func() {
+		b, e := xml.Marshal(req)
+		So(e, ShouldBeNil)
+		So(b, ShouldNotBeNil)
+		s := string(b)
+		So(s, ShouldContainSubstring, "xmlns")
+		So(s, ShouldContainSubstring, "<Changes>")
+		So(s, ShouldContainSubstring, "<ChangeBatch>")
+		So(s, ShouldContainSubstring, "<Change>")
+	})
+}
 
 func mustReadFixture(name string) []byte {
 	b, e := ioutil.ReadFile("fixtures/" + name)

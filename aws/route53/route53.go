@@ -1,6 +1,7 @@
 package route53
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
 	"github.com/dynport/gocloud/aws"
@@ -8,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 )
+
+const API_VERSION = "2012-12-12"
 
 func NewFromEnv() *Client {
 	return &Client{
@@ -27,6 +30,23 @@ type HostedZone struct {
 	ResourceRecordSetCount int    `xml:"ResourceRecordSetCount"`
 }
 
+type ChangeResourceRecordSetsRequest struct {
+	XMLName     xml.Name     `xml:"ChangeResourceRecordSetsRequest"`
+	Xmlns       string       `xml:"xmlns,attr"`
+	ChangeBatch *ChangeBatch `xml:"ChangeBatch"`
+}
+
+type ChangeBatch struct {
+	XMLName xml.Name  `xml:"ChangeBatch"`
+	Comment string    `xml:"Comment,omitempty"`
+	Changes []*Change `xml:"Changes>Change"`
+}
+
+type Change struct {
+	Action            string // CREATE or DELETE
+	ResourceRecordSet *ResourceRecordSet
+}
+
 func (zone *HostedZone) Code() string {
 	chunks := strings.Split(zone.Id, "/")
 	if len(chunks) == 3 {
@@ -34,8 +54,6 @@ func (zone *HostedZone) Code() string {
 	}
 	return ""
 }
-
-const API_VERSION = "2012-12-12"
 
 type HttpResponse struct {
 	StatusCode int
@@ -50,15 +68,54 @@ type ResourceRecordSet struct {
 	Name            string            `xml:"Name"`
 	Type            string            `xml:"Type"`
 	TTL             int               `xml:"TTL"`
-	HealthCheckId   string            `xml:"HealthCheckId"`
-	SetIdentifier   string            `xml:"SetIdentifier"`
-	Weight          int               `xml:"Weight"`
+	HealthCheckId   string            `xml:"HealthCheckId,omitempty"`
+	SetIdentifier   string            `xml:"SetIdentifier,omitempty"`
+	Weight          int               `xml:"Weight,omitempty"`
 	ResourceRecords []*ResourceRecord `xml:"ResourceRecords>ResourceRecord"`
 }
 
 type ListResourceRecordSetsResponse struct {
 	XMLName            xml.Name             `xml:"ListResourceRecordSetsResponse"`
 	ResourceRecordSets []*ResourceRecordSet `xml:"ResourceRecordSets>ResourceRecordSet"`
+}
+
+func NewChangeResourceRecordSets(batch *ChangeBatch) *ChangeResourceRecordSetsRequest {
+	return &ChangeResourceRecordSetsRequest{
+		Xmlns:       "https://route53.amazonaws.com/doc/" + API_VERSION + "/",
+		ChangeBatch: batch,
+	}
+}
+
+func (client *Client) ChangeResourceRecordSets(hostedZone string, changes []*Change) error {
+	req := NewChangeResourceRecordSets(&ChangeBatch{
+		Changes: changes,
+	})
+	buf := &bytes.Buffer{}
+	e := xml.NewEncoder(buf).Encode(req)
+	if e != nil {
+		return e
+	}
+	httpRequest, e := http.NewRequest("POST", apiEndpoint+"/hostedzone/"+hostedZone+"/rrset", buf)
+	if e != nil {
+		return e
+	}
+
+	client.SignAwsRequest(httpRequest)
+
+	rsp, e := http.DefaultClient.Do(httpRequest)
+	if e != nil {
+		return e
+	}
+	defer rsp.Body.Close()
+
+	b, e := ioutil.ReadAll(rsp.Body)
+	if e != nil {
+		return e
+	}
+	if rsp.Status[0] != '2' {
+		return fmt.Errorf("expected status 2xx, got %s (%s)", rsp.Status, string(b))
+	}
+	return nil
 }
 
 func (client *Client) ListResourceRecordSets(id string) (rrs []*ResourceRecordSet, e error) {
@@ -106,8 +163,10 @@ type ListHostedZonesResponse struct {
 	HostedZones []*HostedZone `xml:"HostedZones>HostedZone"`
 }
 
+var apiEndpoint = "https://route53.amazonaws.com/" + API_VERSION
+
 func (client *Client) doRequest(method, path string) (rsp *HttpResponse, e error) {
-	request, e := http.NewRequest(method, "https://route53.amazonaws.com/"+API_VERSION+"/"+path, nil)
+	request, e := http.NewRequest(method, apiEndpoint+"/"+path, nil)
 	if e != nil {
 		return nil, e
 	}
