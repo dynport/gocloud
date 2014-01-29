@@ -3,6 +3,8 @@ package s3
 import (
 	"crypto/md5"
 	"io"
+	"log"
+	"os"
 	"strings"
 )
 
@@ -15,3 +17,5 @@ func contentMd5(s string) (ret string, e error) {
 	sum := digest.Sum(nil)
 	return b64.EncodeToString(sum), nil
 }
+
+var logger = log.New(os.Stdout, "", 0)

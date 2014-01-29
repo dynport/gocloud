@@ -10,7 +10,6 @@ import (
 	"github.com/dynport/gocloud/aws"
 	"hash"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -20,19 +19,22 @@ import (
 var b64 = base64.StdEncoding
 
 const (
-	DEFAULT_ENDPOINT_HOST = "s3.amazonaws.com"
-	HEADER_CONTENT_MD5    = "Content-Md5"
-	HEADER_CONTENT_TYPE   = "Content-Type"
-	HEADER_DATE           = "Date"
-	HEADER_AUTHORIZATION  = "Authorization"
-	AMZ_ACL_PUBLIC        = "public-read"
-	DEFAULT_CONTENT_TYPE  = "application/octet-stream"
-	HEADER_AMZ_ACL        = "X-Amz-Acl"
+	DEFAULT_ENDPOINT_HOST         = "s3.amazonaws.com"
+	HEADER_CONTENT_MD5            = "Content-Md5"
+	HEADER_CONTENT_TYPE           = "Content-Type"
+	HEADER_DATE                   = "Date"
+	HEADER_AUTHORIZATION          = "Authorization"
+	AMZ_ACL_PUBLIC                = "public-read"
+	DEFAULT_CONTENT_TYPE          = "application/octet-stream"
+	HEADER_AMZ_ACL                = "x-amz-acl"
+	HEADER_SERVER_SIDE_ENCRUPTION = "x-amz-server-side-encryption"
+	AES256                        = "AES256"
 )
 
 type Client struct {
 	*aws.Client
 	CustomEndpointHost string
+	UseSsl             bool
 }
 
 func NewFromEnv() *Client {
@@ -62,12 +64,17 @@ func (client *Client) EndpointHost() string {
 }
 
 func (client *Client) Endpoint() string {
-	return "https://" + client.EndpointHost()
+	if client.UseSsl {
+		return "https://" + client.EndpointHost()
+	} else {
+		return "http://" + client.EndpointHost()
+	}
 }
 
 type PutOptions struct {
-	ContentType string
-	AmzAcl      string
+	ContentType          string
+	AmzAcl               string
+	ServerSideEncryption bool
 }
 
 func NewPublicPut() *PutOptions {
@@ -134,15 +141,31 @@ func (client *Client) Service() (r *ListAllMyBucketsResult, e error) {
 	return r, e
 }
 
+func (client *Client) Get(bucket, key string) (*http.Response, error) {
+	theUrl := client.keyUrl(bucket, key)
+	req, e := http.NewRequest("GET", theUrl, nil)
+	if e != nil {
+		return nil, e
+	}
+	client.SignS3Request(req, bucket)
+	return http.DefaultClient.Do(req)
+}
+
+func (client *Client) keyUrl(bucket, key string) string {
+	if client.UseSsl {
+		return "https://" + client.EndpointHost() + "/" + bucket + "/" + key
+	}
+	return "http://" + bucket + "." + client.EndpointHost() + "/" + key
+}
+
 func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) error {
-	log.Printf("uploading %s to %s/%s", data, bucket, key)
 	if options == nil {
 		options = &PutOptions{ContentType: DEFAULT_CONTENT_TYPE}
 	}
 
-	buf := &bytes.Buffer{}
-	buf.Write(data)
-	req, e := http.NewRequest("PUT", "http://"+bucket+"."+client.EndpointHost()+"/"+key, buf)
+	buf := bytes.NewBuffer(data)
+	theUrl := client.keyUrl(bucket, key)
+	req, e := http.NewRequest("PUT", theUrl, buf)
 	if e != nil {
 		return e
 	}
@@ -159,6 +182,10 @@ func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) 
 		req.Header.Add(HEADER_AMZ_ACL, options.AmzAcl)
 	}
 
+	if options.ServerSideEncryption {
+		req.Header.Add(HEADER_SERVER_SIDE_ENCRUPTION, AES256)
+	}
+
 	b64md5, e := contentMd5(string(data))
 	if e != nil {
 		return e
@@ -173,7 +200,6 @@ func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) 
 	defer rsp.Body.Close()
 	b, e := ioutil.ReadAll(rsp.Body)
 	if e != nil {
-		log.Println(string(b))
 		return e
 	}
 	if rsp.StatusCode != 200 {
@@ -200,8 +226,8 @@ func (client *Client) SignS3Request(req *http.Request, bucket string) {
 	}
 	sort.Strings(amzHeaders)
 	payloadParts = append(payloadParts, amzHeaders...)
-	path := req.URL.Path
-	if bucket != "" {
+	path := req.URL.RequestURI()
+	if !client.UseSsl && bucket != "" {
 		path = "/" + bucket + path
 	}
 	payloadParts = append(payloadParts, path)

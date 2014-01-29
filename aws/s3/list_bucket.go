@@ -2,6 +2,7 @@ package s3
 
 import (
 	"encoding/xml"
+	"fmt"
 	"net/http"
 	"net/url"
 )
@@ -16,7 +17,7 @@ func (client *Client) ListBucket(bucket string) (r *ListBucketResult, e error) {
 }
 
 func (client *Client) ListBucketWithOptions(bucket string, opts *ListBucketOptions) (r *ListBucketResult, e error) {
-	u := "http://" + bucket + "." + client.EndpointHost() + "/"
+	u := "https://" + client.EndpointHost() + "/" + bucket
 	if opts != nil {
 		v := &url.Values{}
 		if opts.Marker != "" {
@@ -40,7 +41,7 @@ func (client *Client) ListBucketWithOptions(bucket string, opts *ListBucketOptio
 	r = &ListBucketResult{}
 	e = xml.Unmarshal(b, r)
 	if e != nil {
-		return r, e
+		return r, fmt.Errorf("ERROR: %s (%s)", e.Error(), string(b))
 	}
 	return r, e
 }
