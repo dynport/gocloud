@@ -208,6 +208,29 @@ func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) 
 	return nil
 }
 
+// stolen from goamz
+var s3ParamsToSign = map[string]bool{
+	"acl":                          true,
+	"location":                     true,
+	"logging":                      true,
+	"notification":                 true,
+	"partNumber":                   true,
+	"policy":                       true,
+	"requestPayment":               true,
+	"torrent":                      true,
+	"uploadId":                     true,
+	"uploads":                      true,
+	"versionId":                    true,
+	"versioning":                   true,
+	"versions":                     true,
+	"response-content-type":        true,
+	"response-content-language":    true,
+	"response-expires":             true,
+	"response-cache-control":       true,
+	"response-content-disposition": true,
+	"response-content-encoding":    true,
+}
+
 func (client *Client) SignS3Request(req *http.Request, bucket string) {
 	t := time.Now().UTC()
 	date := t.Format(http.TimeFormat)
@@ -226,7 +249,11 @@ func (client *Client) SignS3Request(req *http.Request, bucket string) {
 	}
 	sort.Strings(amzHeaders)
 	payloadParts = append(payloadParts, amzHeaders...)
-	path := req.URL.RequestURI()
+	path := req.URL.Path
+	query := normalizeParams(req.URL)
+	if query != "" {
+		path += "?" + query
+	}
 	if !client.UseSsl && bucket != "" {
 		path = "/" + bucket + path
 	}
@@ -234,6 +261,21 @@ func (client *Client) SignS3Request(req *http.Request, bucket string) {
 	payload := strings.Join(payloadParts, "\n")
 	req.Header.Add(HEADER_DATE, date)
 	req.Header.Add(HEADER_AUTHORIZATION, "AWS "+client.Key+":"+signPayload(payload, client.newSha1Hash(client.Secret)))
+}
+
+func normalizeParams(url *url.URL) string {
+	params := []string{}
+	for _, part := range strings.Split(url.RawQuery, "&") {
+		parts := strings.SplitN(part, "=", 2)
+		if _, ok := s3ParamsToSign[parts[0]]; ok {
+			params = append(params, part)
+		}
+	}
+	sort.Strings(params)
+	if len(params) > 0 {
+		return strings.Join(params, "&")
+	}
+	return ""
 }
 
 func (client *Client) newSha1Hash(secret string) hash.Hash {
