@@ -9,9 +9,12 @@ import (
 	"fmt"
 	"github.com/dynport/gocloud/aws"
 	"hash"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -73,6 +76,7 @@ func (client *Client) Endpoint() string {
 
 type PutOptions struct {
 	ContentType          string
+	ContentLength        int
 	AmzAcl               string
 	ServerSideEncryption bool
 }
@@ -141,9 +145,17 @@ func (client *Client) Service() (r *ListAllMyBucketsResult, e error) {
 	return r, e
 }
 
+func (client *Client) Head(bucket, key string) (*http.Response, error) {
+	return client.readRequest("HEAD", bucket, key)
+}
+
 func (client *Client) Get(bucket, key string) (*http.Response, error) {
+	return client.readRequest("GET", bucket, key)
+}
+
+func (client *Client) readRequest(method, bucket, key string) (*http.Response, error) {
 	theUrl := client.keyUrl(bucket, key)
-	req, e := http.NewRequest("GET", theUrl, nil)
+	req, e := http.NewRequest(method, theUrl, nil)
 	if e != nil {
 		return nil, e
 	}
@@ -156,6 +168,53 @@ func (client *Client) keyUrl(bucket, key string) string {
 		return "https://" + client.EndpointHost() + "/" + bucket + "/" + key
 	}
 	return "http://" + bucket + "." + client.EndpointHost() + "/" + key
+}
+
+func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOptions) error {
+	if options == nil {
+		options = &PutOptions{ContentType: DEFAULT_CONTENT_TYPE}
+	}
+	if options.ContentLength == 0 {
+		return fmt.Errorf("Content-Length must be set")
+	}
+
+	theUrl := client.keyUrl(bucket, key)
+	req, e := http.NewRequest("PUT", theUrl, r)
+	if e != nil {
+		return e
+	}
+
+	req.Header.Add("Host", bucket+"."+client.EndpointHost())
+	req.Header.Add("Content-Length", strconv.Itoa(options.ContentLength))
+
+	contentType := options.ContentType
+	if contentType == "" {
+		contentType = DEFAULT_CONTENT_TYPE
+	}
+	req.Header.Add(HEADER_CONTENT_TYPE, contentType)
+
+	if options.AmzAcl != "" {
+		req.Header.Add(HEADER_AMZ_ACL, options.AmzAcl)
+	}
+
+	if options.ServerSideEncryption {
+		req.Header.Add(HEADER_SERVER_SIDE_ENCRUPTION, AES256)
+	}
+
+	client.SignS3Request(req, bucket)
+	rsp, e := http.DefaultClient.Do(req)
+	if e != nil {
+		return e
+	}
+	defer rsp.Body.Close()
+	b, e := ioutil.ReadAll(rsp.Body)
+	if e != nil {
+		return e
+	}
+	if rsp.StatusCode != 200 {
+		return fmt.Errorf("error uploading key: %s - %s", rsp.Status, string(b))
+	}
+	return nil
 }
 
 func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) error {

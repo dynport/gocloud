@@ -41,25 +41,26 @@ type MultipartOptions struct {
 	Callback func(*UploadPartResult)
 }
 
-const minPartSize = 5 * 1024 * 1024
+const MinPartSize = 5 * 1024 * 1024
 
 type UploadPartResult struct {
-	Part  *Part
-	Error error
+	CurrentSize int
+	Part        *Part
+	Error       error
 }
 
 func (client *Client) PutMultipart(bucket, key string, f io.Reader, opts *MultipartOptions) (res *CompleteMultipartUploadResult, e error) {
 	if opts == nil {
 		opts = &MultipartOptions{
-			PartSize: minPartSize,
+			PartSize: MinPartSize,
 		}
 	}
 	if opts.PartSize == 0 {
-		opts.PartSize = minPartSize
+		opts.PartSize = MinPartSize
 	}
 
-	if opts.PartSize < minPartSize {
-		return nil, fmt.Errorf("part size must be at least %d but was %d", minPartSize, opts.PartSize)
+	if opts.PartSize < MinPartSize {
+		return nil, fmt.Errorf("part size must be at least %d but was %d", MinPartSize, opts.PartSize)
 	}
 
 	result, e := client.InitiateMultipartUpload(bucket, key, opts.PutOptions)
@@ -68,26 +69,36 @@ func (client *Client) PutMultipart(bucket, key string, f io.Reader, opts *Multip
 	}
 	partId := 1
 	parts := []*Part{}
+	currentSize := 0
 	for {
-		buf := make([]byte, opts.PartSize)
-		i, e := f.Read(buf)
+		buf := bytes.NewBuffer(make([]byte, 0, opts.PartSize))
+		i, e := io.CopyN(buf, f, int64(opts.PartSize))
+		if e != nil && e != io.EOF {
+			return nil, e
+		}
+		if i > 0 {
+			part, e := client.UploadPart(bucket, key, buf.Bytes(), partId, result.UploadId)
+			if opts.Callback != nil {
+				opts.Callback(&UploadPartResult{Part: part, Error: e, CurrentSize: currentSize})
+			}
+			if e != nil {
+				return nil, e
+			}
+			currentSize += buf.Len()
+			parts = append(parts, part)
+			partId++
+		}
 		if e == io.EOF {
 			break
 		}
-		part, e := client.UploadPart(bucket, key, buf[0:i], partId, result.UploadId)
-		if opts.Callback != nil {
-			opts.Callback(&UploadPartResult{Part: part, Error: e})
-		}
-		if e != nil {
-			return nil, e
-		}
-		parts = append(parts, part)
-		partId++
 	}
 	return client.CompleteMultipartUpload(bucket, key, result.UploadId, parts)
 }
 
 func (client *Client) InitiateMultipartUpload(bucket, key string, opts *PutOptions) (result *InitiateMultipartUploadResult, e error) {
+	if opts == nil {
+		opts = &PutOptions{}
+	}
 	theUrl := client.keyUrl(bucket, key) + "?uploads"
 	req, e := http.NewRequest("POST", theUrl, nil)
 	if e != nil {

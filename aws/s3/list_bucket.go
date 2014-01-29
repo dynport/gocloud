@@ -34,6 +34,7 @@ func (client *Client) ListBucketWithOptions(bucket string, opts *ListBucketOptio
 	if e != nil {
 		return r, e
 	}
+	req.Header.Add("Host", bucket+"."+client.EndpointHost())
 	_, b, e := client.signAndDoRequest(bucket, req)
 	if e != nil {
 		return nil, e
