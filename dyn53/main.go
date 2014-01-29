@@ -70,11 +70,12 @@ func (action *Action) Run() error {
 	if e != nil {
 		return e
 	}
+	log.Printf("current ip is %s", ip)
 	changes := []*route53.Change{}
 	if deleteRecord != nil {
 		for _, value := range deleteRecord.ResourceRecords {
 			if value.Value == ip {
-				log.Print("nothing changed")
+				log.Printf("nothing changed (ip is %s)", ip)
 				return nil
 			}
 		}
