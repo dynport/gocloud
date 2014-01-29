@@ -88,7 +88,7 @@ func LinuxReservedHeavy() (p *Pricing, e error) {
 }
 
 func loadPricesFor(t string) (p *Pricing, e error) {
-	b, e := ReadAsset(t)
+	b, e := readAsset(t)
 	if e != nil {
 		return nil, e
 	}
@@ -135,7 +135,7 @@ func (config InstanceTypeConfigs) Less(a, b int) bool {
 }
 
 func AllInstanceTypeConfigs() (configs InstanceTypeConfigs, e error) {
-	b, e := ReadAsset("instance_types.json")
+	b, e := readAsset("instance_types.json")
 	if e != nil {
 		return nil, e
 	}
