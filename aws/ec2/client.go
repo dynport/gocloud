@@ -4,11 +4,11 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"github.com/dynport/gocloud/aws"
-	"log"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/dynport/gocloud/aws"
 )
 
 func NewFromEnv() *Client {
@@ -222,8 +222,21 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 	return InstanceList(rsp.Instances), nil
 }
 
-func (client *Client) DescribeInstances() (instances []*Instance, e error) {
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, "Version="+API_VERSIONS_EC2+"&Action=DescribeInstances", nil)
+type DescribeInstancesOptions struct {
+	InstanceIds []string
+}
+
+func (client *Client) DescribeInstancesWithOptions(options *DescribeInstancesOptions) (instances []*Instance, e error) {
+	if options == nil {
+		options = &DescribeInstancesOptions{}
+	}
+	values := url.Values{"Version": {API_VERSIONS_EC2}, "Action": {"DescribeInstances"}}
+	if len(options.InstanceIds) > 0 {
+		for i, id := range options.InstanceIds {
+			values.Add("InstanceId."+strconv.Itoa(i+1), id)
+		}
+	}
+	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
 	if e != nil {
 		return instances, e
 	}
@@ -233,4 +246,8 @@ func (client *Client) DescribeInstances() (instances []*Instance, e error) {
 		return instances, e
 	}
 	return rsp.Instances(), nil
+}
+
+func (client *Client) DescribeInstances() (instances []*Instance, e error) {
+	return client.DescribeInstancesWithOptions(nil)
 }
