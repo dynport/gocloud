@@ -2,15 +2,16 @@ package ec2
 
 import (
 	"fmt"
-	"github.com/dynport/dgtk/cli"
-	"github.com/dynport/gocli"
-	"github.com/dynport/gocloud/aws/ec2"
 	"io/ioutil"
 	"log"
 	"os"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/dynport/dgtk/cli"
+	"github.com/dynport/gocli"
+	"github.com/dynport/gocloud/aws/ec2"
 )
 
 const HOURS_PER_MONTH = 365 * 24.0 / 12.0
@@ -224,13 +225,7 @@ func (a *RunInstances) Run() error {
 		config.UserData = string(b)
 	}
 	if a.PublicIp {
-		nic := &ec2.CreateNetworkInterface{
-			DeviceIndex: 0, AssociatePublicIpAddress: true, SubnetId: a.SubnetId,
-		}
-		if a.SecurityGroup != "" {
-			nic.SecurityGroupIds = []string{a.SecurityGroup}
-		}
-		config.NetworkInterfaces = []*ec2.CreateNetworkInterface{nic}
+		config.AddPublicIp()
 	} else {
 		if a.SecurityGroup != "" {
 			config.SecurityGroups = []string{a.SecurityGroup}

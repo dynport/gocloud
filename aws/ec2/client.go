@@ -65,6 +65,14 @@ type RunInstancesConfig struct {
 	UserData          string
 }
 
+func (config *RunInstancesConfig) AddPublicIp() {
+	nic := &CreateNetworkInterface{
+		DeviceIndex: len(config.NetworkInterfaces), AssociatePublicIpAddress: true, SubnetId: config.SubnetId,
+		SecurityGroupIds: config.SecurityGroups,
+	}
+	config.NetworkInterfaces = []*CreateNetworkInterface{nic}
+}
+
 func queryForAction(action string) string {
 	values := &url.Values{}
 	values.Add("Version", API_VERSIONS_EC2)
