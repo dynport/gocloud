@@ -307,6 +307,7 @@ func (a *DescribeInstances) Run() error {
 			table.Add(i.InstanceId, "LaunchTime", i.LaunchTime.Format("2006-01-02T15:04:05"))
 			table.Add(i.InstanceId, "VpcId", i.VpcId)
 			table.Add(i.InstanceId, "MonitoringState", i.MonitoringState)
+			table.Add(i.InstanceId, "SubnetId", i.SubnetId)
 			for _, group := range i.SecurityGroups {
 				table.Add(i.InstanceId, "SecurityGroup", group.GroupId)
 			}
