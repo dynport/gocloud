@@ -106,18 +106,12 @@ func (client *Client) CreateTags(resourceIds []string, tags map[string]string) e
 	return nil
 }
 
-func (client *Client) TerminateInstances(ids []string) error {
+func (client *Client) TerminateInstances(ids []string) (*aws.Response, error) {
 	query := queryForAction("TerminateInstances")
 	for i, id := range ids {
 		query += fmt.Sprintf("&InstanceId.%d=%s", i, id)
 	}
-	rsp, e := client.DoSignedRequest("DELETE", ENDPOINT, query, nil)
-	if e != nil {
-		return e
-	}
-	log.Println(string(rsp.Content))
-	log.Printf("terminates instances: %d", rsp.StatusCode)
-	return nil
+	return client.DoSignedRequest("DELETE", ENDPOINT, query, nil)
 }
 
 type Error struct {

@@ -257,7 +257,8 @@ type TerminateInstances struct {
 }
 
 func (a *TerminateInstances) Run() error {
-	return client().TerminateInstances(a.InstanceIds)
+	_, e := client().TerminateInstances(a.InstanceIds)
+	return e
 }
 
 type CreateTags struct {
