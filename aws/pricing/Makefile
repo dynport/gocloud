@@ -5,7 +5,7 @@ build: assets
 	go get .
 
 assets: install_goassets
-	rm -f ./compiled_assets.go
+	rm -f ./assets.go
 	goassets assets
 
 install_goassets:
