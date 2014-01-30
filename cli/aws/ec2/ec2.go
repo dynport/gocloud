@@ -16,7 +16,7 @@ import (
 const HOURS_PER_MONTH = 365 * 24.0 / 12.0
 
 func Register(router *cli.Router) {
-	router.RegisterFunc("aws/ec2/instances/describe", DescribeInstances, "Describe ec2 instances")
+	router.Register("aws/ec2/instances/describe", &DescribeInstances{}, "Describe ec2 instances")
 	router.Register("aws/ec2/instances/run", &RunInstances{}, "Run ec2 instances")
 	router.Register("aws/ec2/images/create", &CreateImage{}, "Create image from instance")
 	router.Register("aws/ec2/instances/terminate", &TerminateInstances{}, "Terminate ec2 instances")
@@ -287,11 +287,39 @@ func DescribeTags() error {
 	return nil
 }
 
-func DescribeInstances() error {
+type DescribeInstances struct {
+	Detailed bool `cli:"type=opt long=detailed"`
+}
+
+func (a *DescribeInstances) Run() error {
 	log.Print("describing ec2 instances")
 	instances, e := client().DescribeInstances()
 	if e != nil {
 		return e
+	}
+	if a.Detailed {
+		for _, i := range instances {
+			table := gocli.NewTable()
+			table.Add(i.InstanceId, "Name", i.Name())
+			table.Add(i.InstanceId, "ImageId", i.ImageId)
+			table.Add(i.InstanceId, "InstanceType", i.InstanceType)
+			table.Add(i.InstanceId, "InstanceStateName", i.InstanceStateName)
+			table.Add(i.InstanceId, "Availability Zone", i.PlacementAvailabilityZone)
+			table.Add(i.InstanceId, "KeyName", i.KeyName)
+			table.Add(i.InstanceId, "IpAddress", i.IpAddress)
+			table.Add(i.InstanceId, "PrivateIpAddress", i.PrivateIpAddress)
+			table.Add(i.InstanceId, "LaunchTime", i.LaunchTime.Format("2006-01-02T15:04:05"))
+			table.Add(i.InstanceId, "VpcId", i.VpcId)
+			table.Add(i.InstanceId, "MonitoringState", i.MonitoringState)
+			for _, group := range i.SecurityGroups {
+				table.Add(i.InstanceId, "SecurityGroup", group.GroupId)
+			}
+			for _, tag := range i.Tags {
+				table.Add(i.InstanceId, "Tag", tag.Key, tag.Value)
+			}
+			fmt.Println(table)
+		}
+		return nil
 	}
 	table := gocli.NewTable()
 	table.Add("id", "image", "name", "state", "type", "private_ip", "ip", "az", "launched")
@@ -316,6 +344,5 @@ func DescribeInstances() error {
 		)
 	}
 	fmt.Println(table)
-
 	return nil
 }
