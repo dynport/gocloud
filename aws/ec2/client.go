@@ -199,7 +199,7 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 		}
 	} else {
 		for i, sg := range config.SecurityGroups {
-			values.Add("SecurityGroup."+strconv.Itoa(i+1), sg)
+			values.Add("SecurityGroupId."+strconv.Itoa(i+1), sg)
 		}
 		values.Add("SubnetId", config.SubnetId)
 	}
