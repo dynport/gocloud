@@ -31,7 +31,7 @@ func (client *Client) DescribeImagesWithFilter(filter *ImageFilter) (images Imag
 }
 
 type CreateImageOptions struct {
-	InstancId   string // required
+	InstanceId  string // required
 	Name        string // required
 	Description string
 	NoReboot    bool
@@ -44,14 +44,23 @@ type CreateImageResponse struct {
 }
 
 func (client *Client) CreateImage(opts *CreateImageOptions) (rsp *CreateImageResponse, e error) {
+	if opts.InstanceId == "" {
+		return nil, fmt.Errorf("InstanceId must be provided")
+	}
+	if opts.Name == "" {
+		return nil, fmt.Errorf("InstanceId must be provided")
+	}
 	values := &url.Values{}
 	values.Add("Version", API_VERSIONS_EC2)
 	values.Add("Action", "CreateImage")
 	values.Add("Name", opts.Name)
+	values.Add("InstanceId", opts.InstanceId)
 	if opts.Description != "" {
 		values.Add("Description", opts.Description)
 	}
-	values.Add("NoReboot", fmt.Sprintf("%t", opts.NoReboot))
+	if opts.NoReboot {
+		values.Add("NoReboot", "true")
+	}
 
 	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
 	if e != nil {
