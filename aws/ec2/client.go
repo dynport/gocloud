@@ -22,13 +22,14 @@ type Client struct {
 }
 
 const (
-	API_VERSIONS_EC2     = "2013-08-15"
-	CANONICAL_OWNER_ID   = "099720109477"
-	SELF_OWNER_ID        = "self"
-	UBUNTU_PREFIX        = "ubuntu/images/ebs/ubuntu-*"
-	UBUNTU_RARING_PREFIX = "ubuntu/images/ebs/ubuntu-raring*"
-	UBUNTU_SAUCY_PREFIX  = "ubuntu/images/ebs/ubuntu-saucy*"
-	ENDPOINT             = "https://eu-west-1.ec2.amazonaws.com"
+	API_VERSIONS_EC2       = "2013-08-15"
+	CANONICAL_OWNER_ID     = "099720109477"
+	SELF_OWNER_ID          = "self"
+	UBUNTU_PREFIX          = "ubuntu/images/ebs/ubuntu-*"
+	UBUNTU_RARING_PREFIX   = "ubuntu/images/ebs/ubuntu-raring*"
+	UBUNTU_SAUCY_PREFIX    = "ubuntu/images/ebs/ubuntu-saucy*"
+	ENDPOINT               = "https://eu-west-1.ec2.amazonaws.com"
+	ImagePrefixRaringAmd64 = "ubuntu/images/ebs/ubuntu-raring-13.04-amd64*"
 )
 
 type ImageFilter struct {
