@@ -40,7 +40,7 @@ type Image struct {
 	ImageLocation      string `xml:"imageLocation"`
 	ImageState         string `xml:"imageState"`
 	ImageOwnerId       string `xml:"imageOwnerId"`
-	isPublic           bool   `xml:"isPublic"`
+	IsPublic           bool   `xml:"isPublic"`
 	Architecture       string `xml:"architecture"`
 	ImageType          string `xml:"imageType"`
 	ImageOwnerAlias    string `xml:"imageOwnerAlias"`
