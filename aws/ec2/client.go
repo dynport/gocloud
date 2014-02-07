@@ -33,8 +33,9 @@ const (
 )
 
 type ImageFilter struct {
-	Owner string
-	Name  string
+	Owner    string
+	Name     string
+	ImageIds []string
 }
 
 type ImageList []*Image

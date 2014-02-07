@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/url"
+	"strconv"
 )
 
 func (client *Client) DescribeImages() (images []*Image, e error) {
@@ -11,14 +12,21 @@ func (client *Client) DescribeImages() (images []*Image, e error) {
 }
 
 func (client *Client) DescribeImagesWithFilter(filter *ImageFilter) (images ImageList, e error) {
-	query := "Version=" + API_VERSIONS_EC2 + "&Action=DescribeImages"
+	values := url.Values{
+		"Version": {API_VERSIONS_EC2},
+		"Action":  {"DescribeImages"},
+	}
 	if filter.Owner != "" {
-		query += "&Owner.1=" + filter.Owner
+		values.Add("Owner.1", filter.Owner)
 	}
 	if filter.Name != "" {
-		query += "&Filter.1.Name=name&Filter.1.Value.0=" + filter.Name
+		values.Add("Filter.1.Name", "name")
+		values.Add("Filter.1.Value.0", filter.Name)
 	}
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, query, nil)
+	for i, id := range filter.ImageIds {
+		values.Add("ImageId."+strconv.Itoa(i+1), id)
+	}
+	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
 	if e != nil {
 		return
 	}
