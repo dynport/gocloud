@@ -226,6 +226,7 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 
 type DescribeInstancesOptions struct {
 	InstanceIds []string
+	Filters     []*Filter
 }
 
 func (client *Client) DescribeInstancesWithOptions(options *DescribeInstancesOptions) (instances []*Instance, e error) {
@@ -238,6 +239,7 @@ func (client *Client) DescribeInstancesWithOptions(options *DescribeInstancesOpt
 			values.Add("InstanceId."+strconv.Itoa(i+1), id)
 		}
 	}
+	applyFilters(values, options.Filters)
 	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
 	if e != nil {
 		return instances, e
@@ -245,6 +247,7 @@ func (client *Client) DescribeInstancesWithOptions(options *DescribeInstancesOpt
 	rsp := &DescribeInstancesResponse{}
 	e = xml.Unmarshal(raw.Content, rsp)
 	if e != nil {
+		e = fmt.Errorf("%s: %s", e.Error(), string(raw.Content))
 		return instances, e
 	}
 	return rsp.Instances(), nil
