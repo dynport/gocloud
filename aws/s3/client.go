@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"github.com/dynport/gocloud/aws"
 	"hash"
 	"io"
 	"io/ioutil"
@@ -17,6 +16,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/dynport/gocloud/aws"
 )
 
 var b64 = base64.StdEncoding
