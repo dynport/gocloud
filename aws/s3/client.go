@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -175,10 +174,6 @@ func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOpt
 	if options == nil {
 		options = &PutOptions{ContentType: DEFAULT_CONTENT_TYPE}
 	}
-	if options.ContentLength == 0 {
-		return fmt.Errorf("Content-Length must be set")
-	}
-
 	theUrl := client.keyUrl(bucket, key)
 	req, e := http.NewRequest("PUT", theUrl, r)
 	if e != nil {
@@ -186,7 +181,6 @@ func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOpt
 	}
 
 	req.Header.Add("Host", bucket+"."+client.EndpointHost())
-	req.Header.Add("Content-Length", strconv.Itoa(options.ContentLength))
 
 	contentType := options.ContentType
 	if contentType == "" {
@@ -202,20 +196,29 @@ func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOpt
 		req.Header.Add(HEADER_SERVER_SIDE_ENCRUPTION, AES256)
 	}
 
-	client.SignS3Request(req, bucket)
-	rsp, e := http.DefaultClient.Do(req)
-	if e != nil {
+	buf := bytes.NewBuffer(make([]byte, 0, MinPartSize))
+	_, e = io.CopyN(buf, r, MinPartSize)
+	if e == io.EOF {
+		// less than min multipart size => direct upload
+		return client.Put(bucket, key, buf.Bytes(), options)
+	} else if e != nil {
 		return e
 	}
-	defer rsp.Body.Close()
-	b, e := ioutil.ReadAll(rsp.Body)
-	if e != nil {
-		return e
+	mr := io.MultiReader(buf, r)
+
+	mo := &MultipartOptions{
+		PartSize: 5 * 1024 * 1024,
+		Callback: func(res *UploadPartResult) {
+			if res.Error != nil {
+				logger.Print("ERROR: " + e.Error())
+			} else if res.Part != nil {
+				logger.Printf("uploaded: %03d (%s) %d", res.Part.PartNumber, res.Part.ETag, res.CurrentSize)
+			}
+		},
+		PutOptions: options,
 	}
-	if rsp.StatusCode != 200 {
-		return fmt.Errorf("error uploading key: %s - %s", rsp.Status, string(b))
-	}
-	return nil
+	_, e = client.PutMultipart(bucket, key, mr, mo)
+	return e
 }
 
 func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) error {
