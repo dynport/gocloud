@@ -1,11 +1,27 @@
 package cloudformation
 
+var AWSTemplateFormatVersion = "2010-09-09"
+
 type Template struct {
 	AWSTemplateFormatVersion string `json:"AWSTemplateFormatVersion,omitempty"`
 	Description              string `json:"Description,omitempty"`
 
-	Parameters map[string]*Parameter  `json:"Parameters,omitempty"`
-	Resources  map[string]interface{} `json:"Resources,omitempty"`
+	Parameters map[string]*Parameter `json:"Parameters,omitempty"`
+	Resources  Resources             `json:"Resources,omitempty"`
+}
+
+type Resources map[string]interface{}
+
+type Resource struct {
+	Type         string      `json:"Type,omitempty"`
+	Properties   interface{} `json:"Properties,omitempty"`
+	UpdatePolicy interface{} `json:"UpdatePolicy,omitempty"`
+}
+
+func NewResource(theType string, properties interface{}) *Resource {
+	return &Resource{
+		Type: theType, Properties: properties,
+	}
 }
 
 type Properties struct {
@@ -58,103 +74,41 @@ type LaunchConfiguration struct {
 
 // AWS::AutoScaling::AutoScalingGroup",
 type AutoScalingGroup struct {
-	AvailabilityZones       []interface{}
-	Cooldown                interface{}
-	DesiredCapacity         interface{}
-	HealthCheckGracePeriod  interface{}
-	HealthCheckType         interface{}
-	LaunchConfigurationName interface{}
-	LoadBalancerNames       []interface{}
-	MaxSize                 interface{}
-	MinSize                 interface{}
+	AvailabilityZones       []interface{} `json:"AvailabilityZones,omitempty"`
+	Cooldown                interface{}   `json:"Cooldown,omitempty"`
+	DesiredCapacity         interface{}   `json:"DesiredCapacity,omitempty"`
+	HealthCheckGracePeriod  interface{}   `json:"HealthCheckGracePeriod,omitempty"`
+	HealthCheckType         interface{}   `json:"HealthCheckType,omitempty"`
+	LaunchConfigurationName interface{}   `json:"LaunchConfigurationName,omitempty"`
+	LoadBalancerNames       []interface{} `json:"LoadBalancerNames,omitempty"`
+	MaxSize                 interface{}   `json:"MaxSize,omitempty"`
+	MinSize                 interface{}   `json:"MinSize,omitempty"`
 }
 
-//     },
-//     UpdatePolicy" : {
-//       "AutoScalingRollingUpdate" : {
-//         "MaxBatchSize": { "Ref": "batchSize" },
-//         "MinInstancesInService": "1",
-//         "PauseTime": "PT120S"
-//       }
-//     }
-//   },
-//   "scalingIncreaseGroupSize": {
-//     "Type": "AWS::AutoScaling::ScalingPolicy",
-//     "Properties": {
-//       "AdjustmentType": "ChangeInCapacity",
-//       "AutoScalingGroupName": { "Ref": "asg" },
-//       "Cooldown": "300",
-//       "ScalingAdjustment": "1"
-//     }
-//   },
-//   "scalingIncreaseAlarm": {
-//     "Type": "AWS::CloudWatch::Alarm",
-//     "Properties": {
-//       "ActionsEnabled": "true",
-//       "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-//       "EvaluationPeriods": "1",
-//       "MetricName": "CPUUtilization",
-//       "Namespace": "AWS/EC2",
-//       "Period": "600",
-//       "Statistic": "Average",
-//       "Threshold": "80.0",
-//       "AlarmActions": [ { "Ref": "scalingIncreaseGroupSize" } ],
-//       "Dimensions": [
-//         { "Name": "AutoScalingGroupName", "Value": { "Ref": "asg" } }
-//       ]
-//     }
-//   },
-//   "scalingDecreaseGroupSize": {
-//     "Type": "AWS::AutoScaling::ScalingPolicy",
-//     "Properties": {
-//       "AdjustmentType": "ChangeInCapacity",
-//       "AutoScalingGroupName": { "Ref": "asg" },
-//       "Cooldown": "300",
-//       "ScalingAdjustment": "-1"
-//     }
-//   },
-//   "scalingDecreaseAlarm": {
-//     "Type": "",
-//     "Properties": {
-//       "ActionsEnabled": "true",
-//       "ComparisonOperator": "LessThanOrEqualToThreshold",
-//       "EvaluationPeriods": "1",
-//       "MetricName": "CPUUtilization",
-//       "Namespace": "AWS/EC2",
-//       "Period": "300",
-//       "Statistic": "Average",
-//       "Threshold": "10.0",
-//       "AlarmActions": [ { "Ref": "scalingDecreaseGroupSize" } ],
-//       "Dimensions": [
-//         { "Name": "AutoScalingGroupName", "Value": { "Ref": "asg" } }
-//       ]
-//     }
-//   }
-
 type NotificationConfiguration struct {
-	TopicARN          interface{} `json:"TopicARN,omitempty"`
-	NotificationTypes []interface{}
-	Tags              []*Tag
+	TopicARN          interface{}   `json:"TopicARN,omitempty"`
+	NotificationTypes []interface{} `json:"NotificationTypes,omitempty"`
+	Tags              []*Tag        `json:"Tags,omitempty"`
 }
 
 type Tag struct {
-	Key               interface{}
-	Value             interface{}
-	PropagateAtLaunch interface{}
-	VPCZoneIdentifier interface{}
+	Key               interface{} `json:"Key,omitempty"`
+	Value             interface{} `json:"Value,omitempty"`
+	PropagateAtLaunch interface{} `json:"PropagateAtLaunch,omitempty"`
+	VPCZoneIdentifier interface{} `json:"VPCZoneIdentifier,omitempty"`
 }
 
 // AWS::CloudWatch::Alarm
 type Alarm struct {
-	ActionsEnabled     interface{}
-	ComparisonOperator interface{}
-	EvaluationPeriods  interface{}
-	MetricName         interface{}
-	Namespace          interface{}
-	Period             interface{}
-	Statistic          interface{}
-	Threshold          interface{}
-	AlarmActions       []interface{}
+	ActionsEnabled     interface{}   `json:"ActionsEnabled,omitempty"`
+	ComparisonOperator interface{}   `json:"ComparisonOperator,omitempty"`
+	EvaluationPeriods  interface{}   `json:"EvaluationPeriods,omitempty"`
+	MetricName         interface{}   `json:"MetricName,omitempty"`
+	Namespace          interface{}   `json:"Namespace,omitempty"`
+	Period             interface{}   `json:"Period,omitempty"`
+	Statistic          interface{}   `json:"Statistic,omitempty"`
+	Threshold          interface{}   `json:"Threshold,omitempty"`
+	AlarmActions       []interface{} `json:"AlarmActions,omitempty"`
 }
 
 type BlockDeviceMapping struct {

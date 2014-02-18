@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/dynport/gocloud/aws"
@@ -32,12 +33,24 @@ func (client *Client) loadCloudFormationResource(action string, params url.Value
 		return e
 	}
 	switch rsp.StatusCode {
-	case 400, 404:
+	case 404:
 		return ErrorNotFound
 	case 200:
-		return xml.Unmarshal(b, i)
+		if i != nil {
+			return xml.Unmarshal(b, i)
+		}
+		return nil
 	default:
-		return fmt.Errorf("expected status 2xx but got %s (%s)", rsp.Status, string(b))
+		ersp := &ErrorResponse{}
+		e = xml.Unmarshal(b, ersp)
+		if e != nil {
+			return fmt.Errorf("expected status 2xx but got %s (%s)", rsp.Status, string(b))
+
+		}
+		if strings.Contains(ersp.Error.Message, "does not exist") {
+			return ErrorNotFound
+		}
+		return fmt.Errorf(ersp.Error.Message)
 	}
 }
 
