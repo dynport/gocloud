@@ -136,9 +136,19 @@ type SecurityGroupProperties struct {
 }
 
 type SecurityGroup struct {
-	IpProtocol                 interface{} `json:"IpProtocol,omitempty"`
-	FromPort                   interface{} `json:"FromPort,omitempty"`
-	ToPort                     interface{} `json:"ToPort,omitempty"`
+	VpcId                interface{}          `json:"VpcId,omitempty"`
+	GroupDescription     interface{}          `json:"GroupDescription,omitempty"`
+	SecurityGroupEgress  []*SecurityGroupRule `json:"SecurityGroupEgress,omitempty"`
+	SecurityGroupIngress []*SecurityGroupRule `json:"SecurityGroupIngress,omitempty"`
+	Tags                 []*Tag               `json:"Tags,omitempty"`
+}
+
+type SecurityGroupRule struct {
+	GroupId                    interface{} `json:"GroupId,omitempty"`
+	IpProtocol                 string      `json:"IpProtocol,omitempty"`
+	FromPort                   string      `json:"FromPort,omitempty"`
+	ToPort                     string      `json:"ToPort,omitempty"`
+	CidrIp                     string      `json:"CidrIp,omitempty"`
 	SourceSecurityGroupId      interface{} `json:"SourceSecurityGroupId,omitempty"`
 	SourceSecurityGroupOwnerId interface{} `json:"SourceSecurityGroupOwnerId,omitempty"`
 }
