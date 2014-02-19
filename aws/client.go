@@ -58,9 +58,15 @@ type Error struct {
 	Message string `xml:"Message"`
 }
 
-func (er *ErrorResponse) ErrorStrings() string {
+type ErrorsResponse struct {
+	XMLName   xml.Name `xml:"Response"`
+	RequestID string   `xml:"RequestID"`
+	Errors    []*Error `xml:"Errors>Error"`
+}
+
+func errorsString(errors []*Error) string {
 	out := []string{}
-	for _, e := range er.Errors {
+	for _, e := range errors {
 		out = append(out, fmt.Sprintf("%s: %s", e.Code, e.Message))
 	}
 	return strings.Join(out, ", ")
@@ -70,7 +76,16 @@ func ExtractError(b []byte) error {
 	rsp := &ErrorResponse{}
 	e := xml.Unmarshal(b, rsp)
 	if e == nil {
-		return fmt.Errorf(rsp.ErrorStrings())
+		return fmt.Errorf(errorsString(rsp.Errors))
+	}
+	return ExtractErrorsResponse(b)
+}
+
+func ExtractErrorsResponse(b []byte) error {
+	rsp := &ErrorsResponse{}
+	e := xml.Unmarshal(b, rsp)
+	if e == nil {
+		return fmt.Errorf(errorsString(rsp.Errors))
 	}
 	return nil
 }
@@ -90,6 +105,10 @@ func (client *Client) DoSignedRequest(method string, endpoint, action string, ex
 	rsp.Content, e = ioutil.ReadAll(raw.Body)
 	if e != nil {
 		return rsp, e
+	}
+	e = ExtractError(rsp.Content)
+	if e != nil {
+		return nil, e
 	}
 	return rsp, e
 }
