@@ -12,7 +12,7 @@ type ListStacksResponse struct {
 }
 
 type ListStacksResult struct {
-	Stacks []*Stack `xml:"StackSummaries>member>Stack"`
+	Stacks []*Stack `xml:"StackSummaries>member"`
 }
 
 type ListStacksParameters struct {
