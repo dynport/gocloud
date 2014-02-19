@@ -211,8 +211,6 @@ func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOpt
 		Callback: func(res *UploadPartResult) {
 			if res.Error != nil {
 				logger.Print("ERROR: " + e.Error())
-			} else if res.Part != nil {
-				logger.Printf("uploaded: %03d (%s) %d", res.Part.PartNumber, res.Part.ETag, res.CurrentSize)
 			}
 		},
 		PutOptions: options,
