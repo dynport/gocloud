@@ -1,7 +1,11 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"github.com/dynport/dgtk/cli"
+	"github.com/dynport/gocloud/cli/aws/cloudformation"
 	"github.com/dynport/gocloud/cli/aws/cloudwatch"
 	"github.com/dynport/gocloud/cli/aws/ec2"
 	"github.com/dynport/gocloud/cli/aws/elb"
@@ -11,14 +15,13 @@ import (
 	"github.com/dynport/gocloud/cli/hetzner"
 	"github.com/dynport/gocloud/cli/jiffybox"
 	"github.com/dynport/gocloud/cli/profitbricks"
-	"log"
-	"os"
 )
 
 var router = cli.NewRouter()
 
 func init() {
 	ec2.Register(router)
+	cloudformation.Register(router)
 	elb.Register(router)
 	digitalocean.Register(router)
 	hetzner.Register(router)
