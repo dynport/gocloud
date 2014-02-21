@@ -2,6 +2,8 @@ package ec2
 
 import (
 	"encoding/xml"
+	"net/url"
+	"strconv"
 )
 
 type DescribeSecurityGroupsResponse struct {
@@ -25,8 +27,35 @@ type SecurityGroup struct {
 	IpPermissions    []*IpPermission `xml:"ipPermissions>item"`
 }
 
-func (client *Client) DescribeSecurityGroups() (groups []*SecurityGroup, e error) {
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, queryForAction("DescribeSecurityGroups"), nil)
+type DescribeSecurityGroupsParameters struct {
+	GroupNames []string
+	GroupIds   []string
+	Filters    []*Filter
+}
+
+func (d *DescribeSecurityGroupsParameters) query() string {
+	v := url.Values{}
+	for i, g := range d.GroupIds {
+		v.Add("GroupId."+strconv.Itoa(i+1), g)
+	}
+	for i, g := range d.GroupNames {
+		v.Add("GroupName."+strconv.Itoa(i+1), g)
+	}
+	if len(v) > 0 {
+		return v.Encode()
+	}
+	return ""
+}
+
+func (client *Client) DescribeSecurityGroups(params *DescribeSecurityGroupsParameters) (groups []*SecurityGroup, e error) {
+	if params == nil {
+		params = &DescribeSecurityGroupsParameters{}
+	}
+	q := queryForAction("DescribeSecurityGroups")
+	if search := params.query(); search != "" {
+		q += "&" + search
+	}
+	raw, e := client.DoSignedRequest("GET", ENDPOINT, q, nil)
 	if e != nil {
 		return groups, e
 	}
