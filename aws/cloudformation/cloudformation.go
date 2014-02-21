@@ -121,8 +121,8 @@ type Ebs struct {
 }
 
 type PolicyAttribute struct {
-	Name           string        `json:"Name,omitempty"`
-	Value          string        `json:"Value,omitempty"`
+	Name           interface{}   `json:"Name,omitempty"`
+	Value          interface{}   `json:"Value,omitempty"`
 	SecurityGroups []interface{} `json:"SecurityGroups,omitempty"`
 	Subnets        interface{}   `json:"Subnets,omitempty"`
 }
@@ -145,10 +145,10 @@ type SecurityGroup struct {
 
 type SecurityGroupRule struct {
 	GroupId                    interface{} `json:"GroupId,omitempty"`
-	IpProtocol                 string      `json:"IpProtocol,omitempty"`
-	FromPort                   string      `json:"FromPort,omitempty"`
-	ToPort                     string      `json:"ToPort,omitempty"`
-	CidrIp                     string      `json:"CidrIp,omitempty"`
+	IpProtocol                 interface{} `json:"IpProtocol,omitempty"`
+	FromPort                   interface{} `json:"FromPort,omitempty"`
+	ToPort                     interface{} `json:"ToPort,omitempty"`
+	CidrIp                     interface{} `json:"CidrIp,omitempty"`
 	SourceSecurityGroupId      interface{} `json:"SourceSecurityGroupId,omitempty"`
 	SourceSecurityGroupOwnerId interface{} `json:"SourceSecurityGroupOwnerId,omitempty"`
 }
