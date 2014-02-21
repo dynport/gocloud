@@ -2,6 +2,7 @@ package cloudformation
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/dynport/dgtk/cli"
@@ -53,10 +54,62 @@ func (r *StackResources) Run() error {
 	}
 	fmt.Println(t)
 	return nil
+}
 
+type StacksWatch struct {
+	Name string `cli:"arg required"`
+}
+
+type StackEventsList []*cloudformation.StackEvent
+
+func (list StackEventsList) Len() int {
+	return len(list)
+}
+
+func (list StackEventsList) Swap(a, b int) {
+	list[a], list[b] = list[b], list[a]
+}
+
+func (list StackEventsList) Less(a, b int) bool {
+	return list[a].Timestamp.Before(list[b].Timestamp)
+}
+
+var (
+	ReasonUserInitiated             = "User Initiated"
+	ReasonResourceCreationInitiated = "Resource creation Initiated"
+)
+
+func (s *StacksWatch) Run() error {
+	rsp, e := client.DescribeStackEvents(&cloudformation.DescribeStackEventsParameters{StackName: s.Name})
+	if e != nil {
+		return e
+	}
+	max := 0
+	events := StackEventsList(rsp.DescribeStackEventsResult.StackEvents)
+	sort.Sort(events)
+	for _, e := range events {
+		ph := e.PhysicalResourceId
+		fmt.Printf("%s %-24s %-32s %s\n", e.Timestamp.Format(time.RFC3339), maxLen(e.LogicalResourceId, 24), maxLen(ph, 32), e.ResourceStatus)
+		switch e.ResourceStatusReason {
+		case "", ReasonUserInitiated, ReasonResourceCreationInitiated:
+			//
+		default:
+			fmt.Printf("%20s %s\n", "", gocli.Red(e.ResourceStatusReason))
+		}
+	}
+	fmt.Printf("max: %d", max)
+	return nil
+}
+
+func maxLen(s string, i int) string {
+	if len(s) < i {
+		return s
+	}
+	return s[0:i]
 }
 
 func Register(router *cli.Router) {
 	router.Register("aws/cloudformation/stacks/list", &StacksList{}, "List Cloudformation stacks")
+	router.Register("aws/cloudformation/stacks/watch", &StacksWatch{}, "Watch Stacks")
 	router.Register("aws/cloudformation/stacks/resources", &StackResources{}, "Describe Stack Resources")
 }
