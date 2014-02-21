@@ -11,6 +11,7 @@ import (
 
 type StacksList struct {
 	IncludeDeleted bool `cli:"opt --deleted"`
+	Full           bool `cli:"opt --full"`
 }
 
 var client = cloudformation.NewFromEnv()
@@ -25,7 +26,11 @@ func (list *StacksList) Run() error {
 		if !list.IncludeDeleted && s.StackStatus == "DELETE_COMPLETE" {
 			continue
 		}
-		t.Add(s.StackName, s.StackStatus, s.CreationTime.Format(time.RFC3339))
+		parts := []interface{}{s.StackName, s.StackStatus, s.CreationTime.Format(time.RFC3339)}
+		if list.Full {
+			parts = append(parts, s.StackId)
+		}
+		t.Add(parts...)
 	}
 	fmt.Println(t)
 	return nil
