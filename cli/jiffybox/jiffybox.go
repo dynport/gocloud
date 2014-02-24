@@ -210,7 +210,7 @@ type JiffyBoxDeleteAction struct {
 }
 
 func (a *JiffyBoxDeleteAction) Run() error {
-	log.Printf("deleting box with id %s", a.BoxId)
+	log.Printf("deleting box with id %d", a.BoxId)
 	e := client().DeleteJiffyBox(a.BoxId)
 	if e != nil {
 		return e
