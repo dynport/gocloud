@@ -2,9 +2,10 @@ package ec2
 
 import (
 	"encoding/xml"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func mustReadFixture(name string) []byte {
