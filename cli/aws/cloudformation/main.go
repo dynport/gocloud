@@ -56,10 +56,6 @@ func (r *StackResources) Run() error {
 	return nil
 }
 
-type StacksWatch struct {
-	Name string `cli:"arg required"`
-}
-
 type StackEventsList []*cloudformation.StackEvent
 
 func (list StackEventsList) Len() int {
@@ -79,25 +75,36 @@ var (
 	ReasonResourceCreationInitiated = "Resource creation Initiated"
 )
 
+type StacksWatch struct {
+	Name    string `cli:"arg required"`
+	Refresh int    `cli:"opt --refresh default=5"`
+}
+
 func (s *StacksWatch) Run() error {
-	rsp, e := client.DescribeStackEvents(&cloudformation.DescribeStackEventsParameters{StackName: s.Name})
-	if e != nil {
-		return e
-	}
-	max := 0
-	events := StackEventsList(rsp.DescribeStackEventsResult.StackEvents)
-	sort.Sort(events)
-	for _, e := range events {
-		ph := e.PhysicalResourceId
-		fmt.Printf("%s %-24s %-32s %s\n", e.Timestamp.Format(time.RFC3339), maxLen(e.LogicalResourceId, 24), maxLen(ph, 32), e.ResourceStatus)
-		switch e.ResourceStatusReason {
-		case "", ReasonUserInitiated, ReasonResourceCreationInitiated:
-			//
-		default:
-			fmt.Printf("%20s %s\n", "", gocli.Red(e.ResourceStatusReason))
+	last := time.Time{}
+	for {
+		rsp, e := client.DescribeStackEvents(&cloudformation.DescribeStackEventsParameters{StackName: s.Name})
+		if e != nil {
+			fmt.Printf("ERROR: %s\n", e.Error())
+		} else {
+			events := StackEventsList(rsp.DescribeStackEventsResult.StackEvents)
+			sort.Sort(events)
+			for _, e := range events {
+				if e.Timestamp.After(last) {
+					ph := e.PhysicalResourceId
+					fmt.Printf("%s %-24s %-32s %s\n", e.Timestamp.Format(time.RFC3339), maxLen(e.LogicalResourceId, 24), maxLen(ph, 32), e.ResourceStatus)
+					switch e.ResourceStatusReason {
+					case "", ReasonUserInitiated, ReasonResourceCreationInitiated:
+						//
+					default:
+						fmt.Printf("%20s %s\n", "", gocli.Red(e.ResourceStatusReason))
+					}
+					last = e.Timestamp
+				}
+			}
 		}
+		time.Sleep(time.Duration(s.Refresh) * time.Second)
 	}
-	fmt.Printf("max: %d", max)
 	return nil
 }
 
