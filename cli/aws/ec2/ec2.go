@@ -128,7 +128,7 @@ func DescribeSpotPriceHistory() error {
 }
 
 func DescribeSecurityGroups() error {
-	groups, e := client().DescribeSecurityGroups()
+	groups, e := client().DescribeSecurityGroups(nil)
 	if e != nil {
 		return e
 	}
