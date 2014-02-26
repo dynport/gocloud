@@ -13,3 +13,8 @@ type Ec2Instance struct {
 	BlockDeviceMappings   []*BlockDeviceMapping `json:"BlockDeviceMappings,omitempty"`
 	Tags                  []*Tag                `json:"Tags,omitempty"`
 }
+
+type Ec2EIP struct {
+	InstanceId interface{} `json:"InstanceId,omitempty"`
+	Domain     interface{} `json:"Domain,omitempty"`
+}
