@@ -36,20 +36,20 @@ type DescribeImagesResponse struct {
 }
 
 type Image struct {
-	ImageId            string `xml:"imageId"`
-	ImageLocation      string `xml:"imageLocation"`
-	ImageState         string `xml:"imageState"`
-	ImageOwnerId       string `xml:"imageOwnerId"`
-	IsPublic           bool   `xml:"isPublic"`
-	Architecture       string `xml:"architecture"`
-	ImageType          string `xml:"imageType"`
-	ImageOwnerAlias    string `xml:"imageOwnerAlias"`
-	Name               string `xml:"name"`
-	RootDeviceType     string `xml:"rootDeviceType"`
-	VirtualizationType string `xml:"virtualizationType"`
-	hypervisor         string `xml:"hypervisor"`
-
-	ProductCodes []*ProductCode `xml:"productCodes>item"`
+	ImageId             string                `xml:"imageId"`
+	ImageLocation       string                `xml:"imageLocation"`
+	ImageState          string                `xml:"imageState"`
+	ImageOwnerId        string                `xml:"imageOwnerId"`
+	IsPublic            bool                  `xml:"isPublic"`
+	Architecture        string                `xml:"architecture"`
+	ImageType           string                `xml:"imageType"`
+	ImageOwnerAlias     string                `xml:"imageOwnerAlias"`
+	Name                string                `xml:"name"`
+	RootDeviceType      string                `xml:"rootDeviceType"`
+	VirtualizationType  string                `xml:"virtualizationType"`
+	Hypervisor          string                `xml:"hypervisor"`
+	BlockDeviceMappings []*BlockDeviceMapping `xml:"blockDeviceMapping>item"`
+	ProductCodes        []*ProductCode        `xml:"productCodes>item"`
 }
 
 type ProductCode struct {
@@ -153,18 +153,21 @@ func (tag *Tag) String() string {
 }
 
 type Tag struct {
-	Key          string `xml:"key"`
-	Value        string `xml:"value"`
+	Key          string `xml:"key,omitempty"`
+	Value        string `xml:"value,omitempty"`
 	ResourceId   string `xml:"resourceId,omitempty"`
 	ResourceType string `xml:"resourceType,omitempty"`
 }
 
 type BlockDeviceMapping struct {
-	DeviceName             string `xml:"deviceName"`
-	EbsVolumeId            string `xml:"ebs>volumeId"`
-	EbsStatus              string `xml:"ebs>status"`
-	EbsAttachTime          string `xml:"ebs>attachTime"`
-	EbsDeleteOnTermination string `xml:"ebs>deleteOnTermination"`
+	DeviceName string `xml:"deviceName,omitempty"`
+	Ebs        *Ebs   `xml:"ebs,omitempty"`
+}
+
+type Ebs struct {
+	SnapshotId          string `xml:"snapshotId"`
+	VolumeSize          int    `xml:"volumeSize"`
+	DeleteOnTermination bool   `xml:"deleteOnTermination"`
 }
 
 type Reservation struct {
