@@ -77,8 +77,10 @@ func (client *Client) Endpoint() string {
 type PutOptions struct {
 	ContentType          string
 	ContentLength        int
+	ContentEncoding      string
 	AmzAcl               string
 	ServerSideEncryption bool
+	MetaHeader           http.Header
 }
 
 func NewPublicPut() *PutOptions {
@@ -180,21 +182,7 @@ func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOpt
 		return e
 	}
 
-	req.Header.Add("Host", bucket+"."+client.EndpointHost())
-
-	contentType := options.ContentType
-	if contentType == "" {
-		contentType = DEFAULT_CONTENT_TYPE
-	}
-	req.Header.Add(HEADER_CONTENT_TYPE, contentType)
-
-	if options.AmzAcl != "" {
-		req.Header.Add(HEADER_AMZ_ACL, options.AmzAcl)
-	}
-
-	if options.ServerSideEncryption {
-		req.Header.Add(HEADER_SERVER_SIDE_ENCRUPTION, AES256)
-	}
+	req.Header = client.putRequestHeaders(bucket, key, options)
 
 	buf := bytes.NewBuffer(make([]byte, 0, MinPartSize))
 	_, e = io.CopyN(buf, r, MinPartSize)
@@ -219,6 +207,36 @@ func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOpt
 	return e
 }
 
+func (client *Client) putRequestHeaders(bucket, key string, options *PutOptions) http.Header {
+	headers := http.Header{}
+	headers.Add("Host", bucket+"."+client.EndpointHost())
+
+	if options.MetaHeader != nil {
+		for k := range options.MetaHeader {
+			headers.Add("x-amz-meta-"+k, options.MetaHeader.Get(k))
+		}
+	}
+
+	contentType := options.ContentType
+	if contentType == "" {
+		contentType = DEFAULT_CONTENT_TYPE
+	}
+	headers.Add(HEADER_CONTENT_TYPE, contentType)
+
+	if options.ContentEncoding != "" {
+		headers.Add("Content-Encoding", options.ContentEncoding)
+	}
+
+	if options.AmzAcl != "" {
+		headers.Add(HEADER_AMZ_ACL, options.AmzAcl)
+	}
+
+	if options.ServerSideEncryption {
+		headers.Add(HEADER_SERVER_SIDE_ENCRUPTION, AES256)
+	}
+	return headers
+}
+
 func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) error {
 	if options == nil {
 		options = &PutOptions{ContentType: DEFAULT_CONTENT_TYPE}
@@ -230,22 +248,7 @@ func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) 
 	if e != nil {
 		return e
 	}
-
-	req.Header.Add("Host", bucket+"."+client.EndpointHost())
-
-	contentType := options.ContentType
-	if contentType == "" {
-		contentType = DEFAULT_CONTENT_TYPE
-	}
-	req.Header.Add(HEADER_CONTENT_TYPE, contentType)
-
-	if options.AmzAcl != "" {
-		req.Header.Add(HEADER_AMZ_ACL, options.AmzAcl)
-	}
-
-	if options.ServerSideEncryption {
-		req.Header.Add(HEADER_SERVER_SIDE_ENCRUPTION, AES256)
-	}
+	req.Header = client.putRequestHeaders(bucket, key, options)
 
 	b64md5, e := contentMd5(string(data))
 	if e != nil {
