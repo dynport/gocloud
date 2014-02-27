@@ -33,6 +33,7 @@ var uncountable = map[string]struct{}{
 	"Volumes":                    null,
 	"PrivateIpAddress":           null,
 	"IpPermissions":              null,
+	"Groups":                     null,
 }
 
 func pluralize(name string) string {

@@ -17,7 +17,7 @@ type TypeField struct {
 }
 
 func (tf *TypeField) String() string {
-	out := tf.Name + " " + tf.Type
+	out := strings.TrimSpace(tf.Name) + " " + tf.Type
 	comments := []string{}
 	for key, value := range tf.Comments {
 		comments = append(comments, fmt.Sprintf("%s:%q", key, value))

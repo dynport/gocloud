@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -37,12 +38,13 @@ func (g *GenerateTypes) Run() error {
 		}
 		types = append(types, &Type{Name: a.Type, Fields: fields})
 	}
-	return writeTypes("generated", "generated/types.go", types)
+	return writeTypes("ez2", "generated/ez2/types.go", types)
 }
 
-func writeTypes(pkgName string, path string, types []*Type) error {
-	os.Mkdir("generated", 0755)
-	f, e := os.Create(path)
+func writeTypes(pkgName string, p string, types []*Type) error {
+	os.MkdirAll(path.Dir(p), 0755)
+	logger.Printf("writing to file %q", p)
+	f, e := os.Create(p)
 	if e != nil {
 		return e
 	}
@@ -52,7 +54,7 @@ func writeTypes(pkgName string, path string, types []*Type) error {
 		typeLines = append(typeLines, t.String())
 	}
 	typesString := strings.Join(typeLines, "\n")
-	all := []string{"package generated\n"}
+	all := []string{"package " + pkgName + "\n"}
 
 	if strings.Contains(typesString, "time.Time") {
 		all = append(all, `import "time"`+"\n")

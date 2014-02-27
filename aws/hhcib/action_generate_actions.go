@@ -30,11 +30,7 @@ func (g *GenerateActions) Run() error {
 			RequestParameters: a.RequestParameters(),
 		}
 		t := ac.RequestType()
-		for _, f := range t.Fields {
-			if f.CustomType != nil {
-				customTypes[f.CustomType.Name] = f.CustomType
-			}
-		}
+		addCustomTypes(customTypes, t)
 		types = append(types, t)
 	}
 	if len(customTypes) > 0 {
@@ -44,7 +40,16 @@ func (g *GenerateActions) Run() error {
 			types = append(types, t)
 		}
 	}
-	return writeTypes("generated", "generated/ec2_actions.go", types)
+	return writeTypes("ez2", "generated/ez2/actions.go", types)
+}
+
+func addCustomTypes(cts map[string]*Type, t *Type) {
+	for _, f := range t.Fields {
+		if f.CustomType != nil {
+			cts[f.CustomType.Name] = f.CustomType
+			addCustomTypes(cts, f.CustomType)
+		}
+	}
 }
 
 func init() {

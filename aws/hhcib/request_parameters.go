@@ -4,12 +4,24 @@ import "strings"
 
 type RequestParameters []*Property
 
+var requestTypeMapping = map[string]string{
+	"NetworkInterface": "RequestNetworkInterface",
+}
+
+func mapRequestType(t string) string {
+	if mapped, ok := requestTypeMapping[t]; ok {
+		return mapped
+	}
+	return t
+}
+
 func (r RequestParameters) fields() []*TypeField {
-	multiFields := map[string]map[string]string{}
+	multiFields := MultiFieldMap{}
 	fields := []*TypeField{}
 	for _, p := range r {
 		name := p.Name
-		field := &TypeField{Name: normalizeName(p.Name), Type: convertType(p.Type), Comments: Comments{"aws": strings.Replace(name, ".n", "", -1)}}
+		t := mapRequestType(convertType(p.Type))
+		field := &TypeField{Name: normalizeName(p.Name), Type: t, Comments: Comments{"aws": strings.Replace(name, ".n", "", -1)}}
 		if strings.HasSuffix(name, ".n") {
 			field.Name = pluralize(field.Name)
 			field.Type = "[]" + field.Type
@@ -21,7 +33,7 @@ func (r RequestParameters) fields() []*TypeField {
 				if multiFields[name] == nil {
 					multiFields[name] = map[string]string{}
 				}
-				theType := convertType(strings.Split(p.Type, ".")[0])
+				theType := convertType(strings.Split(t, ".")[0])
 				if strings.HasSuffix(subName, ".m") {
 					subName = strings.TrimSuffix(subName, ".m") + "s"
 					theType = "[]" + theType
@@ -32,13 +44,5 @@ func (r RequestParameters) fields() []*TypeField {
 		}
 		fields = append(fields, field)
 	}
-	for name, mapping := range multiFields {
-		normalizedName := strings.TrimSpace(strings.Replace(name, ".", "", -1))
-		t := &Type{Name: normalizedName}
-		for subname, subType := range mapping {
-			t.Fields = append(t.Fields, &TypeField{Name: strings.TrimSpace(strings.Replace(subname, ".", "", -1)), Type: subType, Comments: Comments{"aws": subname}})
-		}
-		fields = append(fields, &TypeField{CustomType: t, Name: pluralize(normalizeName(normalizedName)), Type: "[]*" + normalizedName, Comments: Comments{"aws": name}})
-	}
-	return fields
+	return append(fields, multiFields.fields()...)
 }
