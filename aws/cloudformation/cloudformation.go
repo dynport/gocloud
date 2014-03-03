@@ -2,6 +2,13 @@ package cloudformation
 
 var AWSTemplateFormatVersion = "2010-09-09"
 
+func NewTemplate(desc string) *Template {
+	return &Template{
+		AWSTemplateFormatVersion: AWSTemplateFormatVersion,
+		Description:              desc,
+	}
+}
+
 type Template struct {
 	AWSTemplateFormatVersion string `json:"AWSTemplateFormatVersion,omitempty"`
 	Description              string `json:"Description,omitempty"`
