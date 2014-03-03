@@ -17,7 +17,7 @@ import (
 var b64 = base64.StdEncoding
 
 type Client struct {
-	Key, Secret string
+	Key, Secret, Region string
 }
 
 var Debug = os.Getenv("DEBUG") == "true"
@@ -30,7 +30,9 @@ func (client *Client) Debug(format string, i ...interface{}) {
 
 func NewFromEnv() *Client {
 	client := &Client{}
-	client.Key, client.Secret = os.Getenv(ENV_AWS_ACCESS_KEY), os.Getenv(ENV_AWS_SECRET_KEY)
+	client.Key = os.Getenv(ENV_AWS_ACCESS_KEY)
+	client.Secret = os.Getenv(ENV_AWS_SECRET_KEY)
+	client.Region = os.Getenv(ENV_AWS_DEFAULT_REGION)
 
 	if client.Key == "" || client.Secret == "" {
 		abortWith(fmt.Sprintf("%s and %s must be set in ENV", ENV_AWS_ACCESS_KEY, ENV_AWS_SECRET_KEY))
