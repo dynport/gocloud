@@ -35,7 +35,7 @@ func TestAuthorizeSecurityGroupEgress(t *testing.T) {
 
 		t.Log(fields[0].CustomType.Fields)
 		So(len(fields[0].CustomType.Fields), ShouldEqual, 1)
-		So(fields[0].CustomType.Fields[0].Type, ShouldEqual, "int")
+		So(fields[0].CustomType.Fields[0].Type, ShouldEqual, "*IntValue")
 	})
 }
 

@@ -63,7 +63,7 @@ func TestParseTypes(t *testing.T) {
 	Convey("Parse EC2 types", t, func() {
 		doc, e := gokogiri.ParseHtml(mustRead(t, "API-ItemTypes.html"))
 		So(e, ShouldBeNil)
-		links, e := extractLinks(doc)
+		links, e := extractLinks(doc, ec2Root)
 		So(e, ShouldBeNil)
 		So(links, ShouldNotBeNil)
 		So(len(links), ShouldEqual, 127)

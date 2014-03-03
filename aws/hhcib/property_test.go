@@ -13,7 +13,7 @@ func TestPropertiesToRequestTypeDefinition(t *testing.T) {
 	Convey("toRequestTypeDefinition", t, func() {
 		cases := []*toTypeFieldTest{
 			{Name: "InstanceId.n", Type: "String", Response: "InstanceIds []string `aws:" + `"InstanceId"` + "`"},
-			{Name: "MaxResults", Type: "Integer", Response: "MaxResults int `aws:" + `"MaxResults"` + "`"},
+			{Name: "MaxResults", Type: "Integer", Response: "MaxResults *IntValue `aws:" + `"MaxResults"` + "`"},
 			{Name: "Storage.S3.Bucket", Type: "String", Response: "StorageS3Bucket string `aws:" + `"Storage.S3.Bucket"` + "`"},
 		}
 		for _, c := range cases {

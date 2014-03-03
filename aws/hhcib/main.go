@@ -49,7 +49,7 @@ func (main *Main) Run() error {
 	if e != nil {
 		return e
 	}
-	actions, e := extractLinks(doc)
+	actions, e := extractLinks(doc, ec2Root)
 	if e != nil {
 		return e
 	}

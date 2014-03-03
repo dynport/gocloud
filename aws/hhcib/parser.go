@@ -38,7 +38,7 @@ func parseDocu(b []byte) (*DocumentationPage, error) {
 }
 
 func urlRoot(theUrl string) string {
-	parts := strings.Split(ec2ApiRoot, "/")
+	parts := strings.Split(theUrl, "/")
 	if len(parts) > 1 {
 		return strings.Join(parts[0:len(parts)-1], "/")
 	}
@@ -50,14 +50,16 @@ type Link struct {
 	Url  string
 }
 
-func extractLinks(doc xml.Node) (links []*Link, e error) {
-	nodes, e := doc.Search("//div[@class='highlights']/.//a[starts-with(@href, 'ApiReference')]")
+var ec2Root = urlRoot(ec2ApiRoot)
+
+func extractLinks(doc xml.Node, baseUrl string) (links []*Link, e error) {
+	logger.Printf("extracting links with base_url=%s", baseUrl)
+	nodes, e := doc.Search("//div[@class='highlights']/.//a")
 	if e != nil {
 		return nil, e
 	}
-	root := urlRoot(ec2ApiRoot)
 	for _, node := range nodes {
-		links = append(links, &Link{Name: node.Content(), Url: root + "/" + node.Attr("href")})
+		links = append(links, &Link{Name: node.Content(), Url: baseUrl + "/" + node.Attr("href")})
 	}
 	return links, nil
 }

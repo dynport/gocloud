@@ -8,7 +8,7 @@ func (g *GenerateActions) Run() error {
 	if e != nil {
 		return e
 	}
-	links, e := extractLinks(doc)
+	links, e := extractLinks(doc, ec2Root)
 	if e != nil {
 		return e
 	}
@@ -40,7 +40,7 @@ func (g *GenerateActions) Run() error {
 			types = append(types, t)
 		}
 	}
-	return writeTypes("ez2", "generated/ez2/actions.go", types)
+	return writeTypes("main", "ec2_actions_generated.go", types)
 }
 
 func addCustomTypes(cts map[string]*Type, t *Type) {

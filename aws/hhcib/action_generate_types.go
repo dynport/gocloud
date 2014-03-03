@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 )
@@ -15,7 +17,7 @@ func (g *GenerateTypes) Run() error {
 	if e != nil {
 		return e
 	}
-	links, e := extractLinks(doc)
+	links, e := extractLinks(doc, ec2Root)
 	if e != nil {
 		return e
 	}
@@ -38,10 +40,22 @@ func (g *GenerateTypes) Run() error {
 		}
 		types = append(types, &Type{Name: a.Type, Fields: fields})
 	}
-	return writeTypes("ez2", "generated/ez2/types.go", types)
+	return writeTypes("main", "ec2_types_generated.go", types)
 }
 
 func writeTypes(pkgName string, p string, types []*Type) error {
+	e := writeTypesFile(pkgName, p, types)
+	if e != nil {
+		return e
+	}
+	b, e := exec.Command("gofmt", "-w", p).CombinedOutput()
+	if e != nil {
+		return fmt.Errorf("%s: %s", e.Error(), string(b))
+	}
+	return nil
+}
+
+func writeTypesFile(pkgName string, p string, types []*Type) error {
 	os.MkdirAll(path.Dir(p), 0755)
 	logger.Printf("writing to file %q", p)
 	f, e := os.Create(p)

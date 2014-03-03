@@ -16,7 +16,7 @@ func (m *Test) Run() error {
 	if e != nil {
 		return e
 	}
-	links, e := extractLinks(doc)
+	links, e := extractLinks(doc, ec2Root)
 	if e != nil {
 		return e
 	}

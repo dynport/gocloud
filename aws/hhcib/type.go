@@ -28,20 +28,24 @@ func convertType(s string) string {
 	case "xsd:string":
 		return "string"
 	case "integer", "long", "integer (16-bit unsigned)":
-		return "int"
+		return "*IntValue"
 	case "double":
-		return "float64"
+		return "*FloatValue"
 	case "boolean":
-		return "bool"
+		return "*BoolValue"
 	case "empty element":
 		return "struct{}"
 	case "datetime":
 		return "time.Time"
-	case "[]string", "struct{}", "int", "string", "bool":
+	case "[]string", "struct{}", "*IntValue", "string", "*BoolValue", "*FloatValue":
 		return strings.ToLower(s)
 	case "":
 		return "struct{}"
 	default:
-		return pointer + strings.TrimSuffix(s, "Type")
+		s := strings.TrimSuffix(s, "Type")
+		if strings.HasPrefix(s, pointer) {
+			return s
+		}
+		return pointer + s
 	}
 }

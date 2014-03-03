@@ -12,10 +12,10 @@ func TestConvertTypes(t *testing.T) {
 			Normalized string
 		}
 		tests := []*testCase{
-			{"Integer (16-bit unsigned)", "int"},
+			{"Integer (16-bit unsigned)", "*IntValue"},
 			{"String", "string"},
 			{"xsd:string", "string"},
-			{"Double", "float64"},
+			{"Double", "*FloatValue"},
 			{"dateTime", "time.Time"},
 		}
 		for _, tc := range tests {
