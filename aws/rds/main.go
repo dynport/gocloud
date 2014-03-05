@@ -38,8 +38,12 @@ type DescribeDBInstances struct {
 	MaxRecords           int
 }
 
+func newAction(name string) url.Values {
+	return url.Values{"Action": {name}, "Version": {Version}}
+}
+
 func (d *DescribeDBInstances) Execute(client *Client) (*DescribeDBInstancesResponse, error) {
-	v := url.Values{"Action": {"DescribeDBInstances"}, "Version": {Version}}
+	v := newAction("DescribeDBInstances")
 	e := loadValues(v, d)
 	if e != nil {
 		return nil, e

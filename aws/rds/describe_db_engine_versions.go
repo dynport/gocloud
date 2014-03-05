@@ -2,7 +2,6 @@ package rds
 
 import (
 	"encoding/xml"
-	"net/url"
 
 	"github.com/dynport/gocloud/aws/ec2"
 )
@@ -34,10 +33,7 @@ type DescribeDBEngineVersions struct {
 const Version = "2013-05-15"
 
 func (d *DescribeDBEngineVersions) Execute(client *Client) (*DescribeDBEngineVersionsResponse, error) {
-	v := url.Values{
-		"Action":  {"DescribeDBEngineVersions"},
-		"Version": {Version},
-	}
+	v := newAction("DescribeDBEngineVersions")
 	e := loadValues(v, d)
 	if e != nil {
 		return nil, e
