@@ -68,7 +68,7 @@ func (client *Client) loadResource(method string, url string, r io.Reader, i int
 
 	buf := &bytes.Buffer{}
 	reader := io.TeeReader(rsp.Body, buf)
-	e = xml.NewDecoder(reader).Decode(&i)
+	e = xml.NewDecoder(reader).Decode(i)
 	return e
 }
 
