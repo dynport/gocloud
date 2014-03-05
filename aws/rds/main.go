@@ -19,7 +19,7 @@ type Client struct {
 }
 
 func (client *Client) Endpoint() string {
-	prefix := "https://rds."
+	prefix := "https://rds"
 	if client.Client.Region != "" {
 		prefix += "." + client.Client.Region
 	}
