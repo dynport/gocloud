@@ -45,7 +45,7 @@ func readAsset(key string) ([]byte, error) {
 func mustReadAsset(key string) []byte {
 	p, e := readAsset(key)
 	if e != nil {
-		panic(e)
+		panic("could not read asset with key " + key + ": " + e.Error())
 	}
 	return p
 }
