@@ -94,7 +94,7 @@ type StacksWatch struct {
 }
 
 func (s *StacksWatch) Run() error {
-	last := time.Time{}
+	seen := map[string]struct{}{}
 	for {
 		rsp, e := client.DescribeStackEvents(&cloudformation.DescribeStackEventsParameters{StackName: s.Name})
 		if e != nil {
@@ -103,7 +103,8 @@ func (s *StacksWatch) Run() error {
 			events := StackEventsList(rsp.DescribeStackEventsResult.StackEvents)
 			sort.Sort(events)
 			for _, e := range events {
-				if e.Timestamp.After(last) {
+				_, ok := seen[e.EventId]
+				if !ok {
 					ph := e.PhysicalResourceId
 					fmt.Printf("%s %-24s %-32s %s\n", e.Timestamp.Format(time.RFC3339), maxLen(e.LogicalResourceId, 24), maxLen(ph, 32), e.ResourceStatus)
 					switch e.ResourceStatusReason {
@@ -112,7 +113,7 @@ func (s *StacksWatch) Run() error {
 					default:
 						fmt.Printf("%20s %s\n", "", gocli.Red(e.ResourceStatusReason))
 					}
-					last = e.Timestamp
+					seen[e.EventId] = struct{}{}
 				}
 			}
 		}
