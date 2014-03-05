@@ -2,6 +2,8 @@ package cloudformation
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"sort"
 	"time"
 
@@ -9,6 +11,17 @@ import (
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws/cloudformation"
 )
+
+var logger = log.New(os.Stdout, "", 0)
+
+type StacksDelete struct {
+	Name string `cli:"arg required"`
+}
+
+func (d *StacksDelete) Run() error {
+	logger.Printf("deleting stack %q", d.Name)
+	return client.DeleteStack(d.Name)
+}
 
 type StacksList struct {
 	IncludeDeleted bool `cli:"opt --deleted"`
@@ -116,6 +129,7 @@ func maxLen(s string, i int) string {
 }
 
 func Register(router *cli.Router) {
+	router.Register("aws/cloudformation/stacks/delete", &StacksDelete{}, "Delete Stack")
 	router.Register("aws/cloudformation/stacks/list", &StacksList{}, "List Cloudformation stacks")
 	router.Register("aws/cloudformation/stacks/watch", &StacksWatch{}, "Watch Stacks")
 	router.Register("aws/cloudformation/stacks/resources", &StackResources{}, "Describe Stack Resources")
