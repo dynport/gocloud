@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/dynport/gocloud/aws"
@@ -38,27 +39,37 @@ type DescribeDBInstances struct {
 }
 
 func (d *DescribeDBInstances) Execute(client *Client) (*DescribeDBInstancesResponse, error) {
-	req, e := http.NewRequest("GET", client.Endpoint()+"/?Action=DescribeDBInstances&Version=2013-05-15", nil)
+	v := url.Values{"Action": {"DescribeDBInstances"}, "Version": {Version}}
+	e := loadValues(v, d)
 	if e != nil {
 		return nil, e
+	}
+	r := &DescribeDBInstancesResponse{}
+	e = client.loadResource("GET", client.Endpoint()+"?"+v.Encode(), nil, r)
+	return r, e
+}
+
+func (client *Client) loadResource(method string, url string, r io.Reader, i interface{}) error {
+	req, e := http.NewRequest(method, url, r)
+	if e != nil {
+		return e
 	}
 	client.SignAwsRequestV2(req, time.Now())
 	rsp, e := http.DefaultClient.Do(req)
 	if e != nil {
-		return nil, e
+		return e
 	}
 	defer rsp.Body.Close()
 
 	if rsp.Status[0] != '2' {
 		b, _ := ioutil.ReadAll(rsp.Body)
-		return nil, fmt.Errorf("expected status 2xx, got %s (payload=%q", rsp.Status, string(b))
+		return fmt.Errorf("expected status 2xx, got %s (payload=%q", rsp.Status, string(b))
 	}
 
 	buf := &bytes.Buffer{}
-	r := io.TeeReader(rsp.Body, buf)
-	rs := &DescribeDBInstancesResponse{}
-	e = xml.NewDecoder(r).Decode(rs)
-	return rs, e
+	reader := io.TeeReader(rsp.Body, buf)
+	e = xml.NewDecoder(reader).Decode(&i)
+	return e
 }
 
 type DescribeDBInstancesResponse struct {
