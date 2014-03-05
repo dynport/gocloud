@@ -44,6 +44,8 @@ type LoadBalancer struct {
 	CrossZone        interface{}  `json:"CrossZone,omitempty"`
 	HealthCheck      *HealthCheck `json:"HealthCheck,omitempty"`
 	Listeners        []*Listener  `json:"Listeners,omitempty"`
+	SecurityGroups   interface{}  `json:"SecurityGroups,omitempty"`
+	Subnets          interface{}  `json:"Subnets,omitempty"`
 }
 
 type HealthCheck struct {
@@ -151,7 +153,6 @@ type SecurityGroup struct {
 }
 
 type SecurityGroupRule struct {
-	GroupId                    interface{} `json:"GroupId,omitempty"`
 	IpProtocol                 interface{} `json:"IpProtocol,omitempty"`
 	FromPort                   interface{} `json:"FromPort,omitempty"`
 	ToPort                     interface{} `json:"ToPort,omitempty"`
