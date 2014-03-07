@@ -188,9 +188,9 @@ type CacheClusterProperties struct {
 
 // AWS::RDS::DBParameterGroup
 type DBParameterGroup struct {
-	Description                interface{}       `json:"Description,omitempty"`
-	Family                     interface{}       `json:"Family,omitempty"`
-	DBParameterGroupParameters map[string]string `json:"DBParameterGroupParameters,omitempty"`
+	Description interface{}       `json:"Description,omitempty"`
+	Family      interface{}       `json:"Family,omitempty"`
+	Parameters  map[string]string `json:"Parameters,omitempty"`
 }
 
 // AWS::RDS::DBInstance
