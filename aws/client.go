@@ -2,10 +2,12 @@ package aws
 
 import (
 	"crypto/hmac"
+	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
+	"hash"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -115,23 +117,27 @@ func (client *Client) DoSignedRequest(method string, endpoint, action string, ex
 	return rsp, e
 }
 
-func (client *Client) signPayload(payload string) string {
-	hash := hmac.New(sha256.New, []byte(client.Secret))
-	hash.Write([]byte(payload))
-	signature := make([]byte, b64.EncodedLen(hash.Size()))
-	b64.Encode(signature, hash.Sum(nil))
+func (client *Client) signPayload(payload string, hash func() hash.Hash) string {
+	h := hmac.New(hash, []byte(client.Secret))
+	h.Write([]byte(payload))
+	signature := make([]byte, b64.EncodedLen(h.Size()))
+	b64.Encode(signature, h.Sum(nil))
 	return string(signature)
 }
 
 func (client *Client) SignAwsRequest(req *http.Request) {
 	date := time.Now().UTC().Format(http.TimeFormat)
-	token := "AWS3-HTTPS AWSAccessKeyId=" + client.Key + ",Algorithm=HmacSHA256,Signature=" + client.signPayload(date)
+	token := "AWS3-HTTPS AWSAccessKeyId=" + client.Key + ",Algorithm=HmacSHA256,Signature=" + client.signPayload(date, sha1.New)
 	req.Header.Set("X-Amzn-Authorization", token)
 	req.Header.Set("x-amz-date", date)
 	return
 }
 
-func (client *Client) v2PayloadAndQuery(req *http.Request) (payload, rawQuery string) {
+func timestamp(t time.Time) string {
+	return strings.TrimSuffix(t.UTC().Format(time.RFC3339), "Z")
+}
+
+func (client *Client) v2PayloadAndQuery(req *http.Request, refTime time.Time) (payload, rawQuery string) {
 	values := req.URL.Query()
 	if len(values["AWSAccessKeyId"]) == 0 {
 		values.Add("AWSAccessKeyId", client.Key)
@@ -146,7 +152,7 @@ func (client *Client) v2PayloadAndQuery(req *http.Request) (payload, rawQuery st
 	}
 
 	if len(values["Timestamp"]) == 0 {
-		values.Add("Timestamp", time.Now().UTC().Format(time.RFC3339))
+		values.Add("Timestamp", timestamp(refTime))
 	}
 
 	var keys, sarray []string
@@ -172,22 +178,31 @@ func (client *Client) v2PayloadAndQuery(req *http.Request) (payload, rawQuery st
 	}, "\n"), joined
 }
 
+// http://docs.aws.amazon.com/general/latest/gr/signature-version-2.html
 func (client *Client) SignAwsRequestV2(req *http.Request, t time.Time) {
 	values := req.URL.Query()
 	if len(values["Timestamp"]) == 0 {
-		values.Add("Timestamp", t.UTC().Format(time.RFC3339))
+		values.Add("Timestamp", timestamp(t))
 	}
 	req.URL.RawQuery = values.Encode()
-	payload, query := client.v2PayloadAndQuery(req)
-	query += "&Signature=" + Encode(client.signPayload(payload))
+	payload, query := client.v2PayloadAndQuery(req, t)
+	query += "&Signature=" + Encode(client.signPayload(payload, sha256.New))
 	req.URL.RawQuery = query
 }
 
 // authentication:	http://s3.amazonaws.com/doc/s3-developer-guide/RESTAuthentication.html
 // upload:			http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html
 func (client *Client) SignS3Request(req *http.Request) {
-	time := time.Now()
-	date := time.Format(http.TimeFormat)
+	payload := s3Payload(req)
+	req.Header.Add("Authorization", "AWS "+client.Key+":"+client.signPayload(payload, sha1.New))
+}
+
+func s3Payload(req *http.Request) string {
+	date := req.Header.Get("Date")
+	if date == "" {
+		date = time.Now().Format(http.TimeFormat)
+		req.Header.Set("Date", date)
+	}
 	payloadParts := []string{
 		req.Method,
 		req.Header.Get(CONTENT_MD5),
@@ -204,7 +219,5 @@ func (client *Client) SignS3Request(req *http.Request) {
 	sort.Strings(amzHeaders)
 	payloadParts = append(payloadParts, amzHeaders...)
 	payloadParts = append(payloadParts, req.URL.Path)
-	payload := strings.Join(payloadParts, "\n")
-	req.Header.Add("Date", date)
-	req.Header.Add("Authorization", "AWS "+client.Key+":"+client.signPayload(payload))
+	return strings.Join(payloadParts, "\n")
 }
