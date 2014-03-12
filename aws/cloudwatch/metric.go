@@ -36,11 +36,19 @@ type Client struct {
 	*aws.Client
 }
 
+func (client *Client) Endpoint() string {
+	prefix := "https://monitoring"
+	if client.Client.Region != "" {
+		prefix += "." + client.Client.Region
+	}
+	return prefix + ".amazonaws.com"
+}
+
 func (client *Client) ListMetrics() (rsp *ListMetricsResponse, e error) {
 	values := &url.Values{}
 	values.Add("Version", VERSION)
 	values.Add("Action", "ListMetrics")
-	raw, e := client.DoSignedRequest("GET", endpoint(client.Client), values.Encode(), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return nil, e
 	}

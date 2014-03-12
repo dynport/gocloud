@@ -20,7 +20,7 @@ type DescribeAddressesResponse struct {
 }
 
 func (client *Client) DescribeAddresses() (addresses []*Address, e error) {
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, queryForAction("DescribeAddresses"), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), queryForAction("DescribeAddresses"), nil)
 	if e != nil {
 		return addresses, e
 	}

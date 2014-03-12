@@ -31,7 +31,7 @@ func (action *DescribeImages) Execute(client *Client) (*DescribeImagesResponse, 
 			values.Set("Filter."+strconv.Itoa(i+1)+"."+strconv.Itoa(j+1), value)
 		}
 	}
-	rsp, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
+	rsp, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return nil, e
 	}

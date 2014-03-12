@@ -26,7 +26,7 @@ func (client *Client) DescribeImagesWithFilter(filter *ImageFilter) (images Imag
 	for i, id := range filter.ImageIds {
 		values.Add("ImageId."+strconv.Itoa(i+1), id)
 	}
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return
 	}
@@ -70,7 +70,7 @@ func (client *Client) CreateImage(opts *CreateImageOptions) (rsp *CreateImageRes
 		values.Add("NoReboot", "true")
 	}
 
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return nil, e
 	}

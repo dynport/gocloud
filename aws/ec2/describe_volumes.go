@@ -36,7 +36,7 @@ func (action *DescribeVolumes) Execute(client *Client) (*DescribeVolumesResponse
 	for i, v := range action.VolumeIds {
 		values.Set("VolumeId."+strconv.Itoa(i+1), v)
 	}
-	rsp, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
+	rsp, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return nil, e
 	}

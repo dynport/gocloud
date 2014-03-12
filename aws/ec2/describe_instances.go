@@ -19,7 +19,7 @@ func (action *DescribeInstances) Execute(client *Client) (*DescribeInstancesResp
 		}
 	}
 	applyFilters(values, action.Filters)
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return nil, e
 	}

@@ -16,7 +16,7 @@ type DescribeKeyPairsResponse struct {
 }
 
 func (client *Client) DescribeKeyPairs() (pairs []*KeyPair, e error) {
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, queryForAction("DescribeKeyPairs"), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), queryForAction("DescribeKeyPairs"), nil)
 	if e != nil {
 		return pairs, e
 	}

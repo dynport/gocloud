@@ -10,7 +10,6 @@ import (
 
 const (
 	API_VERSION = "2012-06-01"
-	ENDPOINT    = "https://elasticloadbalancing.eu-west-1.amazonaws.com"
 )
 
 type Client struct {
@@ -80,9 +79,17 @@ type RegisterInstancesWithLoadBalancerResponse struct {
 	RequestId string `xml:"ResponseMetadata>RequestId"`
 }
 
+func (client *Client) Endpoint() string {
+	prefix := "https://elasticloadbalancing"
+	if client.Client.Region != "" {
+		prefix += "." + client.Client.Region
+	}
+	return prefix + ".amazonaws.com"
+}
+
 func (client *Client) DescribeInstanceHealth(name string) (states []*InstanceState, e error) {
 	query := queryForAction("DescribeInstanceHealth") + "&LoadBalancerName=" + name
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, query, nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), query, nil)
 	if e != nil {
 		return nil, e
 	}
@@ -109,7 +116,7 @@ func (client *Client) updateLoadBalancerCall(action string, loadBalancerName str
 		query += fmt.Sprintf("&Instances.member.%d.InstanceId=%s", i+1, id)
 	}
 	log.Printf("sending request %s", query)
-	raw, e := client.DoSignedRequest("POST", ENDPOINT, query, nil)
+	raw, e := client.DoSignedRequest("POST", client.Endpoint(), query, nil)
 	if e != nil {
 		return e
 	}
@@ -119,7 +126,7 @@ func (client *Client) updateLoadBalancerCall(action string, loadBalancerName str
 }
 
 func (client *Client) DescribeLoadBalancers() (lbs []*LoadBalancer, e error) {
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, "Version="+API_VERSION+"&Action=DescribeLoadBalancers", nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), "Version="+API_VERSION+"&Action=DescribeLoadBalancers", nil)
 	if e != nil {
 		return lbs, e
 	}

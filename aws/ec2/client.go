@@ -21,6 +21,14 @@ type Client struct {
 	*aws.Client
 }
 
+func (client *Client) Endpoint() string {
+	prefix := "https://"
+	if client.Client.Region != "" {
+		prefix += client.Client.Region + "."
+	}
+	return prefix + "ec2.amazonaws.com"
+}
+
 const (
 	API_VERSIONS_EC2       = "2013-08-15"
 	CANONICAL_OWNER_ID     = "099720109477"
@@ -28,7 +36,6 @@ const (
 	UBUNTU_PREFIX          = "ubuntu/images/ebs/ubuntu-*"
 	UBUNTU_RARING_PREFIX   = "ubuntu/images/ebs/ubuntu-raring*"
 	UBUNTU_SAUCY_PREFIX    = "ubuntu/images/ebs/ubuntu-saucy*"
-	ENDPOINT               = "https://eu-west-1.ec2.amazonaws.com"
 	ImagePrefixRaringAmd64 = "ubuntu/images/ebs/ubuntu-raring-13.04-amd64*"
 )
 
@@ -85,7 +92,7 @@ func queryForAction(action string) string {
 
 func (client *Client) DescribeTags() (tags TagList, e error) {
 	query := queryForAction("DescribeTags")
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, query, nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), query, nil)
 	if e != nil {
 		return tags, e
 	}
@@ -110,7 +117,7 @@ func (client *Client) CreateTags(resourceIds []string, tags map[string]string) e
 		tagsCount++
 	}
 	query := queryForAction("CreateTags") + "&" + values.Encode()
-	_, e := client.DoSignedRequest("POST", ENDPOINT, query, nil)
+	_, e := client.DoSignedRequest("POST", client.Endpoint(), query, nil)
 	if e != nil {
 		return e
 	}
@@ -122,7 +129,7 @@ func (client *Client) TerminateInstances(ids []string) (*aws.Response, error) {
 	for i, id := range ids {
 		query += fmt.Sprintf("&InstanceId.%d=%s", i, id)
 	}
-	return client.DoSignedRequest("DELETE", ENDPOINT, query, nil)
+	return client.DoSignedRequest("DELETE", client.Endpoint(), query, nil)
 }
 
 type Error struct {
@@ -212,7 +219,7 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 
 	query := queryForAction("RunInstances") + "&" + values.Encode()
 
-	raw, e := client.DoSignedRequest("POST", ENDPOINT, query, nil)
+	raw, e := client.DoSignedRequest("POST", client.Endpoint(), query, nil)
 	if e != nil {
 		return list, e
 	}
@@ -245,7 +252,7 @@ func (client *Client) DescribeInstancesWithOptions(options *DescribeInstancesOpt
 		}
 	}
 	applyFilters(values, options.Filters)
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return instances, e
 	}
