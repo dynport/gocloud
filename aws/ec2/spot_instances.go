@@ -53,7 +53,7 @@ func (client *Client) DescribeSpotPriceHistory(filter *SpotPriceFilter) (prices 
 	}
 	query += "&" + values.Encode()
 	log.Println(query)
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, query, nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), query, nil)
 	if e != nil {
 		return prices, e
 	}

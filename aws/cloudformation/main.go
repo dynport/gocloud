@@ -20,6 +20,14 @@ func NewFromEnv() *Client {
 	return &Client{Client: aws.NewFromEnv()}
 }
 
+func (client *Client) Endpoint() string {
+	prefix := "https://cloudformation"
+	if client.Client.Region != "" {
+		prefix += "." + client.Client.Region
+	}
+	return prefix + ".amazonaws.com"
+}
+
 func (client *Client) loadCloudFormationResource(action string, params url.Values, i interface{}) error {
 	req, e := client.signedCloudFormationRequest(action, params)
 
@@ -62,7 +70,6 @@ func defaultParams() url.Values {
 
 var (
 	ErrorNotFound = fmt.Errorf("Error not found")
-	urlRoot       = "https://cloudformation.eu-west-1.amazonaws.com/"
 )
 
 func (client *Client) signedCloudFormationRequest(action string, params url.Values) (*http.Request, error) {
@@ -73,7 +80,7 @@ func (client *Client) signedCloudFormationRequest(action string, params url.Valu
 		}
 	}
 	values.Add("Action", action)
-	theUrl := urlRoot + "?" + values.Encode()
+	theUrl := client.Endpoint() + "?" + values.Encode()
 	req, e := http.NewRequest("GET", theUrl, nil)
 	if e != nil {
 		return nil, e

@@ -55,7 +55,7 @@ func (client *Client) DescribeSecurityGroups(params *DescribeSecurityGroupsParam
 	if search := params.query(); search != "" {
 		q += "&" + search
 	}
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, q, nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), q, nil)
 	if e != nil {
 		return groups, e
 	}

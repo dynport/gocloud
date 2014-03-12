@@ -21,7 +21,7 @@ func (client *Client) DescribeSubnets(params *DescribeSubnetsParameters) (*Descr
 		"Version": {API_VERSIONS_EC2},
 	}
 	applyFilters(query, params.Filters)
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, query.Encode(), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), query.Encode(), nil)
 	if e != nil {
 		return nil, e
 	}

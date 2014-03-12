@@ -24,19 +24,26 @@ type ListMetricsResponse struct {
 }
 
 const (
-	ENDPOINT = "https://monitoring.us-east-1.amazonaws.com"
-	VERSION  = "2010-08-01"
+	VERSION = "2010-08-01"
 )
 
 type Client struct {
 	*aws.Client
 }
 
+func (client *Client) Endpoint() string {
+	prefix := "https://monitoring"
+	if client.Client.Region != "" {
+		prefix += "." + client.Client.Region
+	}
+	return prefix + ".amazonaws.com"
+}
+
 func (client *Client) ListMetrics() (rsp *ListMetricsResponse, e error) {
 	values := &url.Values{}
 	values.Add("Version", VERSION)
 	values.Add("Action", "ListMetrics")
-	raw, e := client.DoSignedRequest("GET", ENDPOINT, values.Encode(), nil)
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return nil, e
 	}
