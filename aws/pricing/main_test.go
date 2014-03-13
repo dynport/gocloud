@@ -1,10 +1,10 @@
 package pricing
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
 	"io/ioutil"
-	_ "launchpad.net/xmlpath"
 	"testing"
+	. "github.com/smartystreets/goconvey/convey"
+	_ "launchpad.net/xmlpath"
 )
 
 func mustReadFile(t *testing.T, path string) []byte {
