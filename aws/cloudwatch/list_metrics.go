@@ -44,6 +44,16 @@ func (values Values) Encode() string {
 var logger = log.New(os.Stderr, "", 0)
 
 func (action *ListMetrics) Execute(client *ec2.Client) (*ListMetricsResponse, error) {
+	rsp, e := client.DoSignedRequest("GET", endpoint(client.Client), action.query(), nil)
+	if e != nil {
+		return nil, e
+	}
+	o := &ListMetricsResponse{}
+	e = xml.Unmarshal(rsp.Content, o)
+	return o, e
+}
+
+func (action *ListMetrics) query() string {
 	values := Values{
 		"Version":    VERSION,
 		"Action":     "ListMetrics",
@@ -57,12 +67,5 @@ func (action *ListMetrics) Execute(client *ec2.Client) (*ListMetricsResponse, er
 		values.Add(prefix+"Name", d.Name)
 		values.Add(prefix+"Value", d.Value)
 	}
-	logger.Printf("sending %q", values.Encode())
-	rsp, e := client.DoSignedRequest("GET", endpoint(client.Client), values.Encode(), nil)
-	if e != nil {
-		return nil, e
-	}
-	o := &ListMetricsResponse{}
-	e = xml.Unmarshal(rsp.Content, o)
-	return o, e
+	return values.Encode()
 }
