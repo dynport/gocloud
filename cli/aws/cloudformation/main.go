@@ -69,6 +69,52 @@ func (r *StackResources) Run() error {
 	return nil
 }
 
+type StackDescription struct {
+	Name string `cli:"arg required"`
+}
+
+func (r *StackDescription) Run() error {
+	rsp, e := client.DescribeStacks(&cloudformation.DescribeStacksParameters{
+		StackName: r.Name,
+	})
+	if e != nil {
+		return e
+	}
+	if rsp.DescribeStacksResult == nil || len(rsp.DescribeStacksResult.Stacks) == 0 {
+		return nil
+	}
+
+	s := rsp.DescribeStacksResult.Stacks[0]
+
+	t := gocli.NewTable()
+	t.Add("name", s.StackName)
+	t.Add("created", s.CreationTime)
+	t.Add("state", s.StackStatus)
+	if len(s.Parameters) > 0 {
+		t := gocli.NewTable()
+		fmt.Println("Parameters:")
+		for _, p := range s.Parameters {
+			t.Add(p.ParameterKey, p.ParameterValue)
+		}
+		fmt.Println(t)
+	} else {
+		fmt.Println("Parameters: none")
+	}
+
+	if len(s.Outputs) > 0 {
+		t := gocli.NewTable()
+		fmt.Println("Outputs:")
+		for _, p := range s.Outputs {
+			t.Add(p.OutputKey, p.OutputValue)
+		}
+		fmt.Println(t)
+	} else {
+		fmt.Println("Outputs: none")
+	}
+	fmt.Println(t)
+	return nil
+}
+
 type StackEventsList []*cloudformation.StackEvent
 
 func (list StackEventsList) Len() int {
@@ -132,6 +178,7 @@ func maxLen(s string, i int) string {
 func Register(router *cli.Router) {
 	router.Register("aws/cloudformation/stacks/delete", &StacksDelete{}, "Delete Stack")
 	router.Register("aws/cloudformation/stacks/list", &StacksList{}, "List Cloudformation stacks")
+	router.Register("aws/cloudformation/stacks/describe", &StackDescription{}, "Describe stack")
 	router.Register("aws/cloudformation/stacks/watch", &StacksWatch{}, "Watch Stacks")
 	router.Register("aws/cloudformation/stacks/resources", &StackResources{}, "Describe Stack Resources")
 }
