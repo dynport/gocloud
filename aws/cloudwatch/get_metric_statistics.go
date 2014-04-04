@@ -45,11 +45,7 @@ func (action *GetMetricStatistics) Execute(client *ec2.Client) (*GetMetricStatis
 		values.Add("Statistics.member."+strconv.Itoa(i+1), s)
 	}
 
-	for i, d := range action.Dimensions {
-		prefix := "Dimensions.member." + strconv.Itoa(i+1) + "."
-		values.Add(prefix+"Name", d.Name)
-		values.Add(prefix+"Value", d.Value)
-	}
+	values.addDimensions("", action.Dimensions)
 
 	rsp, e := client.DoSignedRequest("GET", endpoint(client.Client), values.Encode(), nil)
 	if e != nil {

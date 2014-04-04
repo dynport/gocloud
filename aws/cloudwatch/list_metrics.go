@@ -19,6 +19,14 @@ type ListMetrics struct {
 
 type Values map[string]string
 
+func (values Values) addDimensions(prefix string, dimensions []*Dimension) {
+	for i, d := range dimensions {
+		dimPrefix := prefix + "Dimensions.member." + strconv.Itoa(i+1) + "."
+		values.Add(dimPrefix+"Name", d.Name)
+		values.Add(dimPrefix+"Value", d.Value)
+	}
+}
+
 func (values Values) Add(key, value string) {
 	values[key] = value
 }
