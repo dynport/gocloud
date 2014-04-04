@@ -37,13 +37,14 @@ func (client *Client) DescribeStacks(params *DescribeStacksParameters) (rsp *Des
 }
 
 type Stack struct {
-	StackName           string    `xml:"StackName"`       // MyStack</StackName>
-	StackId             string    `xml:"StackId"`         // arn:aws:cloudformation:us-east-1:123456789:stack/MyStack/aaf549a0-a413-11df-adb3-5081b3858e83</StackId>
-	CreationTime        time.Time `xml:"CreationTime"`    // 2010-07-27T22:28:28Z</CreationTime>
-	StackStatus         string    `xml:"StackStatus"`     // CREATE_COMPLETE</StackStatus>
-	DisableRollback     bool      `xml:"DisableRollback"` // false</DisableRollback>
-	TemplateDescription string    `xml:"TemplateDescription"`
-	Outputs             []*Output `xml:"Output>member"`
+	StackName           string            `xml:"StackName"`       // MyStack</StackName>
+	StackId             string            `xml:"StackId"`         // arn:aws:cloudformation:us-east-1:123456789:stack/MyStack/aaf549a0-a413-11df-adb3-5081b3858e83</StackId>
+	CreationTime        time.Time         `xml:"CreationTime"`    // 2010-07-27T22:28:28Z</CreationTime>
+	StackStatus         string            `xml:"StackStatus"`     // CREATE_COMPLETE</StackStatus>
+	DisableRollback     bool              `xml:"DisableRollback"` // false</DisableRollback>
+	TemplateDescription string            `xml:"TemplateDescription"`
+	Outputs             []*Output         `xml:"Output>member"`
+	Parameters          []*StackParameter `xml:"Parameters>member"`
 }
 
 type Output struct {
