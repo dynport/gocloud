@@ -55,16 +55,17 @@ func (list ImageList) Less(a, b int) bool {
 }
 
 type RunInstancesConfig struct {
-	ImageId           string
-	MinCount          int
-	MaxCount          int
-	InstanceType      string
-	AvailabilityZone  string
-	KeyName           string
-	SecurityGroups    []string
-	SubnetId          string
-	NetworkInterfaces []*CreateNetworkInterface
-	UserData          string
+	ImageId                string
+	MinCount               int
+	MaxCount               int
+	InstanceType           string
+	AvailabilityZone       string
+	KeyName                string
+	SecurityGroups         []string
+	SubnetId               string
+	NetworkInterfaces      []*CreateNetworkInterface
+	UserData               string
+	IamInstanceProfileName string
 }
 
 func (config *RunInstancesConfig) AddPublicIp() {
@@ -173,6 +174,10 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 
 	if config.UserData != "" {
 		values.Add("UserData", b64.EncodeToString([]byte(config.UserData)))
+	}
+
+	if config.IamInstanceProfileName != "" {
+		values.Add("IamInstanceProfile.Name", config.IamInstanceProfileName)
 	}
 
 	if config.InstanceType != "" {
