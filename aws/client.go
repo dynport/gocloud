@@ -16,29 +16,30 @@ import (
 	"time"
 )
 
-var b64 = base64.StdEncoding
+var (
+	Debug                  = os.Getenv("DEBUG") == "true"
+	b64                    = base64.StdEncoding
+	metadataIp             = "169.254.169.254"
+	securityCredentialsUrl = "http://" + metadataIp + "/latest/meta-data/iam/security-credentials/"
+)
 
 type Client struct {
-	Key, Secret, Region string
-	SecurityToken       string
-}
-
-var Debug = os.Getenv("DEBUG") == "true"
-
-func (client *Client) Debug(format string, i ...interface{}) {
-	if Debug {
-		fmt.Printf(format+"\n", i...)
-	}
+	Key, Secret, Region, SecurityToken string
 }
 
 func NewFromEnv() *Client {
-	client := &Client{}
-	client.Key = os.Getenv(ENV_AWS_ACCESS_KEY)
-	client.Secret = os.Getenv(ENV_AWS_SECRET_KEY)
-	client.Region = os.Getenv(ENV_AWS_DEFAULT_REGION)
+	client := &Client{
+		Key:    os.Getenv(ENV_AWS_ACCESS_KEY),
+		Secret: os.Getenv(ENV_AWS_SECRET_KEY),
+		Region: os.Getenv(ENV_AWS_DEFAULT_REGION),
+	}
 
 	if client.Key == "" || client.Secret == "" {
-		abortWith(fmt.Sprintf("%s and %s must be set in ENV", ENV_AWS_ACCESS_KEY, ENV_AWS_SECRET_KEY))
+		var e error
+		client, e = newFromIam()
+		if e != nil {
+			abortWith(fmt.Sprintf("%s and %s must be set in ENV", ENV_AWS_ACCESS_KEY, ENV_AWS_SECRET_KEY))
+		}
 	}
 	return client
 }
@@ -179,11 +180,13 @@ func (client *Client) v2PayloadAndQuery(req *http.Request, refTime time.Time) (p
 	}, "\n"), joined
 }
 
-// http://docs.aws.amazon.com/general/latest/gr/signature-version-2.html
 func (client *Client) SignAwsRequestV2(req *http.Request, t time.Time) {
 	values := req.URL.Query()
 	if len(values["Timestamp"]) == 0 {
 		values.Add("Timestamp", timestamp(t))
+	}
+	if client.SecurityToken != "" {
+		values.Add("SecurityToken", client.SecurityToken)
 	}
 	req.URL.RawQuery = values.Encode()
 	payload, query := client.v2PayloadAndQuery(req, t)
