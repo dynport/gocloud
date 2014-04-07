@@ -20,20 +20,31 @@ type DescribeStacksParameters struct {
 	StackName string
 }
 
-func (client *Client) DescribeStacks(params *DescribeStacksParameters) (rsp *DescribeStacksResponse, e error) {
-	if params == nil {
-		params = &DescribeStacksParameters{}
-	}
+type DescribeStacks struct {
+	NextToken string
+	StackName string
+}
+
+func (a *DescribeStacks) Execute(client *Client) (*DescribeStacksResponse, error) {
 	r := &DescribeStacksResponse{}
 	v := url.Values{}
-	if params.NextToken != "" {
-		v.Add("NextToken", params.NextToken)
+	if a.NextToken != "" {
+		v.Add("NextToken", a.NextToken)
 	}
-	if params.StackName != "" {
-		v.Add("StackName", params.StackName)
+	if a.StackName != "" {
+		v.Add("StackName", a.StackName)
 	}
-	e = client.loadCloudFormationResource("DescribeStacks", v, r)
+	e := client.loadCloudFormationResource("DescribeStacks", v, r)
 	return r, e
+}
+
+func (client *Client) DescribeStacks(params *DescribeStacksParameters) (rsp *DescribeStacksResponse, e error) {
+	action := &DescribeStacks{}
+	if params != nil {
+		action.NextToken = params.NextToken
+		action.StackName = params.StackName
+	}
+	return action.Execute(client)
 }
 
 type Stack struct {
