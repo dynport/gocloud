@@ -22,7 +22,7 @@ func TestPutMetricData(t *testing.T) {
 		So(query, ShouldNotEqual, "")
 		So(query, ShouldContainSubstring, "Value=1.0")
 		So(query, ShouldNotContainSubstring, "Unit")
-		So(query, ShouldContainSubstring, "MetricData.1.Dimensions.member.1.Name=InstanceId")
+		So(query, ShouldContainSubstring, "MetricData.member.1.Dimensions.member.1.Name=InstanceId")
 		t.Log(query)
 	})
 
