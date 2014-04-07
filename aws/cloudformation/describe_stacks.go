@@ -43,7 +43,7 @@ type Stack struct {
 	StackStatus         string            `xml:"StackStatus"`     // CREATE_COMPLETE</StackStatus>
 	DisableRollback     bool              `xml:"DisableRollback"` // false</DisableRollback>
 	TemplateDescription string            `xml:"TemplateDescription"`
-	Outputs             []*Output         `xml:"Output>member"`
+	Outputs             []*Output         `xml:"Outputs>member"`
 	Parameters          []*StackParameter `xml:"Parameters>member"`
 }
 
