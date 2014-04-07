@@ -1,4 +1,4 @@
-test:
+test: build
 	go test -v
 
 build: assets

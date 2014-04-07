@@ -16,67 +16,36 @@ func mustReadFile(t *testing.T, path string) []byte {
 }
 
 func TestLoadPricing(t *testing.T) {
-	b := mustReadFile(t, "fixtures/linux-od.json")
-	Convey("Instance configs", t, func() {
-		configs, e := AllInstanceTypeConfigs()
-		So(e, ShouldBeNil)
-		for _, c := range configs {
-			switch c.Name {
-			case "m3.large":
-				So(c.Cpus, ShouldEqual, 2)
-			}
+	Convey("loadPricesFor", t, func() {
+		prices, e := loadPricesFor("linux-od.json")
+		if e != nil {
+			t.Fatal(e)
 		}
-	})
-	Convey("marshall pricing", t, func() {
-		pricing, e := LoadPricing(b)
-		So(e, ShouldBeNil)
-		So(pricing, ShouldNotBeNil)
-		So(pricing.Config, ShouldNotBeNil)
-		So(len(pricing.Config.Regions), ShouldEqual, 8)
+		regions := prices.RegionNames()
+		So(len(regions), ShouldEqual, 8)
+		if len(regions) < 1 {
+			t.Fatal("at least 1 region must be found")
+		}
+		So(regions[0], ShouldEqual, "us-east")
+		if len(prices.Config.Regions) < 1 {
+			t.Fatal("at least 1 region must be found")
+		}
 
-		region := pricing.Config.Regions[0]
-		So(region.Region, ShouldEqual, "us-east")
-		So(len(region.InstanceTypes), ShouldEqual, 9)
+		region := prices.Config.Regions[0]
+		types := region.InstanceTypes
+		if len(types) < 1 {
+			t.Fatal("no types found")
+		}
+		So(len(types), ShouldEqual, 10)
+		instanceType := types[0]
 
-		it := region.InstanceTypes[0]
-		So(it.Type, ShouldEqual, "generalCurrentGen")
-		So(len(it.Sizes), ShouldEqual, 2)
-
-		size := it.Sizes[0]
-		So(size.Size, ShouldEqual, "m3.xlarge")
-		So(len(size.ValueColumns), ShouldEqual, 1)
+		size := instanceType.Sizes[0]
+		So(size.Size, ShouldEqual, "m3.medium")
 		vc := size.ValueColumns[0]
 		So(vc.Name, ShouldEqual, "linux")
-		So(vc.Prices["USD"], ShouldEqual, "0.450")
+		So(vc.Prices["USD"], ShouldEqual, "0.113")
 	})
 }
-
-// {
-//       "name": "yrTerm1",
-//       "prices": {
-//         "USD": "338"
-//       }
-//     },
-//     {
-//       "name": "yrTerm1Hourly",
-//       "rate": "perhr",
-//       "prices": {
-//         "USD": "0.028"
-//       }
-//     },
-//     {
-//       "name": "yrTerm3",
-//       "prices": {
-//         "USD": "514"
-//       }
-//     },
-//     {
-//       "name": "yrTerm3Hourly",
-//       "rate": "perhr",
-//       "prices": {
-//         "USD": "0.023"
-//       }
-//     }
 
 func TestValueColumnes(t *testing.T) {
 	Convey("Value Columns", t, func() {

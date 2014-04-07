@@ -2,6 +2,7 @@ package pricing
 
 import (
 	"encoding/json"
+	"regexp"
 	"strconv"
 )
 
@@ -86,6 +87,8 @@ func LinuxOnDemand() (p *Pricing, e error) {
 func LinuxReservedHeavy() (p *Pricing, e error) {
 	return loadPricesFor("linux-ri-heavy.json")
 }
+
+var callbackRe = regexp.MustCompile("^(.*callback\\)?m)")
 
 func loadPricesFor(t string) (p *Pricing, e error) {
 	b, e := readAsset(t)
