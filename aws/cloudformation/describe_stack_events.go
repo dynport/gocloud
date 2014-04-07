@@ -12,6 +12,7 @@ type DescribeStackEventsResponse struct {
 }
 
 type DescribeStackEventsResult struct {
+	NextToken   string        `xml:"NextToken"`
 	StackEvents []*StackEvent `xml:"StackEvents>member"`
 }
 
