@@ -181,4 +181,5 @@ func Register(router *cli.Router) {
 	router.Register("aws/cloudformation/stacks/describe", &StackDescription{}, "Describe stack")
 	router.Register("aws/cloudformation/stacks/watch", &StacksWatch{}, "Watch Stacks")
 	router.Register("aws/cloudformation/stacks/resources", &StackResources{}, "Describe Stack Resources")
+	router.Register("aws/cloudformation/stacks/parameters", &ParametersDescribe{}, "Describe Stack Parameters")
 }
