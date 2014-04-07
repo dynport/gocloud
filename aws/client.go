@@ -20,6 +20,7 @@ var b64 = base64.StdEncoding
 
 type Client struct {
 	Key, Secret, Region string
+	SecurityToken       string
 }
 
 var Debug = os.Getenv("DEBUG") == "true"

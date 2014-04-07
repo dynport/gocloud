@@ -313,6 +313,9 @@ var s3ParamsToSign = map[string]bool{
 func (client *Client) SignS3Request(req *http.Request, bucket string) {
 	t := time.Now().UTC()
 	date := t.Format(http.TimeFormat)
+	if client.Client.SecurityToken != "" {
+		req.Header.Set("x-amz-security-token", client.Client.SecurityToken)
+	}
 	payloadParts := []string{
 		req.Method,
 		req.Header.Get(HEADER_CONTENT_MD5),
