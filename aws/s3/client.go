@@ -237,6 +237,21 @@ func (client *Client) putRequestHeaders(bucket, key string, options *PutOptions)
 	return headers
 }
 
+func (client *Client) Delete(bucket, key string) error {
+	req, e := http.NewRequest("DELETE", client.keyUrl(bucket, key), nil)
+	if e != nil {
+		return e
+	}
+	client.SignS3Request(req, bucket)
+
+	rsp, e := http.DefaultClient.Do(req)
+	if e != nil {
+		return e
+	}
+	defer rsp.Body.Close()
+	return nil
+}
+
 func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) error {
 	if options == nil {
 		options = &PutOptions{ContentType: DEFAULT_CONTENT_TYPE}
