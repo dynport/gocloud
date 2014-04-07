@@ -2,13 +2,22 @@ package iam
 
 import (
 	"encoding/xml"
-	"github.com/dynport/gocloud/testhelpers"
-	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
+func mustReadFixture(t *testing.T, name string) []byte {
+	b, e := ioutil.ReadFile("fixtures/" + name)
+	if e != nil {
+		t.Fatal("fixture " + name + " does not exist")
+	}
+	return b
+}
+
 func TestGetUser(t *testing.T) {
-	f := testhelpers.MustReadFixture(t, "get_user.xml")
+	f := mustReadFixture(t, "get_user.xml")
 	rsp := &GetUserResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Nil(t, e)
@@ -20,7 +29,7 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestAccountSummary(t *testing.T) {
-	f := testhelpers.MustReadFixture(t, "get_account_summary.xml")
+	f := mustReadFixture(t, "get_account_summary.xml")
 	rsp := &GetAccountSummaryResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Nil(t, e)
@@ -34,7 +43,7 @@ func TestAccountSummary(t *testing.T) {
 }
 
 func TestListUsers(t *testing.T) {
-	f := testhelpers.MustReadFixture(t, "list_users.xml")
+	f := mustReadFixture(t, "list_users.xml")
 	rsp := &ListUsersResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Nil(t, e)
@@ -44,7 +53,7 @@ func TestListUsers(t *testing.T) {
 }
 
 func TestAccountAliases(t *testing.T) {
-	f := testhelpers.MustReadFixture(t, "list_account_aliases.xml")
+	f := mustReadFixture(t, "list_account_aliases.xml")
 	rsp := &ListAccountAliasesResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Nil(t, e)

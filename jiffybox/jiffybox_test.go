@@ -2,13 +2,22 @@ package jiffybox
 
 import (
 	"encoding/json"
-	"github.com/dynport/gocloud/testhelpers"
-	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
+func mustReadFixture(t *testing.T, name string) []byte {
+	b, e := ioutil.ReadFile("fixtures/" + name)
+	if e != nil {
+		t.Fatal("fixture " + name + " does not exist")
+	}
+	return b
+}
+
 func TestJiffyBoxes(t *testing.T) {
-	f := testhelpers.MustReadFixture(t, "jiffyBoxes.json")
+	f := mustReadFixture(t, "jiffyBoxes.json")
 	assert.NotNil(t, f)
 
 	rsp := &JiffyBoxesResponse{}
@@ -48,13 +57,13 @@ func TestJiffyBoxes(t *testing.T) {
 }
 
 func TestUnmarshalling(t *testing.T) {
-	f := testhelpers.MustReadFixture(t, "error_creating_response.json")
+	f := mustReadFixture(t, "error_creating_response.json")
 	rsp := &ErrorResponse{}
 	e := json.Unmarshal(f, rsp)
 	assert.Nil(t, e)
 	t.Log(rsp.Result)
 
-	f = testhelpers.MustReadFixture(t, "no_module_response.json")
+	f = mustReadFixture(t, "no_module_response.json")
 	rsp = &ErrorResponse{}
 	e = json.Unmarshal(f, rsp)
 	assert.Nil(t, e)

@@ -2,13 +2,13 @@ package jiffybox
 
 import (
 	"encoding/json"
-	"github.com/dynport/gocloud/testhelpers"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDistributions(t *testing.T) {
-	f := testhelpers.MustReadFixture(t, "distributions.json")
+	f := mustReadFixture(t, "distributions.json")
 	assert.NotNil(t, f)
 
 	rsp := &DistributionsResponse{}

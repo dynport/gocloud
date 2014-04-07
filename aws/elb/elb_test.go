@@ -2,21 +2,22 @@ package elb
 
 import (
 	"encoding/xml"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func mustReadFixture(name string) []byte {
+func mustReadFixture(t *testing.T, name string) []byte {
 	b, e := ioutil.ReadFile("fixtures/" + name)
 	if e != nil {
-		panic(e.Error())
+		t.Fatal("fixture " + name + " does not exist")
 	}
 	return b
 }
 
 func TestMarshalling(t *testing.T) {
-	f := mustReadFixture("describe_load_balancers.xml")
+	f := mustReadFixture(t, "describe_load_balancers.xml")
 	rsp := &DescribeLoadBalancersResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Nil(t, e)
@@ -41,7 +42,7 @@ func TestMarshalling(t *testing.T) {
 }
 
 func TestMarshalInstanceHealth(t *testing.T) {
-	f := mustReadFixture("describe_instances_health.xml")
+	f := mustReadFixture(t, "describe_instances_health.xml")
 	rsp := &DescribeInstanceHealthResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Equal(t, len(rsp.InstanceStates), 1)

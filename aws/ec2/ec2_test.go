@@ -8,24 +8,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func mustReadFixture(name string) []byte {
+func mustReadFixture(t *testing.T, name string) []byte {
 	b, e := ioutil.ReadFile("fixtures/" + name)
 	if e != nil {
-		panic(e.Error())
+		t.Fatal("fixture " + name + " does not exist")
 	}
 	return b
 }
 
 func TestMarshallRunInstanceResponse(t *testing.T) {
 	rsp := &RunInstancesResponse{}
-	e := xml.Unmarshal(mustReadFixture("run_instances_response.xml"), rsp)
+	e := xml.Unmarshal(mustReadFixture(t, "run_instances_response.xml"), rsp)
 	assert.Nil(t, e)
 	i := rsp.Instances[0]
 	assert.Equal(t, i.InstanceId, "i-1122")
 }
 
 func TestMarshalling(t *testing.T) {
-	f := mustReadFixture("describe_images.xml")
+	f := mustReadFixture(t, "describe_images.xml")
 	rsp := &DescribeImagesResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Nil(t, e)
@@ -39,12 +39,12 @@ func TestMarshalling(t *testing.T) {
 }
 
 func TestDescribeInstances(t *testing.T) {
-	f := mustReadFixture("describe_instances.xml")
+	f := mustReadFixture(t, "describe_instances.xml")
 	assert.NotNil(t, f)
 }
 
 func TestMarshalTags(t *testing.T) {
-	f := mustReadFixture("describe_tags.xml")
+	f := mustReadFixture(t, "describe_tags.xml")
 	rsp := &DescribeTagsResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Nil(t, e)
@@ -61,7 +61,7 @@ func TestMarshalTags(t *testing.T) {
 }
 
 func TestDescribeKeyPair(t *testing.T) {
-	f := mustReadFixture("describe_key_pairs.xml")
+	f := mustReadFixture(t, "describe_key_pairs.xml")
 	rsp := &DescribeKeyPairsResponse{}
 	e := xml.Unmarshal(f, rsp)
 	assert.Nil(t, e)
@@ -74,7 +74,7 @@ func TestDescribeKeyPair(t *testing.T) {
 }
 
 func TestAddresses(t *testing.T) {
-	f := mustReadFixture("describe_addresses.xml")
+	f := mustReadFixture(t, "describe_addresses.xml")
 	assert.NotNil(t, f)
 	rsp := &DescribeAddressesResponse{}
 	e := xml.Unmarshal(f, rsp)
@@ -86,7 +86,7 @@ func TestAddresses(t *testing.T) {
 }
 
 func TestSecurityGroups(t *testing.T) {
-	f := mustReadFixture("describe_security_groups.xml")
+	f := mustReadFixture(t, "describe_security_groups.xml")
 	assert.NotNil(t, f)
 	rsp := &DescribeSecurityGroupsResponse{}
 	e := xml.Unmarshal(f, rsp)
