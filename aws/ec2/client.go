@@ -223,7 +223,6 @@ func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceLis
 	if e != nil {
 		return list, e
 	}
-	client.Debug("got status %d", raw.StatusCode)
 	er := &ErrorResponse{}
 	if e := xml.Unmarshal(raw.Content, er); e == nil {
 		return nil, fmt.Errorf(er.ErrorStrings())
