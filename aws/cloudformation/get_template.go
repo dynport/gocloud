@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/dynport/gocloud/aws"
@@ -13,21 +12,6 @@ import (
 
 type GetTemplate struct {
 	StackName string
-}
-
-type Values map[string]string
-
-func (v Values) Encode() string {
-	out := url.Values{}
-	for k, v := range v {
-		if v != "" {
-			out[k] = []string{v}
-		}
-	}
-	if len(out) > 0 {
-		return "?" + out.Encode()
-	}
-	return ""
 }
 
 type GetTemplateResponse struct {
@@ -57,7 +41,7 @@ func (t *GetTemplate) Execute(client *aws.Client) (*GetTemplateResponse, error) 
 	if e != nil {
 		return nil, e
 	}
-	req, e := http.NewRequest("GET", ep+v.Encode(), nil)
+	req, e := http.NewRequest("GET", ep+"?"+v.Encode(), nil)
 	if e != nil {
 		return nil, e
 	}

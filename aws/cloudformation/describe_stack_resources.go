@@ -2,7 +2,6 @@ package cloudformation
 
 import (
 	"encoding/xml"
-	"net/url"
 	"time"
 )
 
@@ -33,15 +32,10 @@ type DescribeStackResourcesParameters struct {
 
 func (client *Client) DescribeStackResources(params DescribeStackResourcesParameters) (*DescribeStackResourcesResponse, error) {
 	r := &DescribeStackResourcesResponse{}
-	values := url.Values{}
-	p := map[string]string{
+	values := Values{
 		"StackName":          params.StackName,
 		"PhysicalResourceId": params.PhysicalResourceId,
-		"LogicalResourceId":  params.LogicalResourceId}
-	for k, v := range p {
-		if v != "" {
-			values.Add(k, v)
-		}
+		"LogicalResourceId":  params.LogicalResourceId,
 	}
 	e := client.loadCloudFormationResource("DescribeStackResources", values, r)
 	return r, e

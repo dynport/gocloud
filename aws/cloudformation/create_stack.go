@@ -15,30 +15,41 @@ type BaseParameters struct {
 	TemplateURL     string
 }
 
-func (c *BaseParameters) values() url.Values {
-	v := url.Values{}
-	for i, c := range c.Capabilities {
-		v.Add("Capabilities.member."+strconv.Itoa(i+1), c)
-	}
-	for i, p := range c.Parameters {
-		v.Add("Parameters.member."+strconv.Itoa(i+1)+".ParameterKey", p.ParameterKey)
-		v.Add("Parameters.member."+strconv.Itoa(i+1)+".ParameterValue", p.ParameterValue)
-	}
+type Values map[string]string
 
-	mapping := map[string]string{
+func (values Values) Encode() string {
+	ret := url.Values{}
+	for k, v := range values {
+		if v != "" {
+			ret.Add(k, v)
+		}
+	}
+	return ret.Encode()
+}
+
+func (v Values) updateCapabilities(capabilities []string) {
+	for i, c := range capabilities {
+		v["Capabilities.member."+strconv.Itoa(i+1)] = c
+	}
+}
+
+func (v Values) updateParameters(parameters []*StackParameter) {
+	for i, p := range parameters {
+		v["Parameters.member."+strconv.Itoa(i+1)+".ParameterKey"] = p.ParameterKey
+		v["Parameters.member."+strconv.Itoa(i+1)+".ParameterValue"] = p.ParameterValue
+	}
+}
+
+func (c *BaseParameters) values() Values {
+	v := Values{
 		"StackPolicyBody": c.StackPolicyBody,
 		"StackPolicyURL":  c.StackPolicyURL,
 		"TemplateBody":    c.TemplateBody,
 		"TemplateURL":     c.TemplateURL,
 		"StackName":       c.StackName,
 	}
-
-	for k, value := range mapping {
-		if value != "" {
-			v.Add(k, value)
-		}
-	}
-
+	v.updateCapabilities(c.Capabilities)
+	v.updateParameters(c.Parameters)
 	return v
 }
 
@@ -51,22 +62,19 @@ type CreateStackParameters struct {
 	TimeoutInMinutes int
 }
 
-func (c *CreateStackParameters) values() url.Values {
+func (c *CreateStackParameters) values() Values {
 	v := c.BaseParameters.values()
+	v["OnFailure"] = c.OnFailure
 	if c.DisableRollback {
-		v.Add("DisableRollback", "true")
-	}
-
-	if c.OnFailure != "" {
-		v.Add("OnFailure", c.OnFailure)
+		v["DisableRollback"] = "true"
 	}
 
 	if c.TimeoutInMinutes > 0 {
-		v.Add("TimeoutInMinutes", strconv.Itoa(c.TimeoutInMinutes))
+		v["TimeoutInMinutes"] = strconv.Itoa(c.TimeoutInMinutes)
 	}
 
 	for i, arn := range c.NotificationARNs {
-		v.Add("NoNotificationARNs.member."+strconv.Itoa(i+1), arn)
+		v["NoNotificationARNs.member."+strconv.Itoa(i+1)] = arn
 	}
 	return v
 }

@@ -1,25 +1,15 @@
 package cloudformation
 
-import "net/url"
-
 type UpdateStackParameters struct {
 	BaseParameters
 	StackPolicyDuringUpdateBody string
 	StackPolicyDuringUpdateURL  string
 }
 
-func (p *UpdateStackParameters) values() url.Values {
+func (p *UpdateStackParameters) values() Values {
 	v := p.BaseParameters.values()
-	mapping := map[string]string{
-		"StackPolicyDuringUpdateBody": p.StackPolicyDuringUpdateBody,
-		"StackPolicyDuringUpdateURL":  p.StackPolicyDuringUpdateURL,
-	}
-
-	for k, value := range mapping {
-		if value != "" {
-			v.Add(k, value)
-		}
-	}
+	v["StackPolicyDuringUpdateBody"] = p.StackPolicyDuringUpdateBody
+	v["StackPolicyDuringUpdateURL"] = p.StackPolicyDuringUpdateURL
 	return v
 }
 

@@ -2,7 +2,6 @@ package cloudformation
 
 import (
 	"encoding/xml"
-	"net/url"
 	"time"
 )
 
@@ -37,12 +36,9 @@ func (c *Client) DescribeStackEvents(params *DescribeStackEventsParameters) (*De
 	if params == nil {
 		params = &DescribeStackEventsParameters{}
 	}
-	v := url.Values{}
-	if params.NextToken != "" {
-		v.Add("NextToken", params.NextToken)
-	}
-	if params.StackName != "" {
-		v.Add("StackName", params.StackName)
+	v := Values{
+		"NextToken": params.NextToken,
+		"StackName": params.StackName,
 	}
 	r := &DescribeStackEventsResponse{}
 	e := c.loadCloudFormationResource("DescribeStackEvents", v, r)

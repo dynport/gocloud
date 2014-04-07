@@ -2,7 +2,6 @@ package cloudformation
 
 import (
 	"encoding/xml"
-	"net/url"
 	"time"
 )
 
@@ -27,12 +26,9 @@ type DescribeStacks struct {
 
 func (a *DescribeStacks) Execute(client *Client) (*DescribeStacksResponse, error) {
 	r := &DescribeStacksResponse{}
-	v := url.Values{}
-	if a.NextToken != "" {
-		v.Add("NextToken", a.NextToken)
-	}
-	if a.StackName != "" {
-		v.Add("StackName", a.StackName)
+	v := Values{
+		"NextToken": a.NextToken,
+		"StackName": a.StackName,
 	}
 	e := client.loadCloudFormationResource("DescribeStacks", v, r)
 	return r, e

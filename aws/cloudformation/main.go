@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
@@ -28,7 +27,7 @@ func (client *Client) Endpoint() string {
 	return prefix + ".amazonaws.com"
 }
 
-func (client *Client) loadCloudFormationResource(action string, params url.Values, i interface{}) error {
+func (client *Client) loadCloudFormationResource(action string, params Values, i interface{}) error {
 	req, e := client.signedCloudFormationRequest(action, params)
 
 	rsp, e := http.DefaultClient.Do(req)
@@ -62,24 +61,13 @@ func (client *Client) loadCloudFormationResource(action string, params url.Value
 	}
 }
 
-func defaultParams() url.Values {
-	return url.Values{
-		"Version": {"2010-05-15"},
-	}
-}
-
 var (
 	ErrorNotFound = fmt.Errorf("Error not found")
 )
 
-func (client *Client) signedCloudFormationRequest(action string, params url.Values) (*http.Request, error) {
-	values := defaultParams()
-	for k, vs := range params {
-		for _, v := range vs {
-			values.Add(k, v)
-		}
-	}
-	values.Add("Action", action)
+func (client *Client) signedCloudFormationRequest(action string, values Values) (*http.Request, error) {
+	values["Version"] = "2010-05-15"
+	values["Action"] = action
 	theUrl := client.Endpoint() + "?" + values.Encode()
 	req, e := http.NewRequest("GET", theUrl, nil)
 	if e != nil {
