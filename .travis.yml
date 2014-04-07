@@ -1,13 +1,11 @@
 language: go
 
 install:
-  - go get -d -v ./... && go build -v ./...
-  - go get github.com/stretchr/testify/assert
-  - go get github.com/smartystreets/goconvey/convey
-  - make test
+  - go get -v -t ./...
+  - go test -v ./...
 
 go:
-  - 1.1
+  - 1.2.1
 
 notifications:
   email:
