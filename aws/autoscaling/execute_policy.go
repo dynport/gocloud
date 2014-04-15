@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
-
-	"github.com/dynport/gocloud/aws"
 )
 
 type ExecutePolicy struct {
@@ -15,8 +13,8 @@ type ExecutePolicy struct {
 	PolicyName           string
 }
 
-func (action *ExecutePolicy) Execute(client *aws.Client) (string, error) {
-	ep, e := endpoint(client)
+func (action *ExecutePolicy) Execute(client *Client) (string, error) {
+	ep, e := client.Endpoint()
 	if e != nil {
 		return "", e
 	}

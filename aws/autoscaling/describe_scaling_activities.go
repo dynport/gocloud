@@ -34,15 +34,18 @@ func (v Values) query() string {
 	return ""
 }
 
-func endpoint(client *aws.Client) (string, error) {
-	if client.Region == "" {
-		return "", fmt.Errorf("Region must be set")
+func NewFromEnv() *Client {
+	return &Client{
+		Client: aws.NewFromEnv(),
 	}
-	return "https://" + client.Region + ".autoscaling.amazonaws.com", nil
 }
 
-func (d *DescribeScalingActivities) Execute(client *aws.Client) (*DescribeScalingActivitiesResponse, error) {
-	ep, e := endpoint(client)
+type Client struct {
+	*aws.Client
+}
+
+func (d *DescribeScalingActivities) Execute(client *Client) (*DescribeScalingActivitiesResponse, error) {
+	ep, e := client.Endpoint()
 	if e != nil {
 		return nil, e
 	}
