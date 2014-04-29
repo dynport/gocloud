@@ -77,6 +77,7 @@ type DescribeImages struct {
 	Ubuntu    bool `cli:"type=opt long=ubuntu"`
 	Raring    bool `cli:"type=opt long=raring"`
 	Saucy     bool `cli:"type=opt long=saucy"`
+	Trusty    bool `cli:"type=opt long=trusty"`
 }
 
 func (a *DescribeImages) Run() error {
@@ -94,6 +95,8 @@ func (a *DescribeImages) Run() error {
 		filter.Name = ec2.UBUNTU_RARING_PREFIX
 	} else if a.Saucy {
 		filter.Name = ec2.UBUNTU_SAUCY_PREFIX
+	} else if a.Trusty {
+		filter.Name = ec2.UBUNTU_TRUSTY_PREFIX
 	}
 
 	images, e := client().DescribeImagesWithFilter(filter)

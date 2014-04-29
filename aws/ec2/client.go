@@ -35,6 +35,7 @@ const (
 	SELF_OWNER_ID          = "self"
 	UBUNTU_PREFIX          = "ubuntu/images/ebs/ubuntu-*"
 	UBUNTU_RARING_PREFIX   = "ubuntu/images/ebs/ubuntu-raring*"
+	UBUNTU_TRUSTY_PREFIX   = "ubuntu/images/ebs/ubuntu-trusty*"
 	UBUNTU_SAUCY_PREFIX    = "ubuntu/images/ebs/ubuntu-saucy*"
 	ImagePrefixRaringAmd64 = "ubuntu/images/ebs/ubuntu-raring-13.04-amd64*"
 )
