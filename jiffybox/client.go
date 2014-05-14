@@ -3,12 +3,13 @@ package jiffybox
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dynport/gologger"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/dynport/gologger"
 )
 
 const ENV_API_TOKEN = "JIFFYBOX_API_KEY"
@@ -23,15 +24,14 @@ func abortWith(message string) {
 }
 
 func NewFromEnv() *Client {
-	key := os.Getenv(ENV_API_TOKEN)
-	if key == "" {
-		abortWith(ENV_API_TOKEN + " must be set")
-	}
-	return New(key)
+	return &Client{ApiKey: os.Getenv(ENV_API_TOKEN)}
 }
 
-func New(apiKey string) *Client {
-	return &Client{ApiKey: apiKey}
+func (client *Client) Validate() error {
+	if client.ApiKey == "" {
+		return fmt.Errorf("ApiKey must be set")
+	}
+	return nil
 }
 
 func (client *Client) BaseUrl() string {
