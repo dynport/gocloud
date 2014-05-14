@@ -129,7 +129,7 @@ func (client *Client) signPayload(payload string, hash func() hash.Hash) string 
 
 func (client *Client) SignAwsRequest(req *http.Request) {
 	date := time.Now().UTC().Format(http.TimeFormat)
-	token := "AWS3-HTTPS AWSAccessKeyId=" + client.Key + ",Algorithm=HmacSHA256,Signature=" + client.signPayload(date, sha1.New)
+	token := "AWS3-HTTPS AWSAccessKeyId=" + client.Key + ",Algorithm=HmacSHA256,Signature=" + client.signPayload(date, sha256.New)
 	req.Header.Set("X-Amzn-Authorization", token)
 	req.Header.Set("x-amz-date", date)
 	return
