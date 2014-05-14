@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/dynport/gocli"
-	"github.com/dynport/gologger"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/dynport/gocli"
+	"github.com/dynport/gologger"
 )
 
 var logger = gologger.NewFromEnv()
@@ -39,6 +40,27 @@ type Server struct {
 
 type Account struct {
 	User, Password string
+}
+
+func NewFromEnv() *Account {
+	return &Account{
+		User:     os.Getenv(ENV_USER),
+		Password: os.Getenv(ENV_PASSWORD),
+	}
+}
+
+func (a *Account) Validate() error {
+	errors := []string{}
+	if a.User == "" {
+		errors = append(errors, "User must be set")
+	}
+	if a.Password == "" {
+		errors = append(errors, "Password must be set")
+	}
+	if len(errors) > 0 {
+		return fmt.Errorf(strings.Join(errors, ", "))
+	}
+	return nil
 }
 
 const (
@@ -191,4 +213,3 @@ func (account *Account) LoadServer(ip string) (server *Server, e error) {
 	}
 	return serverResponse.Server, e
 }
-
