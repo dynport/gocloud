@@ -1,0 +1,25 @@
+<h3>{{ vpc.Id }}</h3>
+
+<table border="0" class="table table-bordered">
+  <tr>
+    <th>Name</th>
+    <td>{{ vpc.Name }}</td>
+  </tr>
+  <tr>
+    <th>CidrBlock</th>
+    <td>{{ vpc.CidrBlock }}</td>
+  </tr>
+</table>
+
+<div ng-show="subnets != undefied">
+  <h4>Subnets</h4>
+  <table border="0" class="table table-bordered">
+    <tr ng-repeat="subnet in subnets">
+      <td><a href="/subnets/{{ subnet.SubnetId }}">{{ subnet.SubnetId }}</a></td>
+      <td>{{ subnet.CidrBlock }}</td>
+      <td>{{ subnet.AvailabilityZone }}</td>
+      <td>{{ subnet.State }}</td>
+      <td>{{ subnet.AvailableIpAddressCount }}</td>
+    </tr>
+  </table>
+</div>

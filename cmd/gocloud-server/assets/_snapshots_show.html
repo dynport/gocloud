@@ -1,0 +1,30 @@
+<h3>{{ snapshot.SnapshotId }}</h3>
+
+<table class="table table-bordered" border="0">
+  <tr>
+    <th>VolumeId</th>
+    <td><a href="/volumes/{{ snapshot.VolumeId }}">{{ snapshot.VolumeId }}</a></td>
+  </tr>
+  <tr>
+    <th>Volume Size</th>
+    <td>{{ snapshot.VolumeSize }}</td>
+  </tr>
+  <tr>
+    <th>Start Time</th>
+    <td>{{ snapshot.StartTime }}</td>
+  </tr>
+  <tr>
+    <th>Progress</th>
+    <td>{{ snapshot.Progress }}</td>
+  </tr>
+  <tr>
+    <th>Status</th>
+    <td>{{ snapshot.Status }}</td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>{{ snapshot.Description }}</td>
+  </tr>
+</table>
+
+<pre><code>{{ snapshot | json }}</code></pre>

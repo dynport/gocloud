@@ -1,0 +1,8 @@
+<h3>All Stacks</h3>
+
+<table class="table table-bordered" border="0">
+  <tr ng-repeat="stack in stacks">
+    <td><a href="/stacks/{{ stack.Name }}">{{ stack.Name }}</a></td>
+    <td>{{ stack.Status }}</td>
+  </tr>
+</table>

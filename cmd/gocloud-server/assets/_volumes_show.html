@@ -1,0 +1,38 @@
+<h3>{{ volume.VolumeId }}</h3>
+
+<table border="0" class="table table-bordered">
+  <tr>
+    <th>SnapshotId</th>
+    <td><a href="/snapshots/{{ volume.SnapshotId }}">{{ volume.SnapshotId }}</a></td>
+  </tr>
+  <tr>
+    <th>Status</th>
+    <td>{{ volume.Status }}</td>
+  </tr>
+  <tr>
+    <th>Availability Zone</th>
+    <td>{{ volume.AvailabilityZone }}</td>
+  </tr>
+  <tr>
+    <th>Create Time</th>
+    <td>{{ volume.CreateTime }}</td>
+  </tr>
+  <tr>
+    <th>Size</th>
+    <td>{{ volume.Size }}</td>
+  </tr>
+  <tr>
+    <th>Attachments</th>
+    <td>
+        <table border="0" class="table table-bordered">
+          <tr ng-repeat="att in volume.Attachments">
+            <td><a href="/instances/{{ att.InstanceId }}">{{ att.InstanceId }}</a></td>
+            <td>{{ att.Status }}</td>
+            <td>{{ att.AttachTime }}</td>
+          </tr>
+        </table>
+    </td>
+  </tr>
+</table>
+
+<pre><code>{{ volume | json }}</code></pre>

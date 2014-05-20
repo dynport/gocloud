@@ -1,0 +1,10 @@
+<h3>List VPCs</h3>
+
+<table border="0" class="table table-bordered">
+  <tr ng-repeat="vpc in vpcs">
+    <td><a href="/vpcs/{{ vpc.Id }}">{{ vpc.Id }}</a></td>
+    <td>{{ vpc.Name }}</td>
+    <td>{{ vpc.State }}</td>
+    <td>{{ vpc.CidrBlock }}</td>
+  </tr>
+</table>

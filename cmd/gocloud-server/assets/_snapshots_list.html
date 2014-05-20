@@ -1,0 +1,13 @@
+<h3>Snapshots</h3>
+
+<table class="table table-bordered" border="0">
+  <tr ng-repeat="snapshot in snapshots">
+    <td><a href="/snapshots/{{ snapshot.SnapshotId }}">{{ snapshot.SnapshotId }}</a></td>
+    <td><a href="/volumes/{{ snapshot.VolumeId }}">{{ snapshot.VolumeId }}</a></td>
+    <td>{{ snapshot.VolumeSize }}</td>
+    <td>{{ snapshot.Status }}</td>
+    <td>{{ snapshot.StartTime }}</td>
+    <td>{{ snapshot.Progress }}</td>
+    <td>{{ snapshot.Description }}</td>
+  </tr>
+</table>

@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html ng-app='app'>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Index</title>
+    <script type="text/javascript" src="/bootstrap/bootstrap.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/angular-1.2.6/angular.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/angular-1.2.6/angular-route.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/app.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="/bootstrap/bootstrap.css" />
+    <link type="text/css" rel="stylesheet" href="/bootstrap/bootstrap-theme.css" />
+  </head>
+  <body>
+    <div class="container" style="padding:0px 14px; margin:10px">
+      <strong>Gocloud</strong> |
+      <a href="/instances">Instances</a> |
+      <a href="/stacks">Stacks</a> |
+      <a href="/vpcs">Vpcs</a> |
+      <a href="/snapshots">Snapshots</a> |
+      <a href="/volumes">Volumes</a> |
+      <a href="/sgs">SecurityGroups</a>
+      <hr />
+      <div ng-view></div>
+    </div>
+  </body>
+</html>

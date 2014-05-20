@@ -1,0 +1,25 @@
+<div>
+  <input type="text" ng-model="query"/>
+</div>
+<table class="table table-bordered" border="0">
+  <tr ng-repeat="instance in instances | filter:query">
+    <td>
+      <nobr>
+        <a href="/instances/{{ instance.Id }}">{{ instance.Id }}</a>
+      </nobr>
+    </td>
+    <td><a href="/instances/{{ instance.Id }}">{{ instance.Name }}</a></td>
+    <td>{{ instance.Type }}</td>
+    <td>{{ instance.State }}</td>
+    <td><a href="/vpcs/{{ instance.VpcId }}">{{ instance.VpcId }}</a></td>
+    <td>{{ instance.SubnetId }}</td>
+    <td>{{ instance.AvailabilityZone }}</td>
+    <td><input type="text" disabled value="{{ instance.PrivateIpAddress }}" /></td>
+    <td><input id="public_ip" type="text" disabled value="{{ instance.PublicIpAddress }}" /></td>
+    <td>
+      <span ng-repeat="group in instance.SecurityGroups">
+        <a href="/sgs/{{ group }}">{{ group }}</a>
+      </span>
+    </td>
+  </tr>
+</table>

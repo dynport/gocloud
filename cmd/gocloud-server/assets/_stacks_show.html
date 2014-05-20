@@ -1,0 +1,23 @@
+<table class="table table-bordered" border="0">
+  <tr>
+    <th>Name</th>
+    <td>{{ stack.Name }}</td>
+  </tr>
+  <tr>
+    <th>Status</th>
+    <td>{{ stack.Status }}</td>
+  </tr>
+</table>
+
+<h3>Resources</h3>
+<table class="table table-bordered" border="0">
+  <tr ng-repeat="resource in resources">
+    <td>{{ resource.LogicalResourceId }}</td>
+    <td>{{ resource.PhysicalResourceId }}</td>
+    <td>
+      <span ng-show="resource.Link != ''">
+          <a href="{{ resource.Link }}">{{ resource.PhysicalResourceId }}</a>
+      </span>
+    </td>
+  </tr>
+</table>

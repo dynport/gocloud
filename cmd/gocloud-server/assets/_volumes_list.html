@@ -1,0 +1,16 @@
+<h3>Volumes</h3>
+
+<table class="table table-bordered" border="0">
+  <tr ng-repeat="volume in volumes">
+    <td><a href="/volumes/{{ volume.VolumeId }}">{{ volume.VolumeId }}</a></td>
+    <td><a href="/snapshots/{{ volume.SnapshotId }}">{{ volume.SnapshotId }}</a></td>
+    <td>{{ volume.CreateTime }}</td>
+    <td>{{ volume.Status }}</td>
+    <td>{{ volume.Size }}</td>
+    <td>
+      <span ng-repeat="att in volume.Attachments">
+        <a href="/instances/{{ att.InstanceId }}">{{ att.InstanceId }}</a>
+      </span>
+    </td>
+  </tr>
+</table>

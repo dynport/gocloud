@@ -1,0 +1,10 @@
+<h1>All Security Groups</h1>
+
+<table class="table table-bordered" border="0">
+  <tr ng-repeat="group in groups">
+    <td>
+      <a href="/sgs/{{ group.Id }}">{{ group.Id }}</a>
+    </td>
+    <td>{{ group.Name }}</td>
+  </tr>
+</table>

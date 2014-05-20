@@ -1,0 +1,46 @@
+<h3>{{ group.Id }}</h3>
+<table border="0">
+  <tr>
+    <th>Name</th>
+    <td>{{ group.Name }}</td>
+  </tr>
+  <tr>
+    <th>VPC</th>
+    <td ng-show="group.VpcId != ''">
+      <a href="/vpcs/{{ group.VpcId }}">{{ group.VpcId }}</a>
+    </td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>{{ group.Description }}</td>
+  </tr>
+</table>
+
+<h4>Permissions</h4>
+<table class="table table-bordered">
+  <tr ng-repeat="permission in group.IpPermissions">
+    <td>{{ permission.Protocol }}</td>
+    <td>{{ permission.Ports }}</td>
+    <td>
+      {{ permission.IpRanges }}
+      <span ng-repeat="srcGroup in permission.Groups">
+        <a href="/sgs/{{ srcGroup }}">{{ srcGroup }}</a>
+      </span>
+    </td>
+  </tr>
+</table>
+
+<div ng-show="instances != undefined">
+  <h4>Instances</h4>
+  <div ng-show="instances.length == 0">
+    <em>No Instances found</em>
+  </div>
+  <table class="table table-bordered" border="0">
+    <tr ng-repeat="instance in instances">
+      <td>
+        <a href="/instances/{{ instance.Id }}">{{ instance.Id }}</a>
+      </td>
+      <td>{{ instance.Name }}</td>
+    </tr>
+  </table>
+</div>

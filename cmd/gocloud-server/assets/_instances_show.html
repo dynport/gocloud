@@ -1,0 +1,37 @@
+<h3>{{ instance.Id }}</h3>
+<table class="table table-borederd" border="0">
+  <tr>
+    <th>Name</th>
+    <td>{{ instance.Name }}</td>
+  </tr>
+  <tr>
+    <th>VPC</th>
+    <td><a href="/vpcs/{{ instance.VpcId }}">{{ instance.VpcId }}</a></td>
+  </tr>
+  <tr>
+    <th>Subnet ID</th>
+    <td>{{ instance.SubnetId }}</td>
+  </tr>
+  <tr>
+    <th>Availability Zone</th>
+    <td>{{ instance.AvailabilityZone }}</td>
+  </tr>
+  <tr>
+    <th>Security Groups</th>
+    <td>
+        <span ng-repeat="group in instance.SecurityGroups">
+          <a href="/sgs/{{ group }}">{{ group }}</a>
+        <span>
+    </td>
+  </tr>
+  <tr>
+    <th>PrivateIpAddress</th>
+    <td>{{ instance.PrivateIpAddress }}</td>
+  </tr>
+  <tr>
+    <th>PublicIpAddress</th>
+    <td>{{ instance.PublicIpAddress }}</td>
+  </tr>
+</table>
+
+<pre><code>{{ instance.Original | json }}</code></pre>

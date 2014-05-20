@@ -1,0 +1,14 @@
+<table border="0" class="table table-bordered">
+  <tr ng-repeat="image in selfImages">
+    <td>{{ image.ImageId }}</td>
+    <td>{{ image.Name }}</td>
+    <td>
+      <span ng-repeat="bd in image.BlockDeviceMappings">
+        <span ng-show="bd.Ebs != null">
+          <a href="/snapshots/{{ bd.Ebs.SnapshotId }}">{{ bd.Ebs.SnapshotId }}</a>
+          ({{ bd.DeviceName }})
+        </span>
+      </span>
+    </td>
+  </tr>
+</table>

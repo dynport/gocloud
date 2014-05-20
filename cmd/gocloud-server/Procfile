@@ -1,0 +1,2 @@
+coffee: cd public && coffee -c -w . 
+logs: tail -F ~/logs/gocloud.log
