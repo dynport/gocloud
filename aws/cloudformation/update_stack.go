@@ -1,5 +1,7 @@
 package cloudformation
 
+import "fmt"
+
 type UpdateStackParameters struct {
 	BaseParameters
 	StackPolicyDuringUpdateBody string
@@ -54,10 +56,17 @@ func (update *UpdateStack) Execute(client *Client) (*UpdateStackResponse, error)
 	return r, e
 }
 
+const errorNoUpdate = "No updates are to be performed."
+
+var ErrorNoUpdate = fmt.Errorf(errorNoUpdate)
+
 func (c *Client) UpdateStack(params UpdateStackParameters) (stackId string, e error) {
 	r := &UpdateStackResponse{}
 	e = c.loadCloudFormationResource("UpdateStack", params.values(), r)
 	if e != nil {
+		if e.Error() == errorNoUpdate {
+			return "", ErrorNoUpdate
+		}
 		return "", e
 	}
 	return r.UpdateStackResult.StackId, nil
