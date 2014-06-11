@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dynport/goauth2/oauth"
+	"code.google.com/p/goauth2/oauth"
 )
 
 func LoadExchangedToken(code string, config *oauth.Config, token interface{}) error {
