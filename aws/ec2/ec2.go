@@ -50,6 +50,7 @@ type Image struct {
 	Hypervisor          string                `xml:"hypervisor"`
 	BlockDeviceMappings []*BlockDeviceMapping `xml:"blockDeviceMapping>item"`
 	ProductCodes        []*ProductCode        `xml:"productCodes>item"`
+	Tags                []*Tag                `xml:"tagSet>item"`
 }
 
 type ProductCode struct {
