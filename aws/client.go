@@ -98,13 +98,16 @@ func ExtractErrorsResponse(b []byte) error {
 
 // list of endpoints
 func (client *Client) DoSignedRequest(method string, endpoint, action string, extraAttributes map[string]string) (rsp *Response, e error) {
-	request, e := http.NewRequest(method, endpoint+"?"+action, nil)
+	url := endpoint + "?" + action
+	dbg.Printf("reauest url=%q with method=%q", url, method)
+	request, e := http.NewRequest(method, url, nil)
 	client.SignAwsRequestV2(request, time.Now())
 	raw, e := http.DefaultClient.Do(request)
 	if e != nil {
 		return rsp, e
 	}
 	defer raw.Body.Close()
+	dbg.Printf("got response with status=%q", raw.Status)
 	rsp = &Response{
 		StatusCode: raw.StatusCode,
 	}
@@ -112,6 +115,8 @@ func (client *Client) DoSignedRequest(method string, endpoint, action string, ex
 	if e != nil {
 		return rsp, e
 	}
+	dbg.Printf("and content")
+	dbg.Print(string(rsp.Content))
 	e = ExtractError(rsp.Content)
 	if e != nil {
 		return nil, e
