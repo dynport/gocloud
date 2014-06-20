@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"github.com/dynport/gocloud/aws"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/dynport/gocloud/aws"
 )
 
 const API_VERSION = "2012-12-12"
@@ -151,7 +152,7 @@ func (client *Client) ListHostedZones() (zones []*HostedZone, e error) {
 	zonesResponse := &ListHostedZonesResponse{}
 	e = xml.Unmarshal(rsp.Content, zonesResponse)
 	if e != nil {
-		return zones, e
+		return zones, fmt.Errorf("%q: %q", e, string(rsp.Content))
 	}
 	return zonesResponse.HostedZones, nil
 }
