@@ -33,11 +33,12 @@ const (
 	API_VERSIONS_EC2       = "2013-08-15"
 	CANONICAL_OWNER_ID     = "099720109477"
 	SELF_OWNER_ID          = "self"
-	UBUNTU_PREFIX          = "ubuntu/images/ebs/ubuntu-*"
-	UBUNTU_RARING_PREFIX   = "ubuntu/images/ebs/ubuntu-raring*"
-	UBUNTU_TRUSTY_PREFIX   = "ubuntu/images/ebs/ubuntu-trusty*"
-	UBUNTU_SAUCY_PREFIX    = "ubuntu/images/ebs/ubuntu-saucy*"
-	ImagePrefixRaringAmd64 = "ubuntu/images/ebs/ubuntu-raring-13.04-amd64*"
+	UBUNTU_ALL             = "ubuntu/images/*"
+	UBUNTU_PREFIX          = "ubuntu-*"
+	UBUNTU_RARING_PREFIX   = "ubuntu-raring*"
+	UBUNTU_TRUSTY_PREFIX   = "ubuntu-trusty*"
+	UBUNTU_SAUCY_PREFIX    = "ubuntu-saucy*"
+	ImagePrefixRaringAmd64 = "ubuntu-raring-13.04-amd64*"
 )
 
 type ImageFilter struct {

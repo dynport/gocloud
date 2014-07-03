@@ -74,14 +74,16 @@ func monthlyPrice(price float64) string {
 type DescribeImages struct {
 	Canonical bool `cli:"type=opt long=canonical"`
 	Self      bool `cli:"type=opt long=self"`
+	UbuntuAll bool `cli:"opt --ubuntu-all"`
 	Ubuntu    bool `cli:"type=opt long=ubuntu"`
 	Raring    bool `cli:"type=opt long=raring"`
 	Saucy     bool `cli:"type=opt long=saucy"`
 	Trusty    bool `cli:"type=opt long=trusty"`
+	Ssd       bool `cli:"opt --ssd"`
+	HvmSsd    bool `cli:"opt --hvm-ssd"`
 }
 
 func (a *DescribeImages) Run() error {
-	log.Println("describing images")
 	filter := &ec2.ImageFilter{}
 	if a.Canonical {
 		filter.Owner = ec2.CANONICAL_OWNER_ID
@@ -89,15 +91,25 @@ func (a *DescribeImages) Run() error {
 		filter.Owner = ec2.SELF_OWNER_ID
 	}
 
-	if a.Ubuntu {
-		filter.Name = ec2.UBUNTU_PREFIX
-	} else if a.Raring {
-		filter.Name = ec2.UBUNTU_RARING_PREFIX
-	} else if a.Saucy {
-		filter.Name = ec2.UBUNTU_SAUCY_PREFIX
-	} else if a.Trusty {
-		filter.Name = ec2.UBUNTU_TRUSTY_PREFIX
+	storageType := "*"
+	if a.Ssd {
+		storageType = "ebs-ssd"
+	} else if a.HvmSsd {
+		storageType = "hvm-ssd"
 	}
+
+	if a.UbuntuAll {
+		filter.Name = ec2.UBUNTU_ALL
+	} else if a.Ubuntu {
+		filter.Name = "ubuntu/images/" + storageType + "/" + ec2.UBUNTU_PREFIX
+	} else if a.Raring {
+		filter.Name = "ubuntu/images/" + storageType + "/" + ec2.UBUNTU_RARING_PREFIX
+	} else if a.Saucy {
+		filter.Name = "ubuntu/images/" + storageType + "/" + ec2.UBUNTU_SAUCY_PREFIX
+	} else if a.Trusty {
+		filter.Name = "ubuntu/images/" + storageType + "/" + ec2.UBUNTU_TRUSTY_PREFIX
+	}
+	log.Printf("describing images with filter %q", filter.Name)
 
 	images, e := client().DescribeImagesWithFilter(filter)
 	if e != nil {
@@ -106,7 +118,7 @@ func (a *DescribeImages) Run() error {
 	sort.Sort(images)
 	table := gocli.NewTable()
 	for _, image := range images {
-		table.Add(image.ImageId, image.Name, image.ImageState)
+		table.Add(image.ImageId, image.Name, image.ImageState, image.Hypervisor, image.VirtualizationType)
 	}
 	fmt.Println(table)
 	return nil
