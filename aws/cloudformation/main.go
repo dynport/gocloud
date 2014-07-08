@@ -49,6 +49,7 @@ func (client *Client) loadCloudFormationResource(action string, params Values, i
 		return nil
 	default:
 		ersp := &ErrorResponse{}
+		dbg.Printf("ERROR=%q", string(b))
 		e = xml.Unmarshal(b, ersp)
 		if e != nil {
 			return fmt.Errorf("expected status 2xx but got %s (%s)", rsp.Status, string(b))

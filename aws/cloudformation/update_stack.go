@@ -64,6 +64,7 @@ func (c *Client) UpdateStack(params UpdateStackParameters) (stackId string, e er
 	r := &UpdateStackResponse{}
 	e = c.loadCloudFormationResource("UpdateStack", params.values(), r)
 	if e != nil {
+		dbg.Printf("error updating stack %T: %q", e, e)
 		if e.Error() == errorNoUpdate {
 			return "", ErrorNoUpdate
 		}
