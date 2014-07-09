@@ -6,12 +6,16 @@ type UpdateStackParameters struct {
 	BaseParameters
 	StackPolicyDuringUpdateBody string
 	StackPolicyDuringUpdateURL  string
+	UsePreviousTemplate         bool
 }
 
 func (p *UpdateStackParameters) values() Values {
 	v := p.BaseParameters.values()
 	v["StackPolicyDuringUpdateBody"] = p.StackPolicyDuringUpdateBody
 	v["StackPolicyDuringUpdateURL"] = p.StackPolicyDuringUpdateURL
+	if p.UsePreviousTemplate {
+		v["UsePreviousTemplate"] = "true"
+	}
 	return v
 }
 
@@ -33,6 +37,7 @@ type UpdateStack struct {
 	TemplateURL                 string
 	StackPolicyDuringUpdateBody string
 	StackPolicyDuringUpdateURL  string
+	UsePreviousTemplate         bool
 }
 
 func (update *UpdateStack) values() Values {
@@ -44,6 +49,9 @@ func (update *UpdateStack) values() Values {
 		"TemplateURL":                 update.TemplateURL,
 		"StackPolicyDuringUpdateBody": update.StackPolicyDuringUpdateBody,
 		"StackPolicyDuringUpdateURL":  update.StackPolicyDuringUpdateURL,
+	}
+	if update.UsePreviousTemplate {
+		v["UsePreviousTemplate"] = "true"
 	}
 	v.updateCapabilities(update.Capabilities)
 	v.updateParameters(update.Parameters)
