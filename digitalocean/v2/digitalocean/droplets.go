@@ -135,30 +135,30 @@ type Network struct {
 }
 
 type Region struct {
-	Slug      string   `json:"	slug,omitempty"`
-	Name      string   `json:"	name,omitempty"`
-	Sizes     []string `json:"	sizes,omitempty"`
-	Available bool     `json:"	available,omitempty"`
-	Features  []string `json:"	features,omitempty"`
+	Slug      string   `json:"slug,omitempty"`
+	Name      string   `json:"name,omitempty"`
+	Sizes     []string `json:"sizes,omitempty"`
+	Available bool     `json:"available,omitempty"`
+	Features  []string `json:"features,omitempty"`
 }
 
 type Image struct {
-	Id           int       `json:"	id,omitempty"`
-	Name         string    `json:"	name,omitempty"`
-	Distribution string    `json:"	distribution,omitempty"`
-	Slug         string    `json:"	slug,omitempty"`
-	Public       bool      `json:"	public,omitempty"`
-	Regions      []string  `json:"	regions,omitempty"`
-	CreatedAt    time.Time `json:"	created_at,omitempty"`
+	Id           int       `json:"id,omitempty"`
+	Name         string    `json:"name,omitempty"`
+	Distribution string    `json:"distribution,omitempty"`
+	Slug         string    `json:"slug,omitempty"`
+	Public       bool      `json:"public,omitempty"`
+	Regions      []string  `json:"regions,omitempty"`
+	CreatedAt    time.Time `json:"created_at,omitempty"`
 }
 
 type Size struct {
 	Slug          string      `json:"slug,omitempty"`
 	Memory        int         `json:"memory,omitempty"`
-	VCpus         int         `json:"	v_cpus,omitempty"`
-	Disk          int         `json:"	disk,omitempty"`
-	Transfer      interface{} `json:"	transfer,omitempty"`
-	PriceMonthley string      `json:"	price_monthley,omitempty"`
-	PriceHourly   string      `json:"	price_hourly,omitempty"`
-	Regions       []string    `json:"	regions,omitempty"`
+	VCpus         int         `json:"v_cpus,omitempty"`
+	Disk          int         `json:"disk,omitempty"`
+	Transfer      interface{} `json:"transfer,omitempty"`
+	PriceMonthley string      `json:"price_monthley,omitempty"`
+	PriceHourly   string      `json:"price_hourly,omitempty"`
+	Regions       []string    `json:"regions,omitempty"`
 }
