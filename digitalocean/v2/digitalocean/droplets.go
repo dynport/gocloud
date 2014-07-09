@@ -74,6 +74,10 @@ func (c *CreateDroplet) Execute(client *Client) (*DropletResponse, error) {
 		return nil, e
 	}
 	req.Header.Set("Content-Type", "application/json")
+	dbg.Printf("URL %s", req.URL.String())
+	for k, v := range req.Header {
+		dbg.Printf("HEADER %s: %s", k, v[0])
+	}
 	rsp, e := client.Do(req)
 	if e != nil {
 		return nil, e
