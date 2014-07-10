@@ -2,9 +2,10 @@ package ec2
 
 import (
 	"fmt"
+	"sort"
+
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/aws/pricing"
-	"sort"
 )
 
 type Prices struct {
@@ -64,10 +65,10 @@ func printConfigsDetailed(regionName string, typ string, priceMapping map[string
 
 func printConfigs(regionName string, typ string, priceMapping map[string]pricing.PriceList, configs pricing.InstanceTypeConfigs) {
 	table := gocli.NewTable()
-	table.Add("Type", "Cores", "ECUs", "GB RAM", "Region", "Type", "$/Hour", "$/Month", "$/Core", "$/GB")
+	table.Add("Type", "Cores", "GB RAM", "Region", "Type", "$/Hour", "$/Month", "$/Core", "$/GB")
 	for _, config := range configs {
 		cols := []interface{}{
-			config.Name, config.Cpus, config.ECUs, config.Memory,
+			config.Name, config.Cpus, config.Memory,
 		}
 		if prices, ok := priceMapping[config.Name]; ok {
 			cols = append(cols, normalizeRegion(regionName), typ)

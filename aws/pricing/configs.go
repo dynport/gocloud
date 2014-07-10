@@ -1,19 +1,23 @@
 package pricing
 
+import "strings"
+
 type InstanceTypeConfig struct {
-	Family             string
 	Name               string
-	Arch               string
 	Cpus               int
-	ECUs               float64
-	ECUText            string
 	Memory             float64
 	Storage            string
-	EbsOptimizable     bool
 	NetworkPerformance string
+	ClockSpeed         float64
 
-	Turbo             bool
-	AVX               bool
-	AES               bool
-	PhysicalProcessor string
+	Turbo              bool
+	AVX                bool
+	AES                bool
+	PhysicalProcessor  string
+	EbsOptimizable     bool
+	EnhancedNetworking bool
+}
+
+func (c *InstanceTypeConfig) Family() string {
+	return strings.Split(c.Name, ".")[0]
 }
