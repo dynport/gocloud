@@ -14,6 +14,7 @@ func main() {
 	router := cli.NewRouter()
 	router.Register("images/list", &imagesList{}, "List Images")
 	router.Register("regions/list", &regionsList{}, "List Regions")
+	router.Register("keys/list", &keysList{}, "List Keys")
 	router.Register("droplets/delete", &dropletDelete{}, "Delete Droplet")
 	router.Register("droplets/list", &dropletsList{}, "List Droplets")
 	router.Register("droplets/show", &dropletShow{}, "Show Droplet")
