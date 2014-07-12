@@ -3,6 +3,7 @@ package pricing
 import (
 	"io/ioutil"
 	"testing"
+
 	. "github.com/smartystreets/goconvey/convey"
 	_ "launchpad.net/xmlpath"
 )

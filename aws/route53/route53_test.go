@@ -2,10 +2,10 @@ package route53
 
 import (
 	"encoding/xml"
-	. "github.com/smartystreets/goconvey/convey"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSerialize(t *testing.T) {
@@ -38,54 +38,64 @@ func mustReadFixture(name string) []byte {
 }
 
 func TestParseHostedZones(t *testing.T) {
-	f := mustReadFixture("list_hosted_zones.xml")
-	rsp := &ListHostedZonesResponse{}
-	xml.Unmarshal(f, rsp)
-	assert.NotNil(t, rsp)
-	assert.Equal(t, len(rsp.HostedZones), 1)
+	Convey("ParseHostedZones", t, func() {
+		f := mustReadFixture("list_hosted_zones.xml")
+		rsp := &ListHostedZonesResponse{}
+		e := xml.Unmarshal(f, rsp)
+		So(e, ShouldBeNil)
+		So(len(rsp.HostedZones), ShouldEqual, 1)
 
-	assert.Equal(t, rsp.MaxItems, 1)
-	assert.Equal(t, rsp.IsTruncated, true)
+		So(rsp.MaxItems, ShouldEqual, 1)
+		So(rsp.IsTruncated, ShouldEqual, true)
 
-	zone := rsp.HostedZones[0]
-	assert.Equal(t, zone.Id, "/hostedzone/Z111111QQQQQQQ")
-	assert.Equal(t, zone.Name, "example2.com.")
-	assert.Equal(t, zone.CallerReference, "MyUniqueIdentifier2")
-	assert.Equal(t, zone.ResourceRecordSetCount, 42)
+		zone := rsp.HostedZones[0]
+		So(zone.Id, ShouldEqual, "/hostedzone/Z111111QQQQQQQ")
+		So(zone.Name, ShouldEqual, "example2.com.")
+		So(zone.CallerReference, ShouldEqual, "MyUniqueIdentifier2")
+		So(zone.ResourceRecordSetCount, ShouldEqual, 42)
+
+	})
 }
 
 func TestParseGetHostedZOneResponse(t *testing.T) {
-	f := mustReadFixture("get_hosted_zone_response.xml")
-	rsp := &GetHostedZoneResponse{}
-	e := xml.Unmarshal(f, rsp)
-	zone := rsp.HostedZone
+	Convey("ParseGetHostedZoneResponse", t, func() {
+		f := mustReadFixture("get_hosted_zone_response.xml")
+		rsp := &GetHostedZoneResponse{}
+		e := xml.Unmarshal(f, rsp)
+		So(e, ShouldBeNil)
+		zone := rsp.HostedZone
 
-	assert.Nil(t, e)
-	assert.NotNil(t, zone)
-	assert.Equal(t, zone.Id, "/hostedzone/Z1PA6795UKMFR9")
-	assert.Equal(t, zone.Name, "example.com.")
+		So(e, ShouldBeNil)
 
-	nameServers := rsp.NameServers
-	assert.Equal(t, len(nameServers), 4)
-	assert.Equal(t, nameServers[0], "ns-2048.awsdns-64.com")
+		So(zone.Id, ShouldEqual, "/hostedzone/Z1PA6795UKMFR9")
+		So(zone.Name, ShouldEqual, "example.com.")
+
+		nameServers := rsp.NameServers
+		So(len(nameServers), ShouldEqual, 4)
+		So(nameServers[0], ShouldEqual, "ns-2048.awsdns-64.com")
+
+	})
 }
 
 func TestListResourceRecordSets(t *testing.T) {
-	f := mustReadFixture("list_resource_record_sets.xml")
-	rsp := &ListResourceRecordSetsResponse{}
-	e := xml.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	assert.NotNil(t, rsp)
-	assert.Equal(t, len(rsp.ResourceRecordSets), 1)
+	Convey("ListResourceRecordSets", t, func() {
+		f := mustReadFixture("list_resource_record_sets.xml")
+		rsp := &ListResourceRecordSetsResponse{}
+		e := xml.Unmarshal(f, rsp)
+		So(e, ShouldBeNil)
+		So(rsp, ShouldNotBeNil)
+		So(len(rsp.ResourceRecordSets), ShouldEqual, 1)
 
-	rrs := rsp.ResourceRecordSets[0]
-	assert.Equal(t, rrs.Name, "example.com.")
-	assert.Equal(t, rrs.Type, "NS")
-	assert.Equal(t, rrs.TTL, 172800)
+		rrs := rsp.ResourceRecordSets[0]
+		So(rrs.Name, ShouldEqual, "example.com.")
+		So(rrs.Type, ShouldEqual, "NS")
+		So(rrs.TTL, ShouldEqual, 172800)
 
-	assert.Equal(t, len(rrs.ResourceRecords), 4)
+		So(len(rrs.ResourceRecords), ShouldEqual, 4)
 
-	resourceRecord := rrs.ResourceRecords[0]
-	assert.NotNil(t, resourceRecord)
-	assert.Equal(t, resourceRecord.Value, "ns-2048.awsdns-64.com.")
+		resourceRecord := rrs.ResourceRecords[0]
+		So(resourceRecord, ShouldNotBeNil)
+		So(resourceRecord.Value, ShouldEqual, "ns-2048.awsdns-64.com.")
+
+	})
 }

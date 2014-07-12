@@ -3,9 +3,10 @@ package iam
 import (
 	"encoding/xml"
 	"io/ioutil"
+	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func mustReadFixture(t *testing.T, name string) []byte {
@@ -16,48 +17,54 @@ func mustReadFixture(t *testing.T, name string) []byte {
 	return b
 }
 
-func TestGetUser(t *testing.T) {
-	f := mustReadFixture(t, "get_user.xml")
-	rsp := &GetUserResponse{}
-	e := xml.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	assert.NotNil(t, f)
-	user := rsp.User
-	assert.Equal(t, user.Path, "/division_abc/subdivision_xyz/")
-	assert.Equal(t, user.UserName, "Bob")
-	assert.Contains(t, user.Arn, "arn:aws:iam::123456789012:user/division_abc/subdivision_xyz/Bob")
-}
+func TestIam(t *testing.T) {
+	Convey("IAM", t, func() {
+		Convey("GetUser", func() {
+			f := mustReadFixture(t, "get_user.xml")
+			rsp := &GetUserResponse{}
+			e := xml.Unmarshal(f, rsp)
+			So(e, ShouldBeNil)
+			So(f, ShouldNotBeNil)
+			user := rsp.User
+			So(user.Path, ShouldEqual, "/division_abc/subdivision_xyz/")
+			So(user.UserName, ShouldEqual, "Bob")
+			So(strings.TrimSpace(user.Arn), ShouldEqual, "arn:aws:iam::123456789012:user/division_abc/subdivision_xyz/Bob")
+		})
 
-func TestAccountSummary(t *testing.T) {
-	f := mustReadFixture(t, "get_account_summary.xml")
-	rsp := &GetAccountSummaryResponse{}
-	e := xml.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	assert.NotNil(t, f)
-	m := rsp.SummaryMap
-	assert.Equal(t, len(m.Entries), 14)
+		Convey("AccountSummary", func() {
+			f := mustReadFixture(t, "get_account_summary.xml")
+			rsp := &GetAccountSummaryResponse{}
+			e := xml.Unmarshal(f, rsp)
+			So(e, ShouldBeNil)
+			So(f, ShouldNotBeNil)
+			m := rsp.SummaryMap
+			So(len(m.Entries), ShouldEqual, 14)
 
-	entry := m.Entries[0]
-	assert.Equal(t, entry.Key, "Groups")
-	assert.Equal(t, entry.Value, "31")
-}
+			entry := m.Entries[0]
+			So(entry.Key, ShouldEqual, "Groups")
+			So(entry.Value, ShouldEqual, "31")
 
-func TestListUsers(t *testing.T) {
-	f := mustReadFixture(t, "list_users.xml")
-	rsp := &ListUsersResponse{}
-	e := xml.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	assert.NotNil(t, f)
-	assert.Equal(t, len(rsp.Users), 2)
-	assert.Equal(t, rsp.Users[0].UserName, "Andrew")
-}
+		})
 
-func TestAccountAliases(t *testing.T) {
-	f := mustReadFixture(t, "list_account_aliases.xml")
-	rsp := &ListAccountAliasesResponse{}
-	e := xml.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	assert.NotNil(t, f)
-	assert.Equal(t, len(rsp.AccountAliases), 1)
-	assert.Equal(t, rsp.AccountAliases[0], "foocorporation")
+	})
+
+	Convey("ListUsers", t, func() {
+		f := mustReadFixture(t, "list_users.xml")
+		rsp := &ListUsersResponse{}
+		e := xml.Unmarshal(f, rsp)
+		So(e, ShouldBeNil)
+		So(len(rsp.Users), ShouldEqual, 2)
+		So(rsp.Users[0].UserName, ShouldEqual, "Andrew")
+
+	})
+
+	Convey("ListAccountAliases", t, func() {
+		f := mustReadFixture(t, "list_account_aliases.xml")
+		rsp := &ListAccountAliasesResponse{}
+		e := xml.Unmarshal(f, rsp)
+		So(e, ShouldBeNil)
+		So(len(rsp.AccountAliases), ShouldEqual, 1)
+		So(rsp.AccountAliases[0], ShouldEqual, "foocorporation")
+
+	})
 }

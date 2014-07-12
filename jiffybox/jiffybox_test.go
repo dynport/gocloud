@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func mustReadFixture(t *testing.T, name string) []byte {
@@ -17,56 +17,60 @@ func mustReadFixture(t *testing.T, name string) []byte {
 }
 
 func TestJiffyBoxes(t *testing.T) {
-	f := mustReadFixture(t, "jiffyBoxes.json")
-	assert.NotNil(t, f)
+	Convey("JiffyBoxes", t, func() {
 
-	rsp := &JiffyBoxesResponse{}
-	e := json.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	assert.Equal(t, len(rsp.Messages), 0)
+		f := mustReadFixture(t, "jiffyBoxes.json")
 
-	assert.Equal(t, len(rsp.Servers()), 1)
+		rsp := &JiffyBoxesResponse{}
+		e := json.Unmarshal(f, rsp)
+		So(e, ShouldBeNil)
+		So(len(rsp.Messages), ShouldEqual, 0)
 
-	server := rsp.Server()
-	assert.Equal(t, server.Id, 12345)
-	assert.Equal(t, server.Name, "Test")
-	assert.Equal(t, len(server.Ips), 2)
-	assert.Equal(t, server.Ips["public"], []string{"188.93.14.176"})
-	assert.Equal(t, server.Status, "READY")
+		So(len(rsp.Servers()), ShouldEqual, 1)
 
-	plan := server.Plan
-	assert.Equal(t, plan.Id, 22)
-	assert.Equal(t, plan.Name, "CloudLevel 3")
-	assert.Equal(t, plan.RamInMB, 8192)
+		server := rsp.Server()
+		So(server.Id, ShouldEqual, 12345)
+		So(server.Name, ShouldEqual, "Test")
+		So(len(server.Ips), ShouldEqual, 2)
 
-	assert.Equal(t, server.Metadata, map[string]string{
-		"createdby": "JiffyBoxTeam",
+		public := server.Ips["public"]
+
+		So(public[0], ShouldEqual, "188.93.14.176")
+		So(server.Status, ShouldEqual, "READY")
+
+		plan := server.Plan
+		So(plan.Id, ShouldEqual, 22)
+		So(plan.Name, ShouldEqual, "CloudLevel 3")
+		So(plan.RamInMB, ShouldEqual, 8192)
+
+		So(server.Metadata["createdby"], ShouldEqual, "JiffyBoxTeam")
+		ap := server.ActiveProfile
+		So(ap.Name, ShouldEqual, "Standard")
+		So(ap.Created, ShouldEqual, 1234567890)
+
+		So(len(ap.DisksHash), ShouldEqual, 2)
+		So(len(ap.Disks()), ShouldEqual, 2)
+
+		disk := ap.DisksHash["xvda"]
+
+		So(disk.Name, ShouldEqual, "CentOS 5.4")
+		So(disk.SizeInMB, ShouldEqual, 81408)
 	})
-
-	ap := server.ActiveProfile
-	assert.Equal(t, ap.Name, "Standard")
-	assert.Equal(t, ap.Created, 1234567890)
-
-	assert.Equal(t, len(ap.DisksHash), 2)
-	assert.Equal(t, len(ap.Disks()), 2)
-
-	disk := ap.DisksHash["xvda"]
-
-	assert.Equal(t, disk.Name, "CentOS 5.4")
-	assert.Equal(t, disk.SizeInMB, 81408)
 }
 
 func TestUnmarshalling(t *testing.T) {
-	f := mustReadFixture(t, "error_creating_response.json")
-	rsp := &ErrorResponse{}
-	e := json.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	t.Log(rsp.Result)
+	Convey("Unmarshalling", t, func() {
+		f := mustReadFixture(t, "error_creating_response.json")
+		rsp := &ErrorResponse{}
+		e := json.Unmarshal(f, rsp)
+		So(e, ShouldBeNil)
 
-	f = mustReadFixture(t, "no_module_response.json")
-	rsp = &ErrorResponse{}
-	e = json.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	t.Log(rsp.Result)
+		f = mustReadFixture(t, "no_module_response.json")
+		rsp = &ErrorResponse{}
+		e = json.Unmarshal(f, rsp)
+		So(e, ShouldBeNil)
+		t.Log(rsp.Result)
+		So(rsp, ShouldNotBeNil)
+	})
 
 }

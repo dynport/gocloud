@@ -1,15 +1,18 @@
 package digitalocean
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestAccount(t *testing.T) {
-	account := &Account{RegionId: 1122, SizeId: 10}
-	assert.NotNil(t, account)
-	droplet := account.DefaultDroplet()
-	assert.NotNil(t, droplet)
-	assert.Equal(t, account.RegionId, 1122)
-	assert.Equal(t, account.SizeId, 10)
+	Convey("Account", t, func() {
+		account := &Account{RegionId: 1122, SizeId: 10}
+		So(account, ShouldNotBeNil)
+		droplet := account.DefaultDroplet()
+		So(droplet, ShouldNotBeNil)
+		So(account.RegionId, ShouldEqual, 1122)
+		So(account.SizeId, ShouldEqual, 10)
+	})
 }

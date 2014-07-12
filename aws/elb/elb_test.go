@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func mustReadFixture(t *testing.T, name string) []byte {
@@ -16,40 +16,46 @@ func mustReadFixture(t *testing.T, name string) []byte {
 	return b
 }
 
-func TestMarshalling(t *testing.T) {
-	f := mustReadFixture(t, "describe_load_balancers.xml")
-	rsp := &DescribeLoadBalancersResponse{}
-	e := xml.Unmarshal(f, rsp)
-	assert.Nil(t, e)
-	lbs := rsp.LoadBalancers
-	assert.Equal(t, len(lbs), 1)
-	lb := lbs[0]
-	assert.Equal(t, lb.LoadBalancerName, "MyLoadBalancer")
-	assert.Equal(t, lb.CreatedTime.Unix(), 1369430131)
-	assert.Equal(t, lb.CanonicalHostedZoneName, "MyLoadBalancer-123456789.us-east-1.elb.amazonaws.com")
-	assert.Equal(t, len(lb.AvailabilityZones), 1)
-	assert.Equal(t, lb.AvailabilityZones[0], "us-east-1a")
-	assert.Equal(t, len(lb.Subnets), 0)
-	assert.Equal(t, lb.HealthCheckTarget, "HTTP:80/")
-	assert.Equal(t, lb.HealthCheckInterval, 90)
-	assert.Equal(t, len(lb.Listeners), 1)
-	assert.Equal(t, lb.SourceSecurityGroupOwnerAlias, "amazon-elb")
-	listener := lb.Listeners[0]
-	assert.Equal(t, listener.Protocol, "HTTP")
+func TestElb(t *testing.T) {
+	Convey("Elb", t, func() {
+		Convey("Marshalling", func() {
+			f := mustReadFixture(t, "describe_load_balancers.xml")
+			rsp := &DescribeLoadBalancersResponse{}
+			e := xml.Unmarshal(f, rsp)
+			So(e, ShouldBeNil)
+			lbs := rsp.LoadBalancers
+			So(len(lbs), ShouldEqual, 1)
+			lb := lbs[0]
+			So(lb.LoadBalancerName, ShouldEqual, "MyLoadBalancer")
+			So(lb.CreatedTime.Unix(), ShouldEqual, 1369430131)
+			So(lb.CanonicalHostedZoneName, ShouldEqual, "MyLoadBalancer-123456789.us-east-1.elb.amazonaws.com")
+			So(len(lb.AvailabilityZones), ShouldEqual, 1)
+			So(lb.AvailabilityZones[0], ShouldEqual, "us-east-1a")
+			So(len(lb.Subnets), ShouldEqual, 0)
+			So(lb.HealthCheckTarget, ShouldEqual, "HTTP:80/")
+			So(lb.HealthCheckInterval, ShouldEqual, 90)
+			So(len(lb.Listeners), ShouldEqual, 1)
+			So(lb.SourceSecurityGroupOwnerAlias, ShouldEqual, "amazon-elb")
+			listener := lb.Listeners[0]
+			So(listener.Protocol, ShouldEqual, "HTTP")
 
-	assert.Equal(t, len(lb.Instances), 1)
-	assert.Equal(t, lb.Instances[0], "i-e4cbe38d")
-}
+			So(len(lb.Instances), ShouldEqual, 1)
+			So(lb.Instances[0], ShouldEqual, "i-e4cbe38d")
 
-func TestMarshalInstanceHealth(t *testing.T) {
-	f := mustReadFixture(t, "describe_instances_health.xml")
-	rsp := &DescribeInstanceHealthResponse{}
-	e := xml.Unmarshal(f, rsp)
-	assert.Equal(t, len(rsp.InstanceStates), 1)
-	assert.Nil(t, e)
-	assert.NotNil(t, rsp)
+		})
 
-	state := rsp.InstanceStates[0]
-	assert.Equal(t, state.Description, "Instance registration is still in progress.")
-	assert.Equal(t, state.InstanceId, "i-315b7e51")
+		Convey("MarshalInstanceHealth", func() {
+			f := mustReadFixture(t, "describe_instances_health.xml")
+			rsp := &DescribeInstanceHealthResponse{}
+			e := xml.Unmarshal(f, rsp)
+			So(e, ShouldBeNil)
+			So(rsp, ShouldNotBeNil)
+			So(len(rsp.InstanceStates), ShouldEqual, 1)
+
+			state := rsp.InstanceStates[0]
+			So(state.Description, ShouldEqual, "Instance registration is still in progress.")
+			So(state.InstanceId, ShouldEqual, "i-315b7e51")
+
+		})
+	})
 }
