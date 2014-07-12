@@ -1,3 +1,5 @@
+default: test build
+
 build:
 	go get ./...
 
