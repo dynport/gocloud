@@ -1,4 +1,4 @@
-# Gocloud (did not find a better name yet)
+# Gocloud 
 
 [![Build Status](https://travis-ci.org/dynport/gocloud.png)](https://travis-ci.org/dynport/gocloud)
 
