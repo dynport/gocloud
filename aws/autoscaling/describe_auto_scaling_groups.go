@@ -31,7 +31,7 @@ type AutoScalingGroup struct {
 	HealthCheckType         string              `xml:"HealthCheckType,omitempty"`
 	Instances               []*Instance         `xml:"Instances>member,omitempty"`
 	LaunchConfigurationName string              `xml:"LaunchConfigurationName,omitempty"`
-	LoadBalancerNames       []string            `xml:"LoadBalancerNames,omitempty"`
+	LoadBalancerNames       []string            `xml:"LoadBalancerNames>member,omitempty"`
 	MaxSize                 int                 `xml:"MaxSize,omitempty"`
 	MinSize                 int                 `xml:"MinSize,omitempty"`
 	PlacementGroup          string              `xml:"PlacementGroup,omitempty"`
