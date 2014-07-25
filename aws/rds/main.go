@@ -1,7 +1,6 @@
 package rds
 
 import (
-	"bytes"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -42,18 +41,8 @@ func newAction(name string) url.Values {
 	return url.Values{"Action": {name}, "Version": {Version}}
 }
 
-func (d *DescribeDBInstances) Execute(client *Client) (*DescribeDBInstancesResponse, error) {
-	v := newAction("DescribeDBInstances")
-	e := loadValues(v, d)
-	if e != nil {
-		return nil, e
-	}
-	r := &DescribeDBInstancesResponse{}
-	e = client.loadResource("GET", client.Endpoint()+"?"+v.Encode(), nil, r)
-	return r, e
-}
-
 func (client *Client) loadResource(method string, url string, r io.Reader, i interface{}) error {
+	dbg.Printf("executing method=%s to url=%s", method, url)
 	req, e := http.NewRequest(method, url, r)
 	if e != nil {
 		return e
@@ -64,61 +53,16 @@ func (client *Client) loadResource(method string, url string, r io.Reader, i int
 		return e
 	}
 	defer rsp.Body.Close()
+	dbg.Printf("got status %s", rsp.Status)
+
+	b, e := ioutil.ReadAll(rsp.Body)
+	if e != nil {
+		return e
+	}
+	dbg.Printf("got response %s", b)
 
 	if rsp.Status[0] != '2' {
-		b, _ := ioutil.ReadAll(rsp.Body)
 		return fmt.Errorf("expected status 2xx, got %s (payload=%q", rsp.Status, string(b))
 	}
-
-	buf := &bytes.Buffer{}
-	reader := io.TeeReader(rsp.Body, buf)
-	e = xml.NewDecoder(reader).Decode(i)
-	return e
-}
-
-type DescribeDBInstancesResponse struct {
-	XMLName                   xml.Name                   `xml:"DescribeDBInstancesResponse"`
-	DescribeDBInstancesResult *DescribeDBInstancesResult `xml:"DescribeDBInstancesResult"`
-}
-
-type DescribeDBInstancesResult struct {
-	Instances []*DBInstance `xml:"DBInstances>DBInstance"`
-}
-
-type Endpoint struct {
-	Port    string `xml:"Port"`
-	Address string `xml:"Address"`
-}
-
-type VpcSecurityGroupMembership struct {
-	Status             string `xml:"Status"`
-	VpcSecurityGroupId string `xml:"VpcSecurityGroupId"`
-}
-
-type DBSecurityGroup struct {
-	Status              string `xml:"Status"`
-	DBSecurityGroupName string `xml:"DBSecurityGroupName"`
-}
-
-type DBInstance struct {
-	LatestRestorableTime       string                        `xml:"LatestRestorableTime"`
-	Engine                     string                        `xml:"Engine"`
-	PendingModifiedValues      interface{}                   `xml:"PendingModifiedValues"`
-	BackupRetentionPeriod      string                        `xml:"BackupRetentionPeriod"`
-	MultiAZ                    bool                          `xml:"MultiAZ"`
-	LicenseModel               string                        `xml:"LicenseModel"`
-	DBInstanceStatus           string                        `xml:"DBInstanceStatus"`
-	EngineVersion              string                        `xml:"EngineVersion"`
-	Endpoint                   *Endpoint                     `xml:"Endpoint"`
-	DBInstanceIdentifier       string                        `xml:"DBInstanceIdentifier"`
-	VpcSecurityGroups          []*VpcSecurityGroupMembership `xml:"VpcSecurityGroups"`
-	DBSecurityGroups           []*DBSecurityGroup            `xml:"DBSecurityGroups"`
-	PreferredBackupWindow      string                        `xml:"PreferredBackupWindow"`
-	AutoMinorVersionUpgrade    bool                          `xml:"AutoMinorVersionUpgrade"`
-	PreferredMaintenanceWindow string                        `xml:"PreferredMaintenanceWindow"`
-	AvailabilityZone           string                        `xml:"AvailabilityZone"`
-	InstanceCreateTime         time.Time                     `xml:"InstanceCreateTime"`
-	AllocatedStorage           int                           `xml:"AllocatedStorage"`
-	DBInstanceClass            string                        `xml:"DBInstanceClass"`
-	MasterUsername             string                        `xml:"MasterUsername"`
+	return xml.Unmarshal(b, i)
 }
