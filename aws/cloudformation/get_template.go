@@ -46,7 +46,7 @@ func (t *GetTemplate) Execute(client *aws.Client) (*GetTemplateResponse, error) 
 		return nil, e
 	}
 	client.SignAwsRequestV2(req, time.Now())
-	rsp, e := http.DefaultClient.Do(req)
+	rsp, e := httpClient.Do(req)
 	if e != nil {
 		return nil, e
 	}

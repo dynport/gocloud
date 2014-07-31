@@ -15,6 +15,16 @@ type Client struct {
 	*aws.Client
 }
 
+var httpClient = newHttpClient()
+
+func newHttpClient() *http.Client {
+	return &http.Client{
+		Transport: &http.Transport{
+			DisableKeepAlives: true,
+		},
+	}
+}
+
 func NewFromEnv() *Client {
 	return &Client{Client: aws.NewFromEnv()}
 }
@@ -30,7 +40,7 @@ func (client *Client) Endpoint() string {
 func (client *Client) loadCloudFormationResource(action string, params Values, i interface{}) error {
 	req, e := client.signedCloudFormationRequest(action, params)
 
-	rsp, e := http.DefaultClient.Do(req)
+	rsp, e := httpClient.Do(req)
 	if e != nil {
 		return e
 	}
