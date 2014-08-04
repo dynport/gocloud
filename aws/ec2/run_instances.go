@@ -19,6 +19,7 @@ type RunInstances struct {
 	AvailabilityZone                  string
 	InstanceInitiatedShutdownBehavior string
 	IamInstanceProfileName            string
+	BlockDeviceMapings                []*BlockDeviceMapping
 
 	NetworkInterfaces []*CreateNetworkInterface
 }

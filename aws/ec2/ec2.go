@@ -161,14 +161,23 @@ type Tag struct {
 }
 
 type BlockDeviceMapping struct {
-	DeviceName string `xml:"deviceName,omitempty"`
-	Ebs        *Ebs   `xml:"ebs,omitempty"`
+	DeviceName string `xml:"deviceName,omitempty" json:",omitempty"`
+	Ebs        *Ebs   `xml:"ebs,omitempty" json:",omitempty"`
 }
 
+const (
+	VolumeTypeGp       = "gp2"
+	VolumeTypeIo1      = "io1"
+	VolumeTypeStandard = "standard"
+)
+
 type Ebs struct {
-	SnapshotId          string `xml:"snapshotId"`
-	VolumeSize          int    `xml:"volumeSize"`
-	DeleteOnTermination bool   `xml:"deleteOnTermination"`
+	SnapshotId          string `xml:"snapshotId,omitempty" json:",omitempty"`
+	VolumeSize          int    `xml:"volumeSize,omitempty" json:",omitempty"`
+	DeleteOnTermination bool   `xml:"deleteOnTermination,omitempty" json:",omitempty"`
+	VolumeType          string `xml:"volumeType,omitempty json:",omitempty""` // see VolumeType... (e.g. gp, io1, standard)
+	Iops                int    `xml:"iops,omitempty" json:",omitempty"`
+	Encrypted           bool   `xml:"encrypted,omitempty" json:",omitempty"`
 }
 
 type Reservation struct {

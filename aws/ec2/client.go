@@ -64,25 +64,121 @@ func (list ImageList) Less(a, b int) bool {
 }
 
 type RunInstancesConfig struct {
-	ImageId                string
-	MinCount               int
-	MaxCount               int
-	InstanceType           string
-	AvailabilityZone       string
-	KeyName                string
-	SecurityGroups         []string
-	SubnetId               string
-	NetworkInterfaces      []*CreateNetworkInterface
-	UserData               string
-	IamInstanceProfileName string
+	ImageId                string                    `json:",omitempty"`
+	MinCount               int                       `json:",omitempty"`
+	MaxCount               int                       `json:",omitempty"`
+	InstanceType           string                    `json:",omitempty"`
+	AvailabilityZone       string                    `json:",omitempty"`
+	KeyName                string                    `json:",omitempty"`
+	SecurityGroups         []string                  `json:",omitempty"`
+	SubnetId               string                    `json:",omitempty"`
+	NetworkInterfaces      []*CreateNetworkInterface `json:",omitempty"`
+	BlockDeviceMappings    []*BlockDeviceMapping     `json:",omitempty"`
+	UserData               string                    `json:",omitempty"`
+	IamInstanceProfileName string                    `json:",omitempty"`
+	EbsOptimized           bool                      `json:",omitempty"`
 }
 
-func (config *RunInstancesConfig) AddPublicIp() {
+func (config *RunInstancesConfig) Values() (url.Values, error) {
+	values := url.Values{}
+	if config.MinCount == 0 {
+		config.MinCount = 1
+	}
+
+	if config.MaxCount == 0 {
+		config.MaxCount = 1
+	}
+
+	if config.ImageId == "" {
+		return nil, fmt.Errorf("ImageId must be provided")
+	}
+
+	values.Add("MinCount", strconv.Itoa(config.MinCount))
+	values.Add("MaxCount", strconv.Itoa(config.MaxCount))
+	values.Add("ImageId", config.ImageId)
+	if config.EbsOptimized {
+		values.Add("EbsOptimized", "true")
+	}
+
+	if config.UserData != "" {
+		values.Add("UserData", b64.EncodeToString([]byte(config.UserData)))
+	}
+
+	if config.IamInstanceProfileName != "" {
+		values.Add("IamInstanceProfile.Name", config.IamInstanceProfileName)
+	}
+
+	if config.InstanceType != "" {
+		values.Add("InstanceType", config.InstanceType)
+	}
+
+	if config.KeyName != "" {
+		values.Add("KeyName", config.KeyName)
+	}
+
+	if config.AvailabilityZone != "" {
+		values.Add("Placement.AvailabilityZone", config.AvailabilityZone)
+	}
+
+	if len(config.NetworkInterfaces) > 0 {
+		for i, nic := range config.NetworkInterfaces {
+			idx := strconv.Itoa(i)
+			values.Add("NetworkInterface."+idx+".DeviceIndex", idx)
+			values.Add("NetworkInterface."+idx+".AssociatePublicIpAddress", "true")
+			values.Add("NetworkInterface."+idx+".SubnetId", nic.SubnetId)
+
+			for i, sg := range nic.SecurityGroupIds {
+				values.Add("NetworkInterface."+idx+".SecurityGroupId."+strconv.Itoa(i), sg)
+			}
+		}
+	} else {
+		for i, sg := range config.SecurityGroups {
+			values.Add("SecurityGroupId."+strconv.Itoa(i+1), sg)
+		}
+		values.Add("SubnetId", config.SubnetId)
+	}
+
+	for i, bdm := range config.BlockDeviceMappings {
+		prefix := fmt.Sprintf("BlockDeviceMapping.%d", i)
+		if bdm.DeviceName == "" {
+			return nil, fmt.Errorf("DeviceName must be set for all BlockDeviceMappings")
+		}
+		values.Add(prefix+".DeviceName", bdm.DeviceName)
+		if ebs := bdm.Ebs; ebs != nil {
+			prefix := prefix + ".Ebs"
+			if ebs.VolumeSize > 0 {
+				values.Add(prefix+".VolumeSize", strconv.Itoa(ebs.VolumeSize))
+			}
+			if ebs.Iops > 0 {
+				values.Add(prefix+".Iops", strconv.Itoa(ebs.Iops))
+			}
+			if ebs.DeleteOnTermination {
+				values.Add(prefix+".DeleteOnTermination", "true")
+			}
+			if ebs.Encrypted {
+				values.Add(prefix+".Encrypted", "true")
+			}
+			if ebs.SnapshotId != "" {
+				values.Add(prefix+".SnapshotId", ebs.SnapshotId)
+			}
+			if ebs.VolumeType != "" {
+				values.Add(prefix+".VolumeType", ebs.VolumeType)
+			}
+		}
+	}
+	return values, nil
+}
+
+func (config *RunInstancesConfig) AddPublicIp() error {
+	if config.SubnetId == "" {
+		return fmt.Errorf("SubnetId must be set")
+	}
 	nic := &CreateNetworkInterface{
 		DeviceIndex: len(config.NetworkInterfaces), AssociatePublicIpAddress: true, SubnetId: config.SubnetId,
 		SecurityGroupIds: config.SecurityGroups,
 	}
 	config.NetworkInterfaces = []*CreateNetworkInterface{nic}
+	return nil
 }
 
 func queryForAction(action string) string {
@@ -164,61 +260,10 @@ type RunInstancesResponse struct {
 var b64 = base64.StdEncoding
 
 func (client *Client) RunInstances(config *RunInstancesConfig) (list InstanceList, e error) {
-	if config.MinCount == 0 {
-		config.MinCount = 1
+	values, e := config.Values()
+	if e != nil {
+		return nil, e
 	}
-
-	if config.MaxCount == 0 {
-		config.MaxCount = 1
-	}
-
-	if config.ImageId == "" {
-		return list, fmt.Errorf("ImageId must be provided")
-	}
-
-	values := &url.Values{}
-	values.Add("MinCount", strconv.Itoa(config.MinCount))
-	values.Add("MaxCount", strconv.Itoa(config.MaxCount))
-	values.Add("ImageId", config.ImageId)
-
-	if config.UserData != "" {
-		values.Add("UserData", b64.EncodeToString([]byte(config.UserData)))
-	}
-
-	if config.IamInstanceProfileName != "" {
-		values.Add("IamInstanceProfile.Name", config.IamInstanceProfileName)
-	}
-
-	if config.InstanceType != "" {
-		values.Add("InstanceType", config.InstanceType)
-	}
-
-	if config.KeyName != "" {
-		values.Add("KeyName", config.KeyName)
-	}
-
-	if config.AvailabilityZone != "" {
-		values.Add("Placement.AvailabilityZone", config.AvailabilityZone)
-	}
-
-	if len(config.NetworkInterfaces) > 0 {
-		for i, nic := range config.NetworkInterfaces {
-			idx := strconv.Itoa(i)
-			values.Add("NetworkInterface."+idx+".DeviceIndex", idx)
-			values.Add("NetworkInterface."+idx+".AssociatePublicIpAddress", "true")
-			values.Add("NetworkInterface."+idx+".SubnetId", nic.SubnetId)
-
-			for i, sg := range nic.SecurityGroupIds {
-				values.Add("NetworkInterface."+idx+".SecurityGroupId."+strconv.Itoa(i), sg)
-			}
-		}
-	} else {
-		for i, sg := range config.SecurityGroups {
-			values.Add("SecurityGroupId."+strconv.Itoa(i+1), sg)
-		}
-		values.Add("SubnetId", config.SubnetId)
-	}
-
 	query := queryForAction("RunInstances") + "&" + values.Encode()
 
 	raw, e := client.DoSignedRequest("POST", client.Endpoint(), query, nil)
