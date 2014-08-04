@@ -158,7 +158,7 @@ type Size struct {
 	VCpus         int         `json:"v_cpus,omitempty"`
 	Disk          int         `json:"disk,omitempty"`
 	Transfer      interface{} `json:"transfer,omitempty"`
-	PriceMonthley string      `json:"price_monthley,omitempty"`
-	PriceHourly   string      `json:"price_hourly,omitempty"`
+	PriceMonthley float32     `json:"price_monthley,omitempty"`
+	PriceHourly   float32     `json:"price_hourly,omitempty"`
 	Regions       []string    `json:"regions,omitempty"`
 }
