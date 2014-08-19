@@ -8,6 +8,7 @@ import (
 )
 
 type imagesList struct {
+	Page int `cli:"opt --page"`
 }
 
 func (r *imagesList) Run() error {
@@ -15,7 +16,7 @@ func (r *imagesList) Run() error {
 	if e != nil {
 		return e
 	}
-	rsp, e := cl.Images()
+	rsp, e := cl.Images(r.Page)
 	if e != nil {
 		return e
 	}

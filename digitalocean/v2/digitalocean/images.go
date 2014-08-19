@@ -1,5 +1,7 @@
 package digitalocean
 
+import "fmt"
+
 type ImagesResponse struct {
 	Images []*Image `json:"images,omitempty"`
 	Meta   *Meta    `json:"meta,omitempty"`
@@ -9,9 +11,13 @@ type ImageResponse struct {
 	Image *Image `json:"image,omitempty"`
 }
 
-func (client *Client) Images() (*ImagesResponse, error) {
+func (client *Client) Images(page int) (*ImagesResponse, error) {
 	rsp := &ImagesResponse{}
-	e := client.loadResponse("/v2/images", rsp)
+	p := "/v2/images"
+	if page > 1 {
+		p += fmt.Sprintf("?page=%d", page)
+	}
+	e := client.loadResponse(p, rsp)
 	return rsp, e
 }
 

@@ -31,6 +31,7 @@ func (c *Client) loadResponse(path string, i interface{}) error {
 	if rsp.Status[0] != '2' {
 		return fmt.Errorf("expected status 2xx, got %s: %s", rsp.Status, string(b))
 	}
+	dbg.Printf("%s", string(b))
 	return json.Unmarshal(b, &i)
 }
 
