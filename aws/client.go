@@ -99,7 +99,7 @@ func ExtractErrorsResponse(b []byte) error {
 // list of endpoints
 func (client *Client) DoSignedRequest(method string, endpoint, action string, extraAttributes map[string]string) (rsp *Response, e error) {
 	url := endpoint + "?" + action
-	dbg.Printf("reauest url=%q with method=%q", url, method)
+	dbg.Printf("request url=%q with method=%q", url, method)
 	request, e := http.NewRequest(method, url, nil)
 	client.SignAwsRequestV2(request, time.Now())
 	raw, e := http.DefaultClient.Do(request)
