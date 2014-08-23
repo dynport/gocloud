@@ -35,17 +35,19 @@ func (c *Client) loadResponse(path string, i interface{}) error {
 	return json.Unmarshal(b, &i)
 }
 
+func New(token string) (*Client, error) {
+	if token == "" {
+		return nil, fmt.Errorf("token must be set")
+	}
+	return &Client{Client: &http.Client{Transport: &transport{apiToken: token}}}, nil
+}
+
 func NewFromEnv() (*Client, error) {
-	cl := &transport{apiToken: os.Getenv("DIGITAL_OCEAN_API_KEY")}
-	if cl.apiToken == "" {
+	token := os.Getenv("DIGITAL_OCEAN_API_KEY")
+	if token == "" {
 		return nil, fmt.Errorf("DIGITAL_OCEAN_API_KEY must be set in env")
 	}
-	return &Client{
-			Client: &http.Client{
-				Transport: cl,
-			},
-		},
-		nil
+	return New(token)
 }
 
 type transport struct {
