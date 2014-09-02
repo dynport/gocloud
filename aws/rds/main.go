@@ -2,7 +2,6 @@ package rds
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -41,6 +40,21 @@ func newAction(name string) url.Values {
 	return url.Values{"Action": {name}, "Version": {Version}}
 }
 
+type Error struct {
+	Code    string `xml:"Code"`
+	Message string `xml:"Message"`
+}
+
+func (e Error) Error() string {
+	return e.Code + ": " + e.Message
+}
+
+type ErrorResponse struct {
+	XMLName   xml.Name `xml:"ErrorResponse"`
+	RequestID string   `xml:"RequestID"`
+	Error     Error    `xml:"Error"`
+}
+
 func (client *Client) loadResource(method string, url string, r io.Reader, i interface{}) error {
 	dbg.Printf("executing method=%s to url=%s", method, url)
 	req, e := http.NewRequest(method, url, r)
@@ -62,7 +76,11 @@ func (client *Client) loadResource(method string, url string, r io.Reader, i int
 	dbg.Printf("got response %s", b)
 
 	if rsp.Status[0] != '2' {
-		return fmt.Errorf("expected status 2xx, got %s (payload=%q", rsp.Status, string(b))
+		resp := &ErrorResponse{}
+		if e = xml.Unmarshal(b, resp); e != nil {
+			return e
+		}
+		return resp.Error
 	}
 	return xml.Unmarshal(b, i)
 }
