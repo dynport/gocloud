@@ -32,6 +32,12 @@ func loadValues(v url.Values, i interface{}) error {
 			if casted != 0 {
 				v.Set(name, fmt.Sprintf("%d", casted))
 			}
+		case []string:
+			if len(casted) != 0 {
+				for i, val := range casted {
+					v.Set(fmt.Sprintf("%s.member.%d", name, i+1), val)
+				}
+			}
 		}
 	}
 	return nil
