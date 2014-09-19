@@ -71,11 +71,7 @@ func (client *Client) EndpointHost() string {
 }
 
 func (client *Client) Endpoint() string {
-	if client.UseSsl {
-		return "https://" + client.EndpointHost()
-	} else {
-		return "http://" + client.EndpointHost()
-	}
+	return "https://" + client.EndpointHost()
 }
 
 type PutOptions struct {
@@ -170,10 +166,7 @@ func (client *Client) readRequest(method, bucket, key string) (*http.Response, e
 }
 
 func (client *Client) keyUrl(bucket, key string) string {
-	if client.UseSsl {
-		return "https://" + client.EndpointHost() + "/" + bucket + "/" + key
-	}
-	return "http://" + bucket + "." + client.EndpointHost() + "/" + key
+	return "https://" + client.EndpointHost() + "/" + bucket + "/" + key
 }
 
 func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOptions) error {
@@ -339,9 +332,6 @@ func (client *Client) SignS3Request(req *http.Request, bucket string) {
 	query := normalizeParams(req.URL)
 	if query != "" {
 		path += "?" + query
-	}
-	if !client.UseSsl && bucket != "" {
-		path = "/" + bucket + path
 	}
 	payloadParts = append(payloadParts, path)
 	payload := strings.Join(payloadParts, "\n")
