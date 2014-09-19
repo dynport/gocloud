@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -37,13 +38,16 @@ const (
 type Client struct {
 	*aws.Client
 	CustomEndpointHost string
-	UseSsl             bool
 }
 
 func NewFromEnv() *Client {
-	return &Client{
+	cl := &Client{
 		Client: aws.NewFromEnv(),
 	}
+	if reg := os.Getenv("AWS_DEFAULT_REGION"); reg != "" {
+		cl.CustomEndpointHost = "s3-" + reg + ".amazonaws.com"
+	}
+	return cl
 }
 
 type Bucket struct {
