@@ -15,7 +15,7 @@ type DescribeDBInstancesResult struct {
 }
 
 type Endpoint struct {
-	Port    string `xml:"Port"`
+	Port    int    `xml:"Port"`
 	Address string `xml:"Address"`
 }
 
