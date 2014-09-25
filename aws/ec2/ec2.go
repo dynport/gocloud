@@ -91,6 +91,12 @@ type Instance struct {
 	SecurityGroups      []*SecurityGroup      `xml:"groupSet>item"`
 	Tags                []*Tag                `xml:"tagSet>item"`
 	NetworkInterfaces   []*NetworkInterface   `xml:"networkInterfaceSet>item"`
+	IamInstanceProfile  *IamInstanceProfile   `xml:"iamInstanceProfile"`
+}
+
+type IamInstanceProfile struct {
+	Arn string `xml:"arn"`
+	Id  string `xml:"id"`
 }
 
 func (instance *Instance) Name() string {
