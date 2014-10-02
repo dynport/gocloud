@@ -179,6 +179,7 @@ const (
 
 type Ebs struct {
 	SnapshotId          string `xml:"snapshotId,omitempty" json:",omitempty"`
+	VolumeId            string `xml:"volumeId,omitempty"`
 	VolumeSize          int    `xml:"volumeSize,omitempty" json:",omitempty"`
 	DeleteOnTermination bool   `xml:"deleteOnTermination,omitempty" json:",omitempty"`
 	VolumeType          string `xml:"volumeType,omitempty json:",omitempty""` // see VolumeType... (e.g. gp, io1, standard)
