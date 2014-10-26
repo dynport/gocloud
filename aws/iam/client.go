@@ -2,6 +2,8 @@ package iam
 
 import (
 	"encoding/xml"
+	"time"
+
 	"github.com/dynport/gocloud/aws"
 )
 
@@ -44,6 +46,15 @@ type User struct {
 	Arn      string `xml:"Arn"`
 }
 
+type Role struct {
+	Path                     string `xml:"Path"`                     ///application_abc/component_xyz/</Path>
+	Arn                      string `xml:"Arn"`                      //arn:aws:iam::123456789012:role/application_abc/component_xyz/S3Access</Arn>
+	RoleName                 string `xml:"RoleName"`                 //S3Access</RoleName>
+	AssumeRolePolicyDocument string `xml:"AssumeRolePolicyDocument"` //{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["ec2.amazonaws.com"]},"Action":["sts:AssumeRole"]}]}</AssumeRolePolicyDocument>
+	CreateDate               string `xml:"CreateDate"`               //2012-05-09T15:45:35Z</CreateDate>
+	RoleId                   string `xml:"RoleId"`                   //AROACVSVTSZYEXAMPLEYK</RoleId>
+}
+
 func (client *Client) GetUser(userName string) (user *User, e error) {
 	raw, e := client.DoSignedRequest("GET", ENDPOINT, aws.QueryPrefix(API_VERSION, "GetUser"), nil)
 	if e != nil {
@@ -71,6 +82,25 @@ func (client *Client) GetAccountSummary() (m *SummaryMap, e error) {
 		return m, e
 	}
 	return rsp.SummaryMap, nil
+}
+
+type ListInstanceProfilesResponse struct {
+	XMLName          xml.Name           `xml:"ListInstanceProfilesResponse"`
+	InstanceProfiles []*InstanceProfile `xml:"ListInstanceProfilesResult>InstanceProfiles>member"`
+}
+
+type InstanceProfile struct {
+	Id                  string    `xml:"Id"`                  //AIPACZLSXM2EYYEXAMPLE</Id>
+	Roles               []*Role   `xml:"Roles>member"`        //
+	InstanceProfileName string    `xml:"InstanceProfileName"` //Webserver</InstanceProfileName>
+	Path                string    `xml:"Path"`                ///application_abc/component_xyz/</Path>
+	Arn                 string    `xml:"Arn"`
+	CreateDate          time.Time `xml:"CreateDate"`
+}
+
+type ListRolesResponse struct {
+	XMLName xml.Name `xml:"ListRolesResponse"`
+	Roles   []*Role  `xml:"ListRolesResult>Roles>member"`
 }
 
 type ListUsersResponse struct {
