@@ -44,10 +44,30 @@ func (client *Client) Endpoint() string {
 	return prefix + ".amazonaws.com"
 }
 
-func (client *Client) ListMetrics() (rsp *ListMetricsResponse, e error) {
+type ListMetricsOptions struct {
+	NextToken string
+}
+
+type ListMetricsOption func(*ListMetricsOptions)
+
+func OptNextToken(i string) ListMetricsOption {
+	return func(o *ListMetricsOptions) {
+		o.NextToken = i
+	}
+}
+
+func (client *Client) ListMetrics(funcs ...ListMetricsOption) (rsp *ListMetricsResponse, e error) {
 	values := &url.Values{}
 	values.Add("Version", VERSION)
 	values.Add("Action", "ListMetrics")
+	o := &ListMetricsOptions{}
+	for _, f := range funcs {
+		f(o)
+	}
+	if o.NextToken != "" {
+		values.Add("NextToken", o.NextToken)
+	}
+	logger.Printf("%#v", values.Encode())
 	raw, e := client.DoSignedRequest("GET", client.Endpoint(), values.Encode(), nil)
 	if e != nil {
 		return nil, e
