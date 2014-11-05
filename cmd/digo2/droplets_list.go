@@ -25,10 +25,16 @@ func (r *dropletsList) Run() error {
 		if d.Image.Slug != "" {
 			imageName += " (" + d.Image.Slug + ")"
 		}
-		ip := ""
-		if len(d.Networks.V4) > 0 {
-			ip = d.Networks.V4[0].IpAddress
-		}
+		ip := func() string {
+			if d.Networks != nil {
+				for _, i := range d.Networks.V4 {
+					if i.Type == "public" {
+						return i.IpAddress
+					}
+				}
+			}
+			return ""
+		}()
 		reg := func() string {
 			if d.Region != nil {
 				return d.Region.Slug
