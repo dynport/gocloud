@@ -29,7 +29,25 @@ func (r *dropletsList) Run() error {
 		if len(d.Networks.V4) > 0 {
 			ip = d.Networks.V4[0].IpAddress
 		}
-		t.Add(d.Id, d.Status, ip, d.Name, d.Region.Slug, d.Size.Slug, imageName, d.CreatedAt.Format("2006-01-02T15:04:05"))
+		reg := func() string {
+			if d.Region != nil {
+				return d.Region.Slug
+			}
+			return ""
+		}()
+		created := func() string {
+			if !d.CreatedAt.IsZero() {
+				return d.CreatedAt.Format("2006-01-02 15:04:05")
+			}
+			return ""
+		}()
+		size := func() string {
+			if d.Size != nil {
+				return d.Size.Slug
+			}
+			return d.SizeSlug
+		}()
+		t.Add(d.Id, d.Status, ip, d.Name, reg, size, imageName, created)
 	}
 	fmt.Println(t)
 	return nil

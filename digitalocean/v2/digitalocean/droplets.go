@@ -106,6 +106,7 @@ type Droplet struct {
 	Region      *Region   `json:"region,omitempty"`
 	Image       *Image    `json:"image,omitempty"`
 	Size        *Size     `json:"size,omitempty"`
+	SizeSlug    string    `json:"size_slug,omitempty"`
 	Locked      bool      `json:"locked,omitempty"`
 	Status      string    `json:"status,omitempty"`
 	Networks    *Networks `json:"networks,omitempty"`
