@@ -19,22 +19,24 @@ func (r *dropletsList) Run() error {
 		return e
 	}
 	t := gocli.NewTable()
-	t.Add("Id", "Status", "Ip", "Name", "Region", "Size", "ImageId:ImageName (ImageSlug)", "CreatedAt")
+	t.Add("Id", "Status", "IP", "Private IP", "Name", "Region", "Size", "ImageId:ImageName (ImageSlug)", "CreatedAt")
 	for _, d := range rsp.Droplets {
 		imageName := fmt.Sprintf("%d:%s", d.Image.Id, d.Image.Name)
 		if d.Image.Slug != "" {
 			imageName += " (" + d.Image.Slug + ")"
 		}
-		ip := func() string {
-			if d.Networks != nil {
-				for _, i := range d.Networks.V4 {
-					if i.Type == "public" {
-						return i.IpAddress
-					}
+		var public, private string
+		if d.Networks != nil {
+			for _, i := range d.Networks.V4 {
+				switch i.Type {
+				case "public":
+					public = i.IpAddress
+				case "private":
+					private = i.IpAddress
+
 				}
 			}
-			return ""
-		}()
+		}
 		reg := func() string {
 			if d.Region != nil {
 				return d.Region.Slug
@@ -53,7 +55,7 @@ func (r *dropletsList) Run() error {
 			}
 			return d.SizeSlug
 		}()
-		t.Add(d.Id, d.Status, ip, d.Name, reg, size, imageName, created)
+		t.Add(d.Id, d.Status, public, private, d.Name, reg, size, imageName, created)
 	}
 	fmt.Println(t)
 	return nil
