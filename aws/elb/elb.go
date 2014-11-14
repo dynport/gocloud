@@ -3,9 +3,12 @@ package elb
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/dynport/gocloud/aws"
 	"log"
+	"net/url"
+	"strconv"
 	"time"
+
+	"github.com/dynport/gocloud/aws"
 )
 
 const (
@@ -125,8 +128,31 @@ func (client *Client) updateLoadBalancerCall(action string, loadBalancerName str
 	return nil
 }
 
-func (client *Client) DescribeLoadBalancers() (lbs []*LoadBalancer, e error) {
-	raw, e := client.DoSignedRequest("GET", client.Endpoint(), "Version="+API_VERSION+"&Action=DescribeLoadBalancers", nil)
+type DescribeLoadBalancersOptions struct {
+	LoadBalancerNames []string
+	Marker            string
+	PageSize          int
+}
+
+func (client *Client) DescribeLoadBalancers(a ...func(*DescribeLoadBalancersOptions)) (lbs []*LoadBalancer, e error) {
+	o := &DescribeLoadBalancersOptions{}
+	for _, f := range a {
+		f(o)
+	}
+	v := url.Values{
+		"Version": {API_VERSION},
+		"Action":  {"DescribeLoadBalancers"},
+	}
+	for i, n := range o.LoadBalancerNames {
+		v.Set("LoadBalancerNames.member."+strconv.Itoa(i+1), n)
+	}
+	if o.Marker != "" {
+		v.Set("Marker", o.Marker)
+	}
+	if o.PageSize > 0 {
+		v.Set("PageSize", strconv.Itoa(o.PageSize))
+	}
+	raw, e := client.DoSignedRequest("GET", client.Endpoint(), v.Encode(), nil)
 	if e != nil {
 		return lbs, e
 	}
