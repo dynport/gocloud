@@ -173,16 +173,8 @@ func (client *Client) PutStream(bucket, key string, r io.Reader, options *PutOpt
 	if options == nil {
 		options = &PutOptions{ContentType: DEFAULT_CONTENT_TYPE}
 	}
-	theUrl := client.keyUrl(bucket, key)
-	req, e := http.NewRequest("PUT", theUrl, r)
-	if e != nil {
-		return e
-	}
-
-	req.Header = client.putRequestHeaders(bucket, key, options)
-
 	buf := bytes.NewBuffer(make([]byte, 0, MinPartSize))
-	_, e = io.CopyN(buf, r, MinPartSize)
+	_, e := io.CopyN(buf, r, MinPartSize)
 	if e == io.EOF {
 		// less than min multipart size => direct upload
 		return client.Put(bucket, key, buf.Bytes(), options)

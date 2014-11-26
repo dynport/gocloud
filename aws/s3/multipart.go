@@ -104,10 +104,8 @@ func (client *Client) InitiateMultipartUpload(bucket, key string, opts *PutOptio
 	if e != nil {
 		return nil, e
 	}
+	req.Header = client.putRequestHeaders(bucket, key, opts)
 	req.Header.Add("Host", bucket+"."+client.EndpointHost())
-	if opts.ServerSideEncryption {
-		req.Header.Add(HEADER_SERVER_SIDE_ENCRUPTION, AES256)
-	}
 	client.SignS3Request(req, bucket)
 	rsp, e := http.DefaultClient.Do(req)
 	if e != nil {
