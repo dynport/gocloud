@@ -45,17 +45,12 @@ func (a *GetSessionToken) Execute(client *aws.Client) (*GetSessionTokenResponse,
 }
 
 type GetSessionTokenResponse struct {
-	XMLName               xml.Name               `xml:"GetSessionTokenResponse"`
-	GetSessionTokenResult *GetSessionTokenResult `xml:"GetSessionTokenResult"`
-}
-
-type GetSessionTokenResult struct {
-	XMLName     xml.Name     `xml:"GetSessionTokenResult"`
-	Credentials *Credentials `xml:",omitempty"`
+	XMLName     xml.Name     `xml:"GetSessionTokenResponse"`
+	Credentials *Credentials `xml:"GetSessionTokenResult>Credentials"`
 }
 
 type Credentials struct {
-	AccessKeyId     string    `xml:",omitempty"`
+	AccessKeyID     string    `xml:"AccessKeyId,omitempty"`
 	Expiration      time.Time `xml:",omitempty"`
 	SecretAccessKey string    `xml:",omitempty"`
 	SessionToken    string    `xml:",omitempty"`

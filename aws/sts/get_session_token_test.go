@@ -18,14 +18,14 @@ func TestGetSessionTokenParse(t *testing.T) {
 	if err != nil {
 		t.Fatal("error decoding response", err)
 	}
-	creds := rsp.GetSessionTokenResult.Credentials
+	creds := rsp.Credentials
 	tests := []struct {
 		Name     string
-		Expected interface{}
 		Value    interface{}
+		Expected interface{}
 	}{
 		{"Expiration", creds.Expiration.Format("2006-01-02"), "2011-07-11"},
-		{"AccessKeyId", creds.AccessKeyId, "AKIAIOSFODNN7EXAMPLE"},
+		{"AccessKeyID", creds.AccessKeyID, "AKIAIOSFODNN7EXAMPLE"},
 	}
 
 	for _, tst := range tests {
