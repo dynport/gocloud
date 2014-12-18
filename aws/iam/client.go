@@ -137,3 +137,30 @@ func (client *Client) ListAccountAliases() (aliases *ListAccountAliasesResponse,
 	}
 	return rsp, nil
 }
+
+func (client *Client) ListMFADevices(username string) (*ListMFADevicesResponse, error) {
+	params := map[string]string{"UserName": username}
+	raw, err := client.DoSignedRequest(
+		"GET", ENDPOINT,
+		aws.QueryPrefix(API_VERSION, "ListMFADevices"),
+		params)
+	if err != nil {
+		return nil, err
+	}
+	rsp := &ListMFADevicesResponse{}
+	err = xml.Unmarshal(raw.Content, rsp)
+	if err != nil {
+		return nil, err
+	}
+	return rsp, nil
+}
+
+type ListMFADevicesResponse struct {
+	MFADevices  []*MFADevice `xml:"ListMFADevicesResult>MFADevices>member"`
+	IsTruncated bool         `ListAccountAliasesResult>IsTruncated`
+}
+
+type MFADevice struct {
+	UserName     string `xml:"UserName"`
+	SerialNumber string `xml:"SerialNumber"`
+}
