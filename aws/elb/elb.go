@@ -128,6 +128,10 @@ func (client *Client) updateLoadBalancerCall(action string, loadBalancerName str
 	return nil
 }
 
+func OptLoadBalancerName(s string) func(o *DescribeLoadBalancersOptions) {
+	return func(o *DescribeLoadBalancersOptions) { o.LoadBalancerNames = []string{s} }
+}
+
 type DescribeLoadBalancersOptions struct {
 	LoadBalancerNames []string
 	Marker            string
