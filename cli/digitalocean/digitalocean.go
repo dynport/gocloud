@@ -21,6 +21,8 @@ func Register(router *cli.Router) {
 	router.RegisterFunc("do/droplet/list", ListDropletsAction, "List active droplets")
 	router.Register("do/droplet/create", &CreateDroplet{}, "Create new droplet")
 	router.Register("do/droplet/destroy", &DestroyDroplet{}, "Destroy Droplet")
+	router.Register("do/droplet/shutdown", &ShutdownDroplet{}, "Shutdown Droplet")
+	router.Register("do/droplet/poweron", &PowerOnDroplet{}, "Power On Droplet")
 	router.RegisterFunc("do/image/list", ListImagesAction, "List available droplet images")
 	router.RegisterFunc("do/key/list", ListKeysAction, "List available ssh keys")
 	router.RegisterFunc("do/region/list", ListRegionsAction, "List available droplet regions")
@@ -318,4 +320,44 @@ func (a *RebuildDroplet) Run() error {
 	logger.Debugf("got response %+v", rsp)
 	droplet := &digitalocean.Droplet{Id: a.DropletId, Account: account}
 	return digitalocean.WaitForDroplet(droplet)
+}
+
+type ShutdownDroplet struct {
+	DropletId int `cli:"type=arg required=true"`
+}
+
+func (a *ShutdownDroplet) Run() error {
+	account := CurrentAccount()
+	droplet, e := account.GetDroplet(a.DropletId)
+	if e != nil {
+		return e
+	}
+	evresp, e := droplet.ShutdownDroplet()
+	if e != nil {
+		return e
+	}
+	if evresp.Status != "OK" {
+		return fmt.Errorf("shutdown of droplet %d failed: %s", droplet.Id, evresp.ErrorMessage)
+	}
+	return nil
+}
+
+type PowerOnDroplet struct {
+	DropletId int `cli:"type=arg required=true"`
+}
+
+func (a *PowerOnDroplet) Run() error {
+	account := CurrentAccount()
+	droplet, e := account.GetDroplet(a.DropletId)
+	if e != nil {
+		return e
+	}
+	evresp, e := droplet.PowerOnDroplet()
+	if e != nil {
+		return e
+	}
+	if evresp.Status != "OK" {
+		return fmt.Errorf("power on of droplet %d failed: %s", droplet.Id, evresp.ErrorMessage)
+	}
+	return nil
 }
