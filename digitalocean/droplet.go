@@ -85,3 +85,25 @@ func (account *Account) CreateDroplet(droplet *Droplet) (out *Droplet, e error) 
 	e = account.loadResource(path, rsp, nil)
 	return rsp.Droplet, e
 }
+
+func (droplet *Droplet) ShutdownDroplet() (out *EventResponse, e error) {
+	account := droplet.Account
+	if account == nil {
+		return nil, fmt.Errorf("account not set")
+	}
+	ersp := &EventResponse{}
+	path := fmt.Sprintf("/droplets/%d/shutdown", droplet.Id)
+	e = account.loadResource(path, ersp, nil)
+	return ersp, e
+}
+
+func (droplet *Droplet) PowerOnDroplet() (out *EventResponse, e error) {
+	account := droplet.Account
+	if account == nil {
+		return nil, fmt.Errorf("account not set")
+	}
+	ersp := &EventResponse{}
+	path := fmt.Sprintf("/droplets/%d/power_on", droplet.Id)
+	e = account.loadResource(path, ersp, nil)
+	return ersp, e
+}
