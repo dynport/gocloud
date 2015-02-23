@@ -241,6 +241,31 @@ func (client *Client) Delete(bucket, key string) error {
 	return nil
 }
 
+func (client *Client) Copy(srcBucket, srcKey, tgtBucket, tgtKey string) error {
+	theUrl := client.keyUrl(tgtBucket, tgtKey)
+	req, e := http.NewRequest("PUT", theUrl, nil)
+	if e != nil {
+		return e
+	}
+	req.Header.Add("x-amz-copy-source", srcBucket+"/"+srcKey)
+
+	client.SignS3Request(req, tgtBucket)
+	rsp, e := http.DefaultClient.Do(req)
+	if e != nil {
+		return e
+	}
+	defer rsp.Body.Close()
+
+	b, e := ioutil.ReadAll(rsp.Body)
+	if e != nil {
+		return e
+	}
+	if rsp.StatusCode != 200 {
+		return fmt.Errorf("error copying key: %s - %s", rsp.Status, string(b))
+	}
+	return nil
+}
+
 func (client *Client) Put(bucket, key string, data []byte, options *PutOptions) error {
 	if options == nil {
 		options = &PutOptions{ContentType: DEFAULT_CONTENT_TYPE}
