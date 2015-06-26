@@ -13,6 +13,7 @@ type ParametersDescribe struct {
 }
 
 func (a *ParametersDescribe) Run() error {
+	client := cloudformation.NewFromEnv()
 	tpl := cloudformation.DescribeStacks{
 		StackName: a.Name,
 	}

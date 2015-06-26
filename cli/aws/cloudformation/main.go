@@ -19,6 +19,7 @@ type StacksDelete struct {
 }
 
 func (d *StacksDelete) Run() error {
+	client := cloudformation.NewFromEnv()
 	logger.Printf("deleting stack %q", d.Name)
 	return client.DeleteStack(d.Name)
 }
@@ -28,9 +29,8 @@ type StacksList struct {
 	Full           bool `cli:"opt --full"`
 }
 
-var client = cloudformation.NewFromEnv()
-
 func (list *StacksList) Run() error {
+	client := cloudformation.NewFromEnv()
 	rsp, e := client.ListStacks(nil)
 	if e != nil {
 		return e
@@ -55,6 +55,7 @@ type StackResources struct {
 }
 
 func (r *StackResources) Run() error {
+	client := cloudformation.NewFromEnv()
 	rsp, e := client.DescribeStackResources(cloudformation.DescribeStackResourcesParameters{
 		StackName: r.Name,
 	})
@@ -74,6 +75,7 @@ type StackDescription struct {
 }
 
 func (r *StackDescription) Run() error {
+	client := cloudformation.NewFromEnv()
 	rsp, e := client.DescribeStacks(&cloudformation.DescribeStacksParameters{
 		StackName: r.Name,
 	})
@@ -140,6 +142,7 @@ type StacksWatch struct {
 }
 
 func (s *StacksWatch) Run() error {
+	client := cloudformation.NewFromEnv()
 	seen := map[string]struct{}{}
 	for {
 		rsp, e := client.DescribeStackEvents(&cloudformation.DescribeStackEventsParameters{StackName: s.Name})
