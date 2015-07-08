@@ -59,6 +59,7 @@ type CreateDroplet struct {
 	Backups           bool     `json:"backups,omitempty"`
 	IPv6              bool     `json:"ipv6,omitempty"`
 	PrivateNetworking bool     `json:"private_networking,omitempty"`
+	UserData          string   `json:"user_data,omitempty"`
 }
 
 func (c *CreateDroplet) Execute(client *Client) (*DropletResponse, error) {
