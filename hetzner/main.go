@@ -4,17 +4,27 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 
 	"github.com/dynport/gocli"
-	"github.com/dynport/gologger"
 )
 
-var logger = gologger.NewFromEnv()
+var logger = log.New(os.Stderr, "", 0)
+
+func debugStream() io.Writer {
+	if os.Getenv("DEBUG") == "true" {
+		return os.Stderr
+	}
+	return ioutil.Discard
+}
+
+var dbg = log.New(debugStream(), "[DEBUG] ", log.Lshortfile)
 
 type Server struct {
 	ServerIp     string   `json:"server_ip"`
@@ -77,12 +87,6 @@ func AccountFromEnv() (account *Account, e error) {
 	return &Account{User: user, Password: password}, nil
 }
 
-func init() {
-	if os.Getenv("DEBUG") == "true" {
-		logger.LogLevel = gologger.DEBUG
-	}
-}
-
 func (account *Account) Url() string {
 	return fmt.Sprintf("https://%s:%s@robot-ws.your-server.de", account.User, account.Password)
 }
@@ -93,7 +97,7 @@ func (account *Account) RenameServer(ip string, name string) error {
 	theUrl := account.Url() + "/server/" + ip
 	buf := bytes.Buffer{}
 	buf.WriteString(values.Encode())
-	logger.Debugf("using values %s", values.Encode())
+	dbg.Printf("using values %s", values.Encode())
 	req, e := http.NewRequest("POST", theUrl, &buf)
 	if e != nil {
 		return e
@@ -105,7 +109,7 @@ func (account *Account) RenameServer(ip string, name string) error {
 	}
 	defer rsp.Body.Close()
 	if strings.HasPrefix(rsp.Status, "2") {
-		logger.Infof("renamed %s to %s", ip, name)
+		logger.Printf("renamed %s to %s", ip, name)
 		return nil
 	}
 	b, e := ioutil.ReadAll(rsp.Body)
@@ -113,10 +117,10 @@ func (account *Account) RenameServer(ip string, name string) error {
 }
 
 func loadRequest(request *http.Request) (rsp *http.Response, e error) {
-	logger.Debugf("sending request: METHOD=%s, URL=%s", request.Method, request.URL.String())
+	dbg.Printf("sending request: METHOD=%s, URL=%s", request.Method, request.URL.String())
 	rsp, e = (&http.Client{}).Do(request)
 	if e == nil {
-		logger.Debugf("got response %s", rsp.Status)
+		dbg.Printf("got response %s", rsp.Status)
 	}
 	return rsp, e
 }
@@ -126,7 +130,7 @@ func (account *Account) Servers() (servers []*Server, e error) {
 	if e != nil {
 		panic("unable to create request: " + e.Error())
 	}
-	logger.Debug("fetching servers")
+	dbg.Print("fetching servers")
 	rsp, e := loadRequest(req)
 	if e != nil {
 		return servers, e
@@ -142,7 +146,7 @@ func (account *Account) Servers() (servers []*Server, e error) {
 	st := []map[string]*Server{}
 	e = json.Unmarshal(b, &st)
 	if e != nil {
-		logger.Error(string(b))
+		logger.Printf("err=%q; %s", e, string(b))
 		return servers, e
 	}
 	servers = []*Server{}
@@ -180,7 +184,7 @@ func renameServer(args *gocli.Args) error {
 		return fmt.Errorf("<ip> <new_name>")
 	}
 	ip, name := args.Args[0], args.Args[1]
-	logger.Infof("renaming servers %s to %s", ip, name)
+	logger.Printf("renaming servers %s to %s", ip, name)
 	return account.RenameServer(ip, name)
 }
 

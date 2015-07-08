@@ -3,13 +3,13 @@ package jiffybox
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
-
-	"github.com/dynport/gologger"
 )
 
 const ENV_API_TOKEN = "JIFFYBOX_API_KEY"
@@ -52,7 +52,7 @@ type HttpResponse struct {
 func (client *Client) unmarshalResponse(rsp *http.Response, i interface{}) error {
 	defer rsp.Body.Close()
 	b, e := ioutil.ReadAll(rsp.Body)
-	logger.Debug(string(b))
+
 	if e != nil {
 		return e
 	}
@@ -76,12 +76,12 @@ func (client *Client) unmarshal(b []byte, i interface{}) error {
 
 func (client *Client) PostForm(action string, values url.Values) (rsp *HttpResponse, e error) {
 	u := client.BaseUrl() + "/" + action
-	logger.Infof("sending request " + u)
+	logger.Print("sending request " + u)
 	httpResponse, e := http.PostForm(u, values)
 	if e != nil {
 		return nil, e
 	}
-	logger.Debugf("got status %s", httpResponse.Status)
+	dbg.Printf("got status %s", httpResponse.Status)
 	rsp = &HttpResponse{
 		StatusCode: httpResponse.StatusCode,
 	}
@@ -93,7 +93,16 @@ func (client *Client) PostForm(action string, values url.Values) (rsp *HttpRespo
 	return rsp, e
 }
 
-var logger = gologger.NewFromEnv()
+var logger = log.New(os.Stderr, "", 0)
+
+func debugStream() io.Writer {
+	if os.Getenv("DEBUG") == "true" {
+		return os.Stderr
+	}
+	return ioutil.Discard
+}
+
+var dbg = log.New(debugStream(), "[DEBUG] ", log.Lshortfile)
 
 type ErrorResponse struct {
 	Messages []*Message `json:"messages"`
@@ -102,7 +111,7 @@ type ErrorResponse struct {
 
 func (client *Client) LoadResource(action string, i interface{}) error {
 	u := client.BaseUrl() + "/" + action
-	logger.Debug("loading " + u)
+	dbg.Print("loading " + u)
 	rsp, e := http.Get(u)
 	if e != nil {
 		return e

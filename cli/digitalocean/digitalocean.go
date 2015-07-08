@@ -2,17 +2,29 @@ package digitalocean
 
 import (
 	"fmt"
-	"github.com/dynport/dgtk/cli"
-	"github.com/dynport/gocli"
-	"github.com/dynport/gocloud/digitalocean"
-	"github.com/dynport/gologger"
+	"io"
+	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/dynport/dgtk/cli"
+	"github.com/dynport/gocli"
+	"github.com/dynport/gocloud/digitalocean"
 )
 
-var logger = gologger.NewFromEnv()
+var logger = log.New(os.Stderr, "", 0)
+
+func debugStream() io.Writer {
+	if os.Getenv("DEBUG") == "true" {
+		return os.Stderr
+	}
+	return ioutil.Discard
+}
+
+var dbg = log.New(debugStream(), "[DEBUG] ", log.Lshortfile)
 
 func Register(router *cli.Router) {
 	router.Register("do/droplet/rename", &RenameDroplet{}, "Rename Droplet")
@@ -41,12 +53,12 @@ type RenameDroplet struct {
 }
 
 func ListSizesAction() error {
-	logger.Debug("listing sizes")
+	dbg.Print("listing sizes")
 	account, e := AccountFromEnv()
 	if e != nil {
 		return e
 	}
-	logger.Debugf("account is %+v", account)
+	logger.Printf("account is %+v", account)
 	table := gocli.NewTable()
 	table.Add("Id", "Name")
 	sizes, e := account.Sizes()
@@ -61,12 +73,12 @@ func ListSizesAction() error {
 }
 
 func ListRegionsAction() error {
-	logger.Debug("listing regions")
+	dbg.Print("listing regions")
 	account, e := AccountFromEnv()
 	if e != nil {
 		return e
 	}
-	logger.Debugf("account is %+v", account)
+	dbg.Printf("account is %+v", account)
 	table := gocli.NewTable()
 	table.Add("Id", "Name")
 	regions, e := account.Regions()
@@ -94,8 +106,8 @@ func ListKeysAction() error {
 }
 
 func ListImagesAction() error {
-	logger.Debug("listing images")
-	logger.Debug("account is %+v", CurrentAccount())
+	dbg.Print("listing images")
+	dbg.Printf("account is %+v", CurrentAccount())
 	table := gocli.NewTable()
 	table.Add("Id", "Name")
 	images, e := account.Images()
@@ -109,12 +121,12 @@ func ListImagesAction() error {
 	return nil
 }
 func (r *RenameDroplet) Run() error {
-	logger.Infof("renaming droplet %d to %s", r.Id, r.NewName)
+	logger.Printf("renaming droplet %d to %s", r.Id, r.NewName)
 	_, e := CurrentAccount().RenameDroplet(r.Id, r.NewName)
 	if e != nil {
 		return e
 	}
-	logger.Infof("renamed droplet %d to %s", r.Id, r.NewName)
+	logger.Printf("renamed droplet %d to %s", r.Id, r.NewName)
 	return nil
 }
 
@@ -143,7 +155,7 @@ func CurrentAccount() *digitalocean.Account {
 		var e error
 		account, e = AccountFromEnv()
 		if e != nil {
-			logger.Error(e.Error())
+			logger.Printf("err=%q", e)
 			os.Exit(1)
 		}
 		if account.ImageId == 0 {
@@ -158,13 +170,13 @@ func CurrentAccount() *digitalocean.Account {
 		if e != nil {
 			ExitWith("unable to load account from env: " + e.Error())
 		}
-		logger.Debugf("using account %+v", account)
+		dbg.Printf("using account %+v", account)
 	}
 	return account
 }
 
 func ExitWith(err interface{}) {
-	logger.Error(err)
+	logger.Printf("err=%q", err)
 	os.Exit(1)
 }
 
@@ -201,7 +213,7 @@ func AccountFromEnv() (*digitalocean.Account, error) {
 }
 
 func ListDropletsAction() (e error) {
-	logger.Debug("listing droplets")
+	dbg.Print("listing droplets")
 
 	droplets, e := CurrentAccount().Droplets()
 	if e != nil {
@@ -258,9 +270,9 @@ func (a *CreateDroplet) Run() error {
 		return e
 	}
 	droplet.Account = CurrentAccount()
-	logger.Infof("created droplet with id %d", droplet.Id)
+	logger.Printf("created droplet with id %d", droplet.Id)
 	e = digitalocean.WaitForDroplet(droplet)
-	logger.Infof("droplet %d ready, ip: %s. total_time: %.1fs", droplet.Id, droplet.IpAddress, time.Now().Sub(started).Seconds())
+	logger.Printf("droplet %d ready, ip: %s. total_time: %.1fs", droplet.Id, droplet.IpAddress, time.Now().Sub(started).Seconds())
 	return e
 }
 
@@ -269,20 +281,20 @@ type DestroyDroplet struct {
 }
 
 func (a *DestroyDroplet) Run() error {
-	logger.Debugf("would destroy droplet with %#v", a.DropletIds)
+	dbg.Printf("would destroy droplet with %#v", a.DropletIds)
 	for _, id := range a.DropletIds {
-		logger.Prefix = fmt.Sprintf("droplet-%d", id)
+		logger := log.New(os.Stderr, fmt.Sprintf("droplet-%d", id), 0)
 		droplet, e := CurrentAccount().GetDroplet(id)
 		if e != nil {
-			logger.Errorf("unable to get droplet for %d", id)
+			logger.Printf("ERROR: unable to get droplet for %d", id)
 			continue
 		}
-		logger.Infof("destroying droplet %d", droplet.Id)
+		logger.Printf("destroying droplet %d", droplet.Id)
 		rsp, e := CurrentAccount().DestroyDroplet(droplet.Id)
 		if e != nil {
 			return e
 		}
-		logger.Debugf("got response %+v", rsp)
+		logger.Printf("got response %+v", rsp)
 		started := time.Now()
 		archived := false
 		for i := 0; i < 300; i++ {
@@ -291,16 +303,16 @@ func (a *DestroyDroplet) Run() error {
 				archived = true
 				break
 			}
-			logger.Debug("status " + droplet.Status)
+			dbg.Print("status " + droplet.Status)
 			fmt.Print(".")
 			time.Sleep(1 * time.Second)
 		}
 		fmt.Print("\n")
-		logger.Info("droplet destroyed")
+		logger.Print("droplet destroyed")
 		if !archived {
-			logger.Errorf("error archiving %d", droplet.Id)
+			logger.Print("ERROR: error archiving %d", droplet.Id)
 		} else {
-			logger.Debugf("archived in %.06f", time.Now().Sub(started).Seconds())
+			dbg.Printf("archived in %.06f", time.Now().Sub(started).Seconds())
 		}
 	}
 	return nil
@@ -317,7 +329,7 @@ func (a *RebuildDroplet) Run() error {
 	if e != nil {
 		return e
 	}
-	logger.Debugf("got response %+v", rsp)
+	dbg.Printf("got response %+v", rsp)
 	droplet := &digitalocean.Droplet{Id: a.DropletId, Account: account}
 	return digitalocean.WaitForDroplet(droplet)
 }

@@ -3,15 +3,25 @@ package profitbricks
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/dynport/gologger"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 )
 
-var logger = gologger.NewFromEnv()
+var logger = log.New(os.Stderr, "", 0)
+
+func debugStream() io.Writer {
+	if os.Getenv("DEBUG") == "true" {
+		return os.Stderr
+	}
+	return ioutil.Discard
+}
+
+var dbg = log.New(debugStream(), "[DEBUG] ", log.Lshortfile)
 
 const (
 	PROFITBRICKS_USER        = "PROFITBRICKS_USER"
@@ -118,7 +128,7 @@ func (client *Client) GetDataCenter(id string) (dc *DataCenter, e error) {
 
 func (client *Client) loadSoapRequest(body string) (env *Envelope, e error) {
 	reader := strings.NewReader(SOAP_HEADER + body + SOAP_FOOTER)
-	logger.Debugf("sending body %s", body)
+	dbg.Printf("sending body %s", body)
 	req, e := http.NewRequest("POST", "https://"+client.User+":"+client.Password+"@api.profitbricks.com/1.2", reader)
 	if e != nil {
 		return nil, e
@@ -129,17 +139,17 @@ func (client *Client) loadSoapRequest(body string) (env *Envelope, e error) {
 	if e != nil {
 		return nil, e
 	}
-	logger.Debugf("got response in %.06f", time.Now().Sub(started).Seconds())
+	dbg.Printf("got response in %.06f", time.Now().Sub(started).Seconds())
 	defer rsp.Body.Close()
 	b, e := ioutil.ReadAll(rsp.Body)
 	if e != nil {
 		return nil, e
 	}
-	logger.Debugf("got status %s, response %s", rsp.Status, string(b))
+	dbg.Printf("got status %s, response %s", rsp.Status, string(b))
 	if rsp.Status[0] != '2' {
 		return nil, fmt.Errorf("ERROR: %s => %s", rsp.Status, string(b))
 	}
-	logger.Debugf("got response %q", string(b))
+	dbg.Printf("got response %q", string(b))
 	env = &Envelope{}
 	e = xml.Unmarshal(b, env)
 	if e != nil {

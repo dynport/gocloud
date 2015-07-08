@@ -2,7 +2,6 @@ package digitalocean
 
 import (
 	"fmt"
-	"github.com/dynport/gologger"
 	"strconv"
 	"time"
 )
@@ -49,12 +48,7 @@ func (droplet *Droplet) Reload() error {
 
 func WaitForDroplet(droplet *Droplet) error {
 	started := time.Now()
-	logger.Infof("waiting for droplet %d", droplet.Id)
-	level := logger.LogLevel
-	defer func(level int) {
-		logger.LogLevel = level
-	}(level)
-	logger.LogLevel = gologger.WARN
+	logger.Printf("waiting for droplet %d", droplet.Id)
 	for i := 0; i < 60; i++ {
 		if e := droplet.Reload(); e != nil {
 			return e
@@ -66,7 +60,7 @@ func WaitForDroplet(droplet *Droplet) error {
 		time.Sleep(5 * time.Second)
 	}
 	fmt.Print("\n")
-	logger.Debugf("waited for %.06f", time.Now().Sub(started).Seconds())
+	dbg.Printf("waited for %.06f", time.Now().Sub(started).Seconds())
 	return nil
 }
 

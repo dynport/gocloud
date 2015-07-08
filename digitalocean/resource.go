@@ -20,10 +20,10 @@ type resource struct {
 func (r *resource) load(opts *fetchOptions) (e error) {
 	if opts != nil {
 		if e := r.loadCached(opts); e == nil {
-			logger.Debugf("loaded cached resource (expires in %s)", r.CachedAt.Add(opts.ttl).Sub(time.Now()).String())
+			dbg.Printf("loaded cached resource (expires in %s)", r.CachedAt.Add(opts.ttl).Sub(time.Now()).String())
 			return nil
 		} else {
-			logger.Debugf(e.Error())
+			dbg.Printf(e.Error())
 		}
 	}
 	rsp, e := http.Get(r.Url)
@@ -37,7 +37,7 @@ func (r *resource) load(opts *fetchOptions) (e error) {
 	}
 	if opts != nil {
 		if e := r.store(); e != nil {
-			logger.Error(e.Error())
+			logger.Printf("err=%q", e)
 		}
 	}
 	return nil
@@ -80,9 +80,9 @@ func (r *resource) loadCached(opts *fetchOptions) error {
 	if e != nil {
 		return e
 	}
-	logger.Debugf("%v %v", r.CachedAt, opts.ttl.String())
+	dbg.Printf("%v %v", r.CachedAt, opts.ttl.String())
 	if time.Now().After(stat.ModTime().Add(opts.ttl)) {
-		logger.Debug("resource expired")
+		dbg.Printf("resource expired")
 		return fmt.Errorf("expired")
 	}
 	return nil

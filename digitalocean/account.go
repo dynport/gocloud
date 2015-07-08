@@ -81,7 +81,7 @@ func (a *Account) RenameDroplet(id int, name string) (*EventResponse, error) {
 	}
 	if rsp.Status != "OK" {
 		err := "error renaming droplet: " + rsp.ErrorMessage
-		logger.Error(err)
+		logger.Printf("err=%q", err)
 		return rsp, fmt.Errorf(err)
 	}
 	return rsp, nil
@@ -96,14 +96,14 @@ func (a *Account) RebuildDroplet(id int, imageId int) (*EventResponse, error) {
 		imageId = droplet.ImageId
 	}
 	rsp := &EventResponse{}
-	logger.Infof("rebuilding droplet %d and image %d", id, imageId)
+	logger.Printf("rebuilding droplet %d and image %d", id, imageId)
 	path := fmt.Sprintf("/droplets/%d/rebuild?image_id=%d", id, imageId)
 	if e := a.loadResource(path, rsp, nil); e != nil {
 		return nil, e
 	}
 	if rsp.Status != "OK" {
 		err := "error rebuilding droplet: " + rsp.ErrorMessage
-		logger.Error(err)
+		logger.Printf("err=%q", err)
 		return rsp, fmt.Errorf(err)
 	}
 	return rsp, nil
@@ -229,7 +229,7 @@ func (account *Account) loadResource(path string, i interface{}, opts *fetchOpti
 
 	e = json.Unmarshal(r.Content, i)
 	if e != nil {
-		logger.Error(string(r.Content))
+		logger.Printf("err=%q", string(r.Content))
 	}
 	return e
 }

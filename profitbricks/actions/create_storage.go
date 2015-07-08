@@ -2,10 +2,11 @@ package actions
 
 import (
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/profitbricks"
-	"github.com/dynport/gologger"
-	"os"
 )
 
 const (
@@ -24,7 +25,7 @@ const (
 )
 
 var (
-	logger = gologger.NewFromEnv()
+	logger = log.New(os.Stderr, "", 0)
 )
 
 var defaultDataCenterId = os.Getenv("PROFITBRICKS_DEFAULT_DC_ID")
@@ -190,6 +191,6 @@ func CreateStorageHandler(args *gocli.Args) error {
 		Size:         args.MustGetInt(CLI_SIZE),
 		MountImageId: args.MustGetString(CLI_IMAGE_ID),
 	}
-	logger.Infof("creating storage with %#v", req)
+	logger.Printf("creating storage with %#v", req)
 	return profitbricks.NewFromEnv().CreateStorage(req)
 }

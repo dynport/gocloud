@@ -2,13 +2,15 @@ package hetzner
 
 import (
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/dynport/dgtk/cli"
 	"github.com/dynport/gocli"
 	"github.com/dynport/gocloud/hetzner"
-	"github.com/dynport/gologger"
 )
 
-var logger = gologger.NewFromEnv()
+var logger = log.New(os.Stderr, "", 0)
 
 func Register(router *cli.Router) {
 	router.RegisterFunc("hetzner/servers/list", ListServers, "list servers")
@@ -72,6 +74,6 @@ func (a *RenameServer) Run() error {
 	if e != nil {
 		return e
 	}
-	logger.Infof("renaming servers %s to %s", a.Ip, a.NewName)
+	logger.Printf("renaming servers %s to %s", a.Ip, a.NewName)
 	return account.RenameServer(a.Ip, a.NewName)
 }
