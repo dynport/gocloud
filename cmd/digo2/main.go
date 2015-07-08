@@ -19,6 +19,7 @@ func main() {
 	router.Register("droplets/list", &dropletsList{}, "List Droplets")
 	router.Register("droplets/show", &dropletShow{}, "Show Droplet")
 	router.Register("droplets/create", &dropletCreate{}, "Create Droplet")
+	router.Register("droplets/reboot", &dropletReboot{}, "Reboot Droplet")
 	switch e := router.RunWithArgs(); e {
 	case nil, cli.ErrorHelpRequested, cli.ErrorNoRoute:
 		// ignore
