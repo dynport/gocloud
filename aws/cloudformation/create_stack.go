@@ -76,6 +76,11 @@ func (c *CreateStackParameters) values() Values {
 	for i, arn := range c.NotificationARNs {
 		v["NoNotificationARNs.member."+strconv.Itoa(i+1)] = arn
 	}
+
+	for i, tag := range c.Tags {
+		v["Tags.member."+strconv.Itoa(i+1)+".Key"],_ = tag.Key.(string)
+		v["Tags.member."+strconv.Itoa(i+1)+".Value"],_ = tag.Value.(string)
+	}
 	return v
 }
 
